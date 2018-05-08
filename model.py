@@ -23,7 +23,7 @@ class User(db.Model):
     password = db.Column(db.String(10), nullable=False)
     fname = db.Column(db.String(30), nullable=False)
     lname = db.Column(db.String(30), nullable=False)
-    birthday = db.Column(db.String(20), nullable=False)
+    birthday = db.Column(db.DateTime, nullable=False)
 
 
     def __repr__(self):
@@ -89,28 +89,31 @@ class Restaurant(db.Model):
         return "<Restaurant rest_id={} rest_name={}>".format(
                     self.rest_id, self.rest_name)
 
-class Comment(db.Model):
-    """Users exchange messages."""
+# class Comment(db.Model):
+#     """Users exchange messages."""
 
-    __tablename__ = "comments"
+#     __tablename__ = "comments"
 
-    comment_id = db.Column(db.Integer, autoincrement=True, primary_key=True)
-    from_user_id = db.Column(db.Integer, db.ForeignKey("users.user_id"), nullable=False)
-    to_user_id = db.Column(db.Integer, db.ForeignKey("users.user_id"), nullable=False)
-    commented_on = db.Column(db.DateTime, nullable=False)
-    message = db.Column(db.String(250))
+#     comment_id = db.Column(db.Integer, autoincrement=True, primary_key=True)
+#     from_user_id = db.Column(db.Integer, db.ForeignKey("users.user_id"), nullable=False)
+#     to_user_id = db.Column(db.Integer, db.ForeignKey("users.user_id"), nullable=False)
+#     commented_on = db.Column(db.DateTime, nullable=False)
+#     message = db.Column(db.String(250))
 
-    # Define relationship to User.
+#     # Define relationship to User.
 
-    from_user = db.relationship("User", backref=db.backref("comments", order_by=comment_id))
+#     from_user = db.relationship("User", backref=db.backref("comments", order_by=comment_id))
 
-    to_user = db.relationship("User", backref=db.backref("comments", order_by=comment_id))
+#     to_user = db.relationship("User", backref=db.backref("comments", order_by=comment_id))
 
-    def __repr__(self):
-        """Provide useful representation."""
+#     def __repr__(self):
+#         """Provide useful representation."""
 
-        return "<Comment comment_id={} from_user_id={} to_user_id={}>".format(
-                self.comment_id, self.from_user_id, self.to_user_id)
+#         return "<Comment comment_id={} from_user_id={} to_user_id={}>".format(
+#                 self.comment_id, self.from_user_id, self.to_user_id)
+
+# INSERT INTO users (email, password, fname, lname, birthday)
+# VALUES ('noch@yahoo.com', '12345', 'Mar', 'Noc', 'March 25, 1980' );
 
 
 ##############################################################################
@@ -120,7 +123,7 @@ def connect_to_db(app):
     """Connect the database to Flask app."""
 
     # configure to user PostgreSQL database
-    app.config["SQLALCHEMY_DATABASE_URI"] = "PostgreSQL:///[placeholder]"
+    app.config["SQLALCHEMY_DATABASE_URI"] = "PostgreSQL:///munch"
     app.config["SQLALCHEMY_TRACK_MODIFICATIONS"] = False
     db.app = app
     db.init_app(
