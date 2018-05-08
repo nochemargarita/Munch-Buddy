@@ -7,3 +7,6 @@ Yelp API:
 
 Seed.py:
     -https://docs.python.org/2/library/json.html
+    -https://github.com/ashleyhsia0/breadcrumbs/issues/18
+    -http://www.pythonforbeginners.com/files/reading-and-writing-files-in-python
+    
