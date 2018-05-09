@@ -6,6 +6,23 @@ from server import app
 
 
 API_KEY = os.environ['API_KEY'].strip()
+# Categories
+def request_api_categories(offset):
+    """Request restaurants categories."""
+
+    pass
+
+def cat_json_file():
+    """Send response from API request to a json file."""
+    pass
+
+def cat_info(filename):
+    """Get category id, title, alias from json file."""
+    pass
+
+def add_cat_to_db():
+    """Add all categories to database."""
+    pass
 
 def request_api_restaurants(offset):
     """Request restaurants from Yelp API."""
@@ -39,6 +56,7 @@ def rest_json_file():
 
     file.close()
 
+# Restaurants
 def get_restaurants_info(filename):
     """Get all restaurants from the json file."""
     restaurants = {}
@@ -70,8 +88,7 @@ def add_restaurants_to_db():
                               address=address,
                               phone=info['phone'],
                               rating=info['rating'],
-                              num_reviews=info['reviews'],
-                              cat_id='what to do?')
+                              num_reviews=info['reviews'])
 
         db.session.add(category)
 

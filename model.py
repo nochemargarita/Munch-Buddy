@@ -60,8 +60,9 @@ class Category(db.Model):
 
     __tablename__ = "categories"
 
-    cat_id = db.Column(db.Integer, autoincrement=True, primary_key=True)
+    cat_id = db.Column(db.String(50), nullable=False, primary_key=True)
     cat_name = db.Column(db.String(50), nullable=False)
+    cat_alias = db.Column(db.String(50), nullable=False)
 
     def __repr__(self):
         """Provide a helpful representation."""
@@ -73,21 +74,39 @@ class Restaurant(db.Model):
 
     __tablename__ = "restaurants"
 
-    rest_id = db.Column(db.Integer, autoincrement=True, primary_key=True)
-    rest_name = db.Column(db.String(50), nullable=False)
-    cat_id = db.Column(db.Integer, db.ForeignKey("categories.cat_id"), nullable=False)
+    rest_id = db.Column(db.String(50), nullable=False, primary_key=True)
+    rest_title = db.Column(db.String(50), nullable=False)
+    rest_alias = db.Column(db.String(50), nullable=False)    
     address = db.Column(db.String(100), nullable=False)
-    hours = db.Column(db.String(40), nullable=False)
     phone = db.Column(db.String(15), nullable=False)
-
-    # Define relationship to Category.
-    category = db.relationship("Category", backref=db.backref("restaurants", order_by=rest_id))
+    rating = db.Column(db.Integer)
+    num_reviews = db.Column(db.Integer)
 
     def __repr__(self):
         """Provide a helpful representation."""
 
         return "<Restaurant rest_id={} rest_name={}>".format(
-                    self.rest_id, self.rest_name)
+                self.rest_id, self.rest_name)
+
+class RestaurantCategory(db.Model):
+    """Restaurants and categories."""
+
+    __tablename__ = "restaurants_categories"
+
+    rest_cat_id = db.Column(db.Integer, autoincrement=True, primary_key=True)
+    rest_id = db.Column(db.String(50), db.ForeignKey("restaurants.rest_id"), nullable=False)
+    cat_id = db.Column(db.String(50), db.ForeignKey("categories.cat_id"), nullable=False)
+  
+    # Define relationship to Restaurant.
+    restaurant = db.relationship("Restaurant", backref=db.backref("restaurants_categories", order_by=rest_cat_id))
+    # Define relationship to Category.
+    category = db.relationship("Category", backref=db.backref("restaurants_categories", order_by=rest_cat_id))
+
+    def __repr__(self):
+        """Provide a helpful representation."""
+
+        return "<RestaurantCategory rest_cat_id={} rest_id={} cat_id={}>".format(
+                    self.rest_cat_id, self.rest_id, self.cat_id)
 
 class Comment(db.Model):
     """Users exchange messages."""
@@ -100,15 +119,9 @@ class Comment(db.Model):
     commented_on = db.Column(db.DateTime, nullable=False)
     message = db.Column(db.String(250))
 
-    # Define relationship to User.
-    # can you use 2 foreign keys from the same table?
-
     from_user = db.relationship("User", foreign_keys=[from_user_id], backref=db.backref("comments_sent", order_by=comment_id))
 
     to_user = db.relationship("User", foreign_keys=[to_user_id], backref=db.backref("comments_received", order_by=comment_id))
-# figure out how to connect 2 users later.
-# A user can have many messages
-# Conversation table
 
     def __repr__(self):
         """Provide useful representation."""
