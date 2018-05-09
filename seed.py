@@ -12,7 +12,7 @@ def request_api(offset):
 
     url = 'https://api.yelp.com/v3/businesses/search'
     headers = {'Authorization': 'Bearer {key}'.format(key=API_KEY)}
-    params = {'category': 'Restaurant',
+    params = {'term': 'restaurants',
               'location': 'San Francisco',
               'offset': offset,
               'limit': 50
@@ -71,18 +71,8 @@ def add_categories_to_db():
     db.session.commit()
 
 
-# add_categories_to_db()
-
-def add_to_db():
-    pass
-
 # call this function only once. Comment Out after running once.
 # to_text_file()
-
-
-
-
-
 
 if __name__ == "__main__":
     connect_to_db(app)
