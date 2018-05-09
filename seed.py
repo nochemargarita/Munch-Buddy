@@ -1,6 +1,9 @@
 import requests
 import os
 import json
+from model import connect_to_db, db, User, Like, Restaurant, Category
+from server import app
+
 
 API_KEY = os.environ['API_KEY'].strip()
 
@@ -46,8 +49,8 @@ def get_categories(filename):
 
     return categories
 
-def add_categories_to_db():
-    """Add all categories alias to database."""
+def get_categories_alias():
+    """Get all unique alias categories."""
 
     alias_categories = []
     for i in get_categories('restaurants.txt'):
@@ -55,10 +58,17 @@ def add_categories_to_db():
              if i[x]['alias'] not in alias_categories:
                 alias_categories.append(i[x]['alias'])
 
-    for i in sorted(alias_categories):
-        print i
+    return alias_categories
 
-add_categories_to_db()
+def add_categories_to_db():
+    """Add all categories alias to database."""
+
+    for alias in get_categories_alias():
+        category = Category(cat_name=alias)
+
+        db.session.add(category)
+
+    db.session.commit()
 
 
 # add_categories_to_db()
@@ -68,3 +78,15 @@ def add_to_db():
 
 # call this function only once. Comment Out after running once.
 # to_text_file()
+
+
+
+
+
+
+if __name__ == "__main__":
+    connect_to_db(app)
+    db.create_all()
+
+    add_categories_to_db()
+
