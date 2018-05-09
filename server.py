@@ -50,7 +50,8 @@ def signup():
 @app.route('/login')
 def login_form():
     """Let the use fill out login form."""
-    pass
+
+    render_template('login.html')
 
 @app.route('/login', methods=['POST'])
 def login():

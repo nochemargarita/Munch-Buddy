@@ -7,76 +7,79 @@ from server import app
 
 API_KEY = os.environ['API_KEY'].strip()
 
-def request_api(offset):
-    """Returns a json of request from Yelp API."""
+def request_api_restaurants(offset):
+    """Request restaurants from Yelp API."""
 
     url = 'https://api.yelp.com/v3/businesses/search'
     headers = {'Authorization': 'Bearer {key}'.format(key=API_KEY)}
     params = {'term': 'restaurants',
               'location': 'San Francisco',
               'offset': offset,
-              'limit': 50
+              'limit': 1
               }
 
     return requests.request('GET', url=url, headers=headers, params=params)
 
-def to_text_file():
-    """Puts response from API request to a text file."""
+def rest_json_file():
+    """Send response from API request to a json file."""
 
-    file = open('restaurants.txt', 'w')
+    file = open('restaurants.json', 'w')
 
     offset = 0
     while offset < 951:
         # print offset
-        response = request_api(offset)
+        response = request_api_restaurants(offset)
+        businesses = response.json()['businesses']
         try:
-            file.write(json.dumps(response.json()['businesses'])+'\n')
+            for indx in range(len(businesses)):
+                file.write(json.dumps(businesses[indx]) + '\n')
         except KeyError:
             print response.json()
         offset += 50
 
     file.close()
 
-def get_categories(filename):
-    """Get all restaurant categories from a text file."""
-
-    categories = []
+def get_restaurants_info(filename):
+    """Get all restaurants from the json file."""
+    restaurants = {}
     with open(filename) as filename:
-        
-        for i in filename:
-           for x in range(len(json.loads(i))):
-                categories.append(json.loads(i)[x]['categories'])
+        for item in filename:
+            info = json.loads(item)
+            if info['alias'] not in restaurants:
+                restaurants[info['alias']] = {'id': info['id'],
+                                              'name': info['name'],
+                                              'alias': info['alias'],
+                                              'location': info['location']['display_address'],
+                                              'phone': info['phone'],
+                                              'rating': info['rating']}
 
-    return categories
+    return restaurants
 
-def get_categories_alias():
-    """Get all unique alias categories."""
+rest_info = get_restaurants_info('restaurants.json')
 
-    alias_categories = []
-    for i in get_categories('restaurants.txt'):
-        for x in range(len(i)):
-             if i[x]['alias'] not in alias_categories:
-                alias_categories.append(i[x]['alias'])
+def add_restaurants_to_db():
+    """Add all restaurants and info to the database."""
 
-    return alias_categories
-
-def add_categories_to_db():
-    """Add all categories alias to database."""
-
-    for alias in get_categories_alias():
-        category = Category(cat_name=alias)
+    for restaurant in rest_info:
+        info = rest_info[restaurant]
+        st, city, zipcode = info['location']['display_address']
+        address = '{} {} {}'.format(st, city, zipcode)
+        category = Restaurant(rest_id=info['id'],
+                              rest_title=info['title'],
+                              rest_alias=info['alias'],
+                              address=address,
+                              phone=info['phone'],
+                              rating=info['rating'],
+                              num_reviews=info['reviews'],
+                              cat_id='what to do?')
 
         db.session.add(category)
 
     db.session.commit()
-
-
 # call this function only once. Comment Out after running once.
-# to_text_file()
-
+# rest_json_file()
 if __name__ == "__main__":
     connect_to_db(app)
-    db.create_all()
+    # db.create_all()
 
-    add_categories_to_db()
-
+    # add_categories_to_db()
