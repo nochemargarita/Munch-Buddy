@@ -1,0 +1,25 @@
+def get_all_restaurants():
+#     """Pull all restaurants from Yelp."""
+
+#     for off in range(0, OFFSET_MAX_PULL - LIMIT_MAX_REQUEST + 1, LIMIT_MAX_REQUEST):
+#         print off
+#         response = request_api_restaurants(off)
+#         businesses = response.json()['businesses']
+
+#         restaurants.extend(businesses)
+
+#     return restaurants
+
+# def rest_json_file(restaurants):
+#     """Save get_all_restaurants to a json file."""
+
+#     with open('restaurants.json', 'w') as filename:
+#         filename.write(pformat(restaurants))
+
+
+
+
+with open('restaurants.json') as f:
+    for i in f:
+        if 'Sushirrito' in json.loads(i)['name']:
+            print json.loads(i)['alias'], json.loads(i)['id'] 

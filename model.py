@@ -40,7 +40,7 @@ class Like(db.Model):
 
     like_id = db.Column(db.Integer, autoincrement=True, primary_key=True)
     user_id = db.Column(db.Integer, db.ForeignKey("users.user_id"), nullable=False)
-    rest_id = db.Column(db.Integer, db.ForeignKey("restaurants.rest_id"), nullable=False)
+    rest_id = db.Column(db.String(50), db.ForeignKey("restaurants.rest_id"), nullable=False)
 
     # Define relationship to User.
     user = db.relationship("User", backref=db.backref("likes", order_by=like_id))
@@ -76,11 +76,12 @@ class Restaurant(db.Model):
 
     rest_id = db.Column(db.String(50), nullable=False, primary_key=True)
     rest_title = db.Column(db.String(50), nullable=False)
-    rest_alias = db.Column(db.String(50), nullable=False)    
-    address = db.Column(db.String(100), nullable=False)
-    phone = db.Column(db.String(15), nullable=False)
+    rest_alias = db.Column(db.String(50), nullable=False)
     rating = db.Column(db.Integer)
     num_reviews = db.Column(db.Integer)
+    address = db.Column(db.String(100), nullable=False)
+    phone = db.Column(db.String(15), nullable=False)
+    
 
     def __repr__(self):
         """Provide a helpful representation."""
@@ -94,8 +95,8 @@ class RestaurantCategory(db.Model):
     __tablename__ = "restaurants_categories"
 
     rest_cat_id = db.Column(db.Integer, autoincrement=True, primary_key=True)
-    rest_id = db.Column(db.Integer, db.ForeignKey("restaurants.rest_id"), nullable=False)
-    cat_id = db.Column(db.String(50), db.ForeignKey("categories.cat_id"), nullable=False)
+    rest_id = db.Column(db.String(50), db.ForeignKey("restaurants.rest_id"), nullable=False)
+    cat_id = db.Column(db.Integer, db.ForeignKey("categories.cat_id"), nullable=False)
 
     # Define relationship to Restaurant.
     restaurant = db.relationship("Restaurant", backref=db.backref("restaurants_categories", order_by=rest_cat_id))
@@ -153,4 +154,4 @@ if __name__ == "__main__":
 
     from server import app
     connect_to_db(app)
-    print "Connected tp DB."
+    print "Connected to DB."
