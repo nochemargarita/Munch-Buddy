@@ -6,24 +6,37 @@ from server import app
 
 
 API_KEY = os.environ['API_KEY'].strip()
-# Categories
-def request_api_categories(offset):
-    """Request restaurants categories."""
-
-    pass
-
-def cat_json_file():
-    """Send response from API request to a json file."""
-    pass
-
+# Category
 def cat_info(filename):
     """Get category id, title, alias from json file."""
-    pass
+    checker = []
+    categories = {}
+    with open(filename) as filename:
+        for item in json.load(filename):
+            # key error: 'US' in item['country_blacklist'], how to add this logic?
+            if 'restaurants' in item['parents']:
+                if item['alias'] not in categories:
+                # checker.append(item['parents'])
+                    categories[item['alias']] = {'alias': item['alias'],
+                                                 'title': item['title']}
+    # print checker
+    return categories
+
+categories = cat_info('categories.json')
 
 def add_cat_to_db():
     """Add all categories to database."""
-    pass
 
+    for category in categories:
+        info = categories[category]
+        cat = Category(cat_title=info['title'],
+                       cat_alias=info['alias'])
+
+        db.session.add(cat)
+
+    db.session.commit()
+
+# Restaurant
 def request_api_restaurants(offset):
     """Request restaurants from Yelp API."""
 
@@ -44,7 +57,7 @@ def rest_json_file():
 
     offset = 0
     while offset < 951:
-        # print offset
+        print offset
         response = request_api_restaurants(offset)
         businesses = response.json()['businesses']
         try:
@@ -55,6 +68,8 @@ def rest_json_file():
         offset += 50
 
     file.close()
+
+rest_json_file()
 
 # Restaurants
 def get_restaurants_info(filename):
@@ -73,9 +88,10 @@ def get_restaurants_info(filename):
 
     return restaurants
 
-rest_info = get_restaurants_info('restaurants.json')
+# rest_info = get_restaurants_info('restaurants.json')
+# get_restaurants_info('restaurants.json')
 
-def add_restaurants_to_db():
+def add_rest_to_db():
     """Add all restaurants and info to the database."""
 
     for restaurant in rest_info:
@@ -99,4 +115,5 @@ if __name__ == "__main__":
     connect_to_db(app)
     # db.create_all()
 
-    # add_categories_to_db()
+    add_rest_to_db()
+    add_cat_to_db()

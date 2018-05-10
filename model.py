@@ -60,8 +60,8 @@ class Category(db.Model):
 
     __tablename__ = "categories"
 
-    cat_id = db.Column(db.String(50), nullable=False, primary_key=True)
-    cat_name = db.Column(db.String(50), nullable=False)
+    cat_id = db.Column(db.Integer, autoincrement=True, primary_key=True)
+    cat_title = db.Column(db.String(50), nullable=False)
     cat_alias = db.Column(db.String(50), nullable=False)
 
     def __repr__(self):
@@ -94,9 +94,9 @@ class RestaurantCategory(db.Model):
     __tablename__ = "restaurants_categories"
 
     rest_cat_id = db.Column(db.Integer, autoincrement=True, primary_key=True)
-    rest_id = db.Column(db.String(50), db.ForeignKey("restaurants.rest_id"), nullable=False)
+    rest_id = db.Column(db.Integer, db.ForeignKey("restaurants.rest_id"), nullable=False)
     cat_id = db.Column(db.String(50), db.ForeignKey("categories.cat_id"), nullable=False)
-  
+
     # Define relationship to Restaurant.
     restaurant = db.relationship("Restaurant", backref=db.backref("restaurants_categories", order_by=rest_cat_id))
     # Define relationship to Category.

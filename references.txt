@@ -1,6 +1,7 @@
 Module os:
     -http://www.pythonforbeginners.com/os/pythons-os-module
 
+
 Yelp API:
     -https://stackoverflow.com/questions/40729122/authenticating-yelp-fusion-api-with-python-requests - Did not use all
     -Asked Octavia about offset and limit.
@@ -9,4 +10,7 @@ Seed.py:
     -https://docs.python.org/2/library/json.html
     -https://github.com/ashleyhsia0/breadcrumbs/issues/18
     -http://www.pythonforbeginners.com/files/reading-and-writing-files-in-python
+
+Data model/model.py
+    -http://visualgit.readthedocs.io/en/latest/pages/naming_convention.html
     
