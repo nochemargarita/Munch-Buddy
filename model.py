@@ -75,14 +75,13 @@ class Restaurant(db.Model):
     __tablename__ = "restaurants"
 
     rest_id = db.Column(db.String(50), nullable=False, primary_key=True)
-    rest_title = db.Column(db.String(50), nullable=False)
-    rest_alias = db.Column(db.String(50), nullable=False)
-    rating = db.Column(db.Integer)
-    num_reviews = db.Column(db.Integer)
-    address = db.Column(db.String(100), nullable=False)
-    phone = db.Column(db.String(15), nullable=False)
+    rest_title = db.Column(db.String(100), nullable=False)
+    rest_alias = db.Column(db.String(100), nullable=False)
+    rating = db.Column(db.String(100), nullable=False)
+    num_reviews = db.Column(db.String(1000), nullable=False)
+    address = db.Column(db.String(200), nullable=False)
+    phone = db.Column(db.String(20), nullable=False)
     
-
     def __repr__(self):
         """Provide a helpful representation."""
 

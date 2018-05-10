@@ -92,12 +92,12 @@ def add_rest_to_db():
         address = ', '.join(info['address'])
 
         category = Restaurant(rest_id=info['rest_id'],
-                              rest_title=str(info['rest_title']),
-                              rest_alias=str(info['rest_alias']),
-                              rating=str(info['rating']),
-                              num_reviews=str(info['num_reviews']),
-                              address=str(address),
-                              phone=str(info['phone'])
+                              rest_title=info['rest_title'],
+                              rest_alias=info['rest_alias'],
+                              rating=info['rating'],
+                              num_reviews=info['num_reviews'],
+                              address=address,
+                              phone=info['phone']
                               )
 
         db.session.add(category)
@@ -108,5 +108,5 @@ if __name__ == "__main__":
     # db.create_all()
     categories = cat_info('categories.json')
     rest_info = get_restaurants_info('restaurants.json')
-    # add_rest_to_db()
+    add_rest_to_db()
     add_cat_to_db()
