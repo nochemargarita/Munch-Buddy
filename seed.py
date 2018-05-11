@@ -29,18 +29,19 @@ def cat_info(filename):
                 # if item['alias'] not in categories:
                 bl = item.get('country_blacklist')
                 wl = item.get('country_whitelist')
-                if not bl and not wl:
-                    categories[item['alias']] = {'alias': item['alias'],
-                                                 'title': item['title']}
-                elif bl:
-                    if 'US' not in bl:
+                if item['alias'][-1:-3] == 'an' and item['alias'][-1:-3] == 'ese':
+                    if not bl and not wl:
                         categories[item['alias']] = {'alias': item['alias'],
-                                                 'title': item['title']}
+                                                     'title': item['title']}
+                    elif bl:
+                        if 'US' not in bl:
+                            categories[item['alias']] = {'alias': item['alias'],
+                                                     'title': item['title']}
 
     return categories
 
-# for i in cat_info('categories.json'):
-#     print i, len(cat_info('categories.json'))
+for i in cat_info('categories.json'):
+    print i, len(cat_info('categories.json'))
 
 def add_cat_to_db():
     """Add all categories to database."""
