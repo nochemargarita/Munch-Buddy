@@ -4,11 +4,19 @@ import json
 from model import connect_to_db, db, User, Like, Restaurant, Category
 from server import app
 from pprint import pprint, pformat
+from datetime import datetime
 
 
 API_KEY = os.environ['API_KEY'].strip()
 LIMIT_MAX_REQUEST = 50
 OFFSET_MAX_PULL = 1000
+# User
+def add_user_to_db(email, password, fname, lname, birthday):
+    birthday = datetime.strptime(birthday, '%Y-%m-%d')
+    user = User(email=email, password=password, fname=fname, lname=lname, birthday=birthday)
+
+    db.session.add(user)
+    db.session.commit()
 
 # Category
 def cat_info(filename):
@@ -108,5 +116,9 @@ if __name__ == "__main__":
     # db.create_all()
     categories = cat_info('categories.json')
     rest_info = get_restaurants_info('restaurants.json')
-    add_rest_to_db()
-    add_cat_to_db()
+    # add_user_to_db('m@yahoo.com', 'hello', 'man', 'doe', '1965-08-25')
+    add_user_to_db('j@hotmail.com', 'hi', 'King', 'hacks', '1965-05-09')
+    add_user_to_db('h@gmail.com', 'bye', 'Hot', 'Dog', '1945-02-05')
+
+    # add_rest_to_db()
+    # add_cat_to_db()
