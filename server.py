@@ -51,17 +51,33 @@ def signup():
 def login_form():
     """Let the use fill out login form."""
 
-    render_template('login.html')
+    return render_template('/login.html')
 
 @app.route('/login', methods=['POST'])
 def login():
     """Log the user in."""
-    pass
+
+    email = request.form.get('email')
+    password = request.form.get('password')
+
+    user = db.session.query(User).filter(User.email == email, User.password == password).first()
+
+    if user:
+        session['email'] = email
+        return redirect('/')
+
+    else:
+        flash('Please check your email and password!')
+        return redirect('/login')
+
 
 @app.route('/logout')
 def logout():
     """Logs the user our from the session."""
-    pass
+    flash('You successfully logged out.')
+    session.pop('email', None)
+    return redirect('/')
+
 
 @app.route('/select-categories')
 def select_categories():

@@ -117,8 +117,8 @@ if __name__ == "__main__":
     categories = cat_info('categories.json')
     rest_info = get_restaurants_info('restaurants.json')
     # add_user_to_db('m@yahoo.com', 'hello', 'man', 'doe', '1965-08-25')
-    add_user_to_db('j@hotmail.com', 'hi', 'King', 'hacks', '1965-05-09')
-    add_user_to_db('h@gmail.com', 'bye', 'Hot', 'Dog', '1945-02-05')
+    # add_user_to_db('j@hotmail.com', 'hi', 'King', 'hacks', '1965-05-09')
+    # add_user_to_db('h@gmail.com', 'bye', 'Hot', 'Dog', '1945-02-05')
 
     # add_rest_to_db()
     # add_cat_to_db()

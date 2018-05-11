@@ -10,7 +10,15 @@ Seed.py:
     -https://docs.python.org/2/library/json.html
     -https://github.com/ashleyhsia0/breadcrumbs/issues/18
     -http://www.pythonforbeginners.com/files/reading-and-writing-files-in-python
+    -https://docs.python.org/2/library/datetime.html
+    -https://stackoverflow.com/questions/466345/converting-string-into-datetime
+    -https://www.pythoncentral.io/pythons-range-function-explained/
 
 Data model/model.py
     -http://visualgit.readthedocs.io/en/latest/pages/naming_convention.html
+
+Server:
+    -https://www.w3schools.com/tags/att_form_method.asp
     
+USEFUL:
+    -http://jsonprettyprint.com/

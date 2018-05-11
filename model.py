@@ -129,9 +129,6 @@ class Comment(db.Model):
         return "<Comment comment_id={} from_user_id={} to_user_id={}>".format(
                 self.comment_id, self.from_user_id, self.to_user_id)
 
-# INSERT INTO users (email, password, fname, lname, birthday)
-# VALUES ('noch@yahoo.com', '12345', 'Mar', 'Noc', 'March 25, 1980' );
-
 
 ##############################################################################
 # Helper functions
