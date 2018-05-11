@@ -79,10 +79,13 @@ def logout():
     return redirect('/')
 
 
-@app.route('/select-categories')
+@app.route('/categories')
 def select_categories():
     """Let's the user select multiple categories of cuisine."""
-    pass
+    
+    categories = Category.query.all()
+
+    return render_template('/categories.html', categories=categories)
 
 @app.route('/results')
 def result():

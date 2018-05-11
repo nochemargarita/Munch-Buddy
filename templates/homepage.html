@@ -1,13 +1,14 @@
 {% extends 'base.html' %}
 {% block content %}
 
-{% if 'email' not in session %}
-    <p><a href="/signup">Sign Up</a></p>
-    <br><br>
-    <p><a href="/login">Log In</a></p>
-{% else %}
-    <p><a href="/logout">Log Out</a>
-{% endif %}
+    {% if 'email' not in session %}
+        <p><a href="/signup">Sign Up</a></p>
+        <br><br>
+        <p><a href="/login">Log In</a></p>
+    {% else %}
+        <p><a href="/categories">Categories</a></p>
+        <p><a href="/logout">Log Out</a>
+    {% endif %}
 
 
 {% endblock %}

@@ -25,13 +25,22 @@ def cat_info(filename):
     categories = {}
     with open(filename) as filename:
         for item in json.load(filename):
-            # key error: 'US' in item['country_blacklist'], how to add this logic?
             if 'restaurants' in item['parents']:
-                if item['alias'] not in categories:
-                # checker.append(item['parents'])
+                # if item['alias'] not in categories:
+                bl = item.get('country_blacklist')
+                wl = item.get('country_whitelist')
+                if not bl and not wl:
                     categories[item['alias']] = {'alias': item['alias'],
                                                  'title': item['title']}
+                elif bl:
+                    if 'US' not in bl:
+                        categories[item['alias']] = {'alias': item['alias'],
+                                                 'title': item['title']}
+
     return categories
+
+# for i in cat_info('categories.json'):
+#     print i, len(cat_info('categories.json'))
 
 def add_cat_to_db():
     """Add all categories to database."""

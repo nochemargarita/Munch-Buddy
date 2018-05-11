@@ -1,0 +1,11 @@
+{% extends 'base.html'%}
+{% block content %}
+    <h3>Choose 5 categories.</h3>
+    {% for category in categories %}
+        <form>
+            <input type='checkbox' name='{{ category.cat_id }}'>{{ category.cat_title }}
+            <br>
+        </form>
+
+    {% endfor %}
+{% endblock %}
