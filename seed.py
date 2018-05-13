@@ -1,7 +1,7 @@
 import requests
 import os
 import json
-from model import connect_to_db, db, User, Like, Restaurant, Category
+from model import connect_to_db, db, User, Like, Restaurant, Category, RestaurantCategory, Message
 from server import app
 from pprint import pprint, pformat
 from datetime import datetime
@@ -21,15 +21,13 @@ def add_user_to_db(email, password, fname, lname, birthday):
 # Category
 def cat_info(filename):
     """Get category id, title, alias from json file."""
-    checker = []
     categories = {}
     with open(filename) as filename:
         for item in json.load(filename):
             if 'restaurants' in item['parents']:
-                # if item['alias'] not in categories:
                 bl = item.get('country_blacklist')
                 wl = item.get('country_whitelist')
-                if item['alias'][-1:-3] == 'an' and item['alias'][-1:-3] == 'ese':
+                if item['alias'][-2::] == 'an' or item['alias'][-2::] == 'se':
                     if not bl and not wl:
                         categories[item['alias']] = {'alias': item['alias'],
                                                      'title': item['title']}
@@ -40,12 +38,8 @@ def cat_info(filename):
 
     return categories
 
-for i in cat_info('categories.json'):
-    print i, len(cat_info('categories.json'))
-
 def add_cat_to_db():
     """Add all categories to database."""
-    # Category.query.delete()
     for category in categories:
         info = categories[category]
         cat = Category(cat_title=info['title'],
@@ -126,9 +120,9 @@ if __name__ == "__main__":
     # db.create_all()
     categories = cat_info('categories.json')
     rest_info = get_restaurants_info('restaurants.json')
-    # add_user_to_db('m@yahoo.com', 'hello', 'man', 'doe', '1965-08-25')
-    # add_user_to_db('j@hotmail.com', 'hi', 'King', 'hacks', '1965-05-09')
-    # add_user_to_db('h@gmail.com', 'bye', 'Hot', 'Dog', '1945-02-05')
+    add_user_to_db('m@yahoo.com', 'hello', 'man', 'doe', '1965-08-25')
+    add_user_to_db('j@hotmail.com', 'hi', 'King', 'hacks', '1965-05-09')
+    add_user_to_db('h@gmail.com', 'bye', 'Hot', 'Dog', '1945-02-05')
 
-    # add_rest_to_db()
-    # add_cat_to_db()
+    add_rest_to_db()
+    add_cat_to_db()

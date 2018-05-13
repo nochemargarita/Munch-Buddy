@@ -77,8 +77,8 @@ class Restaurant(db.Model):
     rest_id = db.Column(db.String(50), nullable=False, primary_key=True)
     rest_title = db.Column(db.String(100), nullable=False)
     rest_alias = db.Column(db.String(100), nullable=False)
-    rating = db.Column(db.String(100), nullable=False)
-    num_reviews = db.Column(db.String(1000), nullable=False)
+    rating = db.Column(db.Integer, nullable=False)
+    num_reviews = db.Column(db.Integer, nullable=False)
     address = db.Column(db.String(200), nullable=False)
     phone = db.Column(db.String(20), nullable=False)
     
@@ -108,25 +108,25 @@ class RestaurantCategory(db.Model):
         return "<RestaurantCategory rest_cat_id={} rest_id={} cat_id={}>".format(
                     self.rest_cat_id, self.rest_id, self.cat_id)
 
-class Comment(db.Model):
+class Message(db.Model):
     """Users exchange messages."""
 
-    __tablename__ = "comments"
+    __tablename__ = "messages"
 
-    comment_id = db.Column(db.Integer, autoincrement=True, primary_key=True)
+    message_id = db.Column(db.Integer, autoincrement=True, primary_key=True)
     from_user_id = db.Column(db.Integer, db.ForeignKey("users.user_id"), nullable=False)
     to_user_id = db.Column(db.Integer, db.ForeignKey("users.user_id"), nullable=False)
-    commented_on = db.Column(db.DateTime, nullable=False)
-    message = db.Column(db.String(250))
+    messaged_on = db.Column(db.DateTime, nullable=False)
+    message = db.Column(db.String(300))
 
-    from_user = db.relationship("User", foreign_keys=[from_user_id], backref=db.backref("comments_sent", order_by=comment_id))
+    from_user = db.relationship("User", foreign_keys=[from_user_id], backref=db.backref("messages_sent", order_by=message_id))
 
-    to_user = db.relationship("User", foreign_keys=[to_user_id], backref=db.backref("comments_received", order_by=comment_id))
+    to_user = db.relationship("User", foreign_keys=[to_user_id], backref=db.backref("messages_received", order_by=message_id))
 
     def __repr__(self):
         """Provide useful representation."""
 
-        return "<Comment comment_id={} from_user_id={} to_user_id={}>".format(
+        return "<Message message_id={} from_user_id={} to_user_id={}>".format(
                 self.comment_id, self.from_user_id, self.to_user_id)
 
 

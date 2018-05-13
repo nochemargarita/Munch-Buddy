@@ -2,7 +2,7 @@ from jinja2 import StrictUndefined
 from flask import Flask, render_template, request, flash, redirect, session
 from flask_debugtoolbar import DebugToolbarExtension
 
-from model import connect_to_db, db, User, Like, Restaurant, Category
+from model import connect_to_db, db, User, Like, Restaurant, Category, Message
 import os
 
 app = Flask(__name__)
@@ -87,7 +87,7 @@ def select_categories():
 
     return render_template('/categories.html', categories=categories)
 
-@app.route('/results')
+@app.route('/')
 def result():
    pass 
 

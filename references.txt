@@ -13,6 +13,7 @@ Seed.py:
     -https://docs.python.org/2/library/datetime.html
     -https://stackoverflow.com/questions/466345/converting-string-into-datetime
     -https://www.pythoncentral.io/pythons-range-function-explained/
+    -https://github.com/CleverProgrammer/CP-Twilio-Python-Text-App/blob/master/readme.md
 
 Data model/model.py
     -http://visualgit.readthedocs.io/en/latest/pages/naming_convention.html
