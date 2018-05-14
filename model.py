@@ -1,6 +1,7 @@
 """Models and database for Munch Buddy project."""
 
 from flask_sqlalchemy import SQLAlchemy
+from werkzeug.security import generate_password_hash, check_password_hash
 
 
 # This is the connection to the PostgreSQL database; we're getting
@@ -20,40 +21,17 @@ class User(db.Model):
 
     user_id = db.Column(db.Integer, autoincrement=True, primary_key=True)
     email = db.Column(db.String(50), nullable=False)
-    password = db.Column(db.String(10), nullable=False)
+    password = db.Column(db.String(250), nullable=False)
     fname = db.Column(db.String(30), nullable=False)
     lname = db.Column(db.String(30), nullable=False)
     birthday = db.Column(db.DateTime, nullable=False)
 
-
+    
     def __repr__(self):
         """Provide a helpful representation."""
 
         return "<User user_id={} email={} fname={} lname={} birthday={}>".format(
                 self.user_id, self.email, self.fname, self.lname, self.birthday)
-
-
-class Like(db.Model):
-    """Restaurants that users liked."""
-
-    __tablename__ = "likes"
-
-    like_id = db.Column(db.Integer, autoincrement=True, primary_key=True)
-    user_id = db.Column(db.Integer, db.ForeignKey("users.user_id"), nullable=False)
-    rest_id = db.Column(db.String(50), db.ForeignKey("restaurants.rest_id"), nullable=False)
-
-    # Define relationship to User.
-    user = db.relationship("User", backref=db.backref("likes", order_by=like_id))
-
-    # Define ralationship to Restaurant
-    restaurant = db.relationship("Restaurant", backref=db.backref("likes", order_by=like_id))
-
-    def __repr__(self):
-        """Provide useful representation."""
-
-        return "<Like like_id={} user_id={} rest_id={}>".format(
-                self.like_id, self.user_id, self.rest_id)
-
 
 class Category(db.Model):
     """Categories of cuisine."""
@@ -66,8 +44,30 @@ class Category(db.Model):
 
     def __repr__(self):
         """Provide a helpful representation."""
-        return "<Category cat_id={} cat_name={}>".format(
-                    self.cat_id, self.cat_name)
+        return "<Category cat_id={} cat_title={}>".format(
+                    self.cat_id, self.cat_title)
+
+class Like(db.Model):
+    """Restaurants that users liked."""
+
+    __tablename__ = "likes"
+
+    like_id = db.Column(db.Integer, autoincrement=True, primary_key=True)
+    user_id = db.Column(db.Integer, db.ForeignKey("users.user_id"), nullable=False)
+    cat_id = db.Column(db.Integer, db.ForeignKey("categories.cat_id"), nullable=False)
+
+    # Define relationship to User.
+    user = db.relationship("User", backref=db.backref("likes", order_by=like_id))
+
+    # Define ralationship to Category
+    category = db.relationship("Category", backref=db.backref("likes", order_by=like_id))
+
+    def __repr__(self):
+        """Provide useful representation."""
+
+        return "<Like like_id={} user_id={} cat_id={}>".format(
+                self.like_id, self.user_id, self.cat_id)
+
 
 class Restaurant(db.Model):
     """Restaurants and their information."""

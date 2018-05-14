@@ -1,11 +1,12 @@
 from jinja2 import StrictUndefined
 from flask import Flask, render_template, request, flash, redirect, session
 from flask_debugtoolbar import DebugToolbarExtension
-
-from model import connect_to_db, db, User, Like, Restaurant, Category, Message
+from werkzeug.security import generate_password_hash, check_password_hash
+from model import connect_to_db, db, User, Like , Restaurant, Category, Message, RestaurantCategory
 import os
 
 app = Flask(__name__)
+
 # Required to use Flask sessions and the debug toolbar
 app.secret_key = "ABC"
 
@@ -33,7 +34,8 @@ def signup():
     fname = request.form.get('fname')
     lname = request.form.get('lname')
     birthday = request.form.get('birthday')
-
+    
+    hashed_password = generate_password_hash(password)
     q = db.session.query(User).filter(User.email == email).first()
 
     if q:
@@ -42,7 +44,7 @@ def signup():
 
     else:
         flash('Yay! You are now a Munch Buddy!')
-        user = User(email=email, password=password, fname=fname, lname=lname, birthday=birthday)
+        user = User(email=email, password=hashed_password, fname=fname, lname=lname, birthday=birthday)
         db.session.add(user)
         db.session.commit()
         return redirect('/')
@@ -59,10 +61,11 @@ def login():
 
     email = request.form.get('email')
     password = request.form.get('password')
+    user = db.session.query(User).filter(User.email == email).first()
+    checked_hashed = check_password_hash(user.password, password)
+    print checked_hashed
 
-    user = db.session.query(User).filter(User.email == email, User.password == password).first()
-
-    if user:
+    if user and checked_hashed:
         session['email'] = email
         return redirect('/')
 
@@ -80,16 +83,35 @@ def logout():
 
 
 @app.route('/categories')
-def select_categories():
+def categories():
     """Let's the user select multiple categories of cuisine."""
     
     categories = Category.query.all()
+    if session.get('email'):
+        return render_template('/categories.html', categories=categories)
+    else:
+        return redirect('/')
 
-    return render_template('/categories.html', categories=categories)
+@app.route('/categories', methods=['POST'])
+def selected_categories():
+    """Get all selected check boxes and add it to database Like."""
+    
+    categories = Category.query.all()
+    email = session.get('email')
+    user_id = User.query.filter(User.email == email).first()
 
-@app.route('/')
-def result():
-   pass 
+    cat = []
+    for i in range(1, len(categories) + 1):
+        submitted = request.form.get('{}'.format(i))
+        if submitted:
+            like = Like(user_id=user_id.user_id, cat_id=i)
+            db.session.add(like)
+
+    db.session.commit()
+
+    return redirect('/')
+
+
 
 if __name__ == "__main__":
     # set debug to True at the point of invoking the DebugToolbarExtension
