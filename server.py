@@ -112,11 +112,14 @@ def selected_categories():
 
     return redirect('/')
 
-
+@app.route('/')
+def show_buddies():
+    pass
+  
 
 if __name__ == "__main__":
     # set debug to True at the point of invoking the DebugToolbarExtension
-    # app.debug = False
+    # app.debug = True
 
     connect_to_db(app)
 

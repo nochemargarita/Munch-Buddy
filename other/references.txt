@@ -26,4 +26,4 @@ USEFUL:
 
 HASHING:
     -https://blog.miguelgrinberg.com/post/the-flask-mega-tutorial-part-v-user-logins
-    -https://www.youtube.com/watch?v=jJ4awOToB6k
+    -https://www.youtube.com/watch?v=jJ4awOToB6k  
