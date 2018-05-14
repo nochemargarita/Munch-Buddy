@@ -22,19 +22,19 @@ def homepage():
 @app.route('/signup')
 def signup_form():
     """Directs user to a form."""
-    
+
     return render_template("signup.html")
 
 @app.route('/signup', methods=['POST'])
 def signup():
     """Process signup using post request."""
-    
+
     email = request.form.get('email')
     password = request.form.get('password')
     fname = request.form.get('fname')
     lname = request.form.get('lname')
     birthday = request.form.get('birthday')
-    
+
     hashed_password = generate_password_hash(password)
     q = db.session.query(User).filter(User.email == email).first()
 
@@ -44,10 +44,12 @@ def signup():
 
     else:
         flash('Yay! You are now a Munch Buddy!')
-        user = User(email=email, password=hashed_password, fname=fname, lname=lname, birthday=birthday)
+        session['email'] = email
+        user = User(email=email, password=hashed_password,
+                    fname=fname, lname=lname, birthday=birthday)
         db.session.add(user)
         db.session.commit()
-        return redirect('/')
+        return redirect('/categories')
 
 @app.route('/login')
 def login_form():
@@ -85,17 +87,16 @@ def logout():
 @app.route('/categories')
 def categories():
     """Let's the user select multiple categories of cuisine."""
-    
     categories = Category.query.all()
     if session.get('email'):
         return render_template('/categories.html', categories=categories)
     else:
-        return redirect('/')
+        return redirect('/login')
 
 @app.route('/categories', methods=['POST'])
 def selected_categories():
     """Get all selected check boxes and add it to database Like."""
-    
+
     categories = Category.query.all()
     email = session.get('email')
     user_id = User.query.filter(User.email == email).first()
