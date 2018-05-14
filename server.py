@@ -53,13 +53,13 @@ def signup():
 
 @app.route('/login')
 def login_form():
-    """Let the use fill out login form."""
+    """Directs user to a login form."""
 
     return render_template('/login.html')
 
 @app.route('/login', methods=['POST'])
 def login():
-    """Log the user in."""
+    """Verify user and log the user in."""
 
     email = request.form.get('email')
     password = request.form.get('password')
@@ -101,20 +101,27 @@ def selected_categories():
     email = session.get('email')
     user_id = User.query.filter(User.email == email).first()
 
-    cat = []
     for i in range(1, len(categories) + 1):
         submitted = request.form.get('{}'.format(i))
         if submitted:
             like = Like(user_id=user_id.user_id, cat_id=i)
+
             db.session.add(like)
 
     db.session.commit()
 
     return redirect('/')
 
-@app.route('/')
+
+@app.route('/restaurants')
 def show_buddies():
-    pass
+    """Directs user to a page of restaurant suggestions."""
+
+    rest_cat = RestaurantCategory.query.all()
+
+    
+
+
   
 
 if __name__ == "__main__":

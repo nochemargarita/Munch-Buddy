@@ -6,6 +6,7 @@ API_KEY = os.environ['API_KEY'].strip()
 LIMIT_MAX_REQUEST = 50
 OFFSET_MAX_PULL = 1000
 
+
 # Category
 def cat_info(filename):
     """Get category id, title, alias from json file."""
@@ -22,7 +23,7 @@ def cat_info(filename):
                     elif bl:
                         if 'US' not in bl:
                             categories[item['alias']] = {'alias': item['alias'],
-                                                     'title': item['title']}
+                                                         'title': item['title']}
 
     return categories
 
@@ -40,6 +41,7 @@ def request_api_restaurants(offset):
               }
 
     return requests.request('GET', url=url, headers=headers, params=params)
+
 
 def rest_json_file():
     """Send response from API request to a json file."""
@@ -62,7 +64,7 @@ def get_restaurants_info(filename):
     with open(filename, 'r') as filename:
         for item in filename:
             info = json.loads(item)
-               
+
             restaurants[info['alias']] = {'rest_id': info['id'],
                                           'rest_title': info['name'],
                                           'rest_alias': info['alias'],
@@ -70,6 +72,6 @@ def get_restaurants_info(filename):
                                           'num_reviews': info['review_count'],
                                           'address': info['location']['display_address'],
                                           'phone': info['phone']
-                                         }
+                                          }
 
     return restaurants

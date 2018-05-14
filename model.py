@@ -74,7 +74,7 @@ class Restaurant(db.Model):
 
     __tablename__ = "restaurants"
 
-    rest_id = db.Column(db.String(50), nullable=False, primary_key=True)
+    rest_id = db.Column(db.String(100), nullable=False, primary_key=True)
     rest_title = db.Column(db.String(100), nullable=False)
     rest_alias = db.Column(db.String(100), nullable=False)
     rating = db.Column(db.Integer, nullable=False)
@@ -84,9 +84,9 @@ class Restaurant(db.Model):
     
     def __repr__(self):
         """Provide a helpful representation."""
-
+        # self.rest_id = unicode(self.rest_id.encode, errors='ignore')
         return "<Restaurant rest_id={} rest_name={}>".format(
-                self.rest_id, self.rest_name)
+                self.rest_id, self.rest_title.encode('ascii', 'replace'))
 
 class RestaurantCategory(db.Model):
     """Restaurants and categories."""
@@ -127,7 +127,7 @@ class Message(db.Model):
         """Provide useful representation."""
 
         return "<Message message_id={} from_user_id={} to_user_id={}>".format(
-                self.comment_id, self.from_user_id, self.to_user_id)
+                self.message_id, self.from_user_id, self.to_user_id)
 
 
 ##############################################################################
