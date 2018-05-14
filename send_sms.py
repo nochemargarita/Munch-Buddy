@@ -12,7 +12,3 @@ my_message = 'Hello...'
 
 message = client.messages.create(to=MY_CELL, from_=MY_TWILIO, body=my_message)
 print 'message sent'
-# # print ACCOUNT_SID
-# # print AUTH_TOKEN
-# print MY_CELLN
-# # print MY_TWILIO
