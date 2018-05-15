@@ -23,3 +23,15 @@ with open('restaurants.json') as f:
     for i in f:
         if 'Sushirrito' in json.loads(i)['name']:
             print json.loads(i)['alias'], json.loads(i)['id'] 
+
+
+for query:
+
+han = Restaurant.query.filter(Like.user_id == 3, Like.cat_id == Category.cat_id, Category.cat_id == RestaurantCategory.cat_id, RestaurantCategory.rest_id == Restaurant.rest_id).all()
+
+
+q
+                         18
+       6 |       2 |     20
+       7 |       2 |     35
+       8 |       2 |     37

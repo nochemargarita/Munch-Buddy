@@ -80,9 +80,9 @@ def restaurant_category():
                     if cat_alias in info['categories'][i]['alias']:
                         rest_cat = RestaurantCategory(rest_id=info['id'], cat_id=like[indx].cat_id)
 
-            #             db.session.add(rest_cate)
+                        db.session.add(rest_cat)
 
-            # db.session.commit()
+            db.session.commit()
 
 
 if __name__ == "__main__":

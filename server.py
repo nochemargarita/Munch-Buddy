@@ -119,7 +119,7 @@ def show_buddies():
 
     rest_cat = RestaurantCategory.query.all()
 
-    
+    pass
 
 
   

@@ -26,7 +26,6 @@ class User(db.Model):
     lname = db.Column(db.String(30), nullable=False)
     birthday = db.Column(db.DateTime, nullable=False)
 
-    
     def __repr__(self):
         """Provide a helpful representation."""
 
@@ -81,10 +80,10 @@ class Restaurant(db.Model):
     num_reviews = db.Column(db.Integer, nullable=False)
     address = db.Column(db.String(200), nullable=False)
     phone = db.Column(db.String(20), nullable=False)
-    
+
     def __repr__(self):
         """Provide a helpful representation."""
-        # self.rest_id = unicode(self.rest_id.encode, errors='ignore')
+
         return "<Restaurant rest_id={} rest_name={}>".format(
                 self.rest_id, self.rest_title.encode('ascii', 'replace'))
 
