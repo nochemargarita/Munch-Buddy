@@ -48,7 +48,7 @@ def signup():
                     fname=fname, lname=lname, birthday=birthday)
         db.session.add(user)
         db.session.commit()
-        # session['user_id'] = q.user_id
+        session['email'] = email
     return redirect('/categories')
 
 
@@ -94,7 +94,13 @@ def logout():
 def categories():
     """Let's the user select multiple categories of cuisine."""
     categories = Category.query.all()
-    if session.get('user_id'):
+
+    if session.get('email'):
+        email = session.pop('email')
+        user = db.session.query(User).filter(User.email == email).first()
+        session['user_id'] = user.user_id
+        return render_template('/categories.html', categories=categories)
+    elif session.get('user_id'):
         return render_template('/categories.html', categories=categories)
     else:
         return redirect('/login')
@@ -109,7 +115,7 @@ def selected_categories():
     if submitted:
         for ident in submitted:
             like = Like(user_id=user.user_id, cat_id=ident)
-            
+
             db.session.add(like)
     db.session.commit()
 

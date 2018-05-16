@@ -1,7 +1,7 @@
 """Models and database for Munch Buddy project."""
 
 from flask_sqlalchemy import SQLAlchemy
-from werkzeug.security import generate_password_hash, check_password_hash
+# from werkzeug.security import generate_password_hash, check_password_hash
 
 
 # This is the connection to the PostgreSQL database; we're getting
@@ -13,6 +13,7 @@ db = SQLAlchemy()
 
 #####################################################################
 # Model Definitions
+
 
 class User(db.Model):
     """User of Munch Buddy Web App."""
@@ -32,6 +33,7 @@ class User(db.Model):
         return "<User user_id={} email={} fname={} lname={} birthday={}>".format(
                 self.user_id, self.email, self.fname, self.lname, self.birthday)
 
+
 class Category(db.Model):
     """Categories of cuisine."""
 
@@ -44,7 +46,8 @@ class Category(db.Model):
     def __repr__(self):
         """Provide a helpful representation."""
         return "<Category cat_id={} cat_title={}>".format(
-                    self.cat_id, self.cat_title)
+                self.cat_id, self.cat_title)
+
 
 class Like(db.Model):
     """Restaurants that users liked."""
@@ -87,6 +90,7 @@ class Restaurant(db.Model):
         return "<Restaurant rest_id={} rest_name={}>".format(
                 self.rest_id, self.rest_title.encode('ascii', 'replace'))
 
+
 class RestaurantCategory(db.Model):
     """Restaurants and categories."""
 
@@ -106,6 +110,7 @@ class RestaurantCategory(db.Model):
 
         return "<RestaurantCategory rest_cat_id={} rest_id={} cat_id={}>".format(
                     self.rest_cat_id, self.rest_id, self.cat_id)
+
 
 class Message(db.Model):
     """Users exchange messages."""
