@@ -31,14 +31,34 @@ def get_all_liked_cat():
 
     """
     current_user_id = session.get('user_id')
-    current_user = []
-    users = {}
-    
     like = Like.query.all()
-    user_liked = Like.query.filter(Like.user_id == current_user_id).all()
+    curr_user_liked = Like.query.filter(Like.user_id == current_user_id).all()
+
+    current_user = []
+
+    users = {}
+
+    for l in like:
+        for cl in curr_user_liked:
+            if cl.cat_id == l:
+                current_user.append(2)
+            else:
+                current_user.append(1)
+
 
     while len(users) <= NUM_PEOPLE_MATCHED:
-        for item in like:
+        for user in like:
             if current_user_id != item.user_id:
-                if item.user_id 
-                users[item.user_id] = 
+                for liked in curr_user_liked:
+                    if user.cat_id == liked.cat_id:
+                        if user.user_id not in users:
+                            users[user.user_id] = [2]
+                        else:
+                            users[user.user_id].append(2)
+                    else:
+                        if user.user_id not in users:
+                            users[user.user_id] = [1]
+                        else:
+                            users[user.user_id].append(1)
+
+                      

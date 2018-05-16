@@ -129,6 +129,29 @@ def show_buddies():
 
     pass
 
+NUM_PEOPLE_MATCHED = 5
+def get_all_liked_cat():
+    """query the database and get all the info on that table.
+
+        use 1 for categories that were not chosen.
+        use 2 for categories that were chosen.
+
+    """
+    current_user_id = session.get('user_id')
+    like = Like.query.all()
+    curr_user_liked = Like.query.filter(Like.user_id == current_user_id).all()
+
+    current_user = []
+
+    # users = {}
+
+    for l in like:
+        for cl in curr_user_liked:
+            if cl.cat_id == l:
+                current_user.append(2)
+            else:
+                current_user.append(1)
+
 if __name__ == "__main__":
     # set debug to True at the point of invoking the DebugToolbarExtension
     # app.debug = True

@@ -98,3 +98,6 @@ def get_categories(filename):
                                     'cat_title': title}
 
     return category_info
+
+
+
