@@ -1,7 +1,7 @@
 {% extends 'base.html' %}
 {% block content %}
 
-    {% if 'email' not in session %}
+    {% if 'user_id' not in session %}
         <p><a href="/signup">Sign Up</a></p>
         <br><br>
         <p><a href="/login">Log In</a></p>

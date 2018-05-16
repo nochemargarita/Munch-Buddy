@@ -44,18 +44,20 @@ def signup():
 
     else:
         flash('Yay! You are now a Munch Buddy!')
-        session['email'] = email
         user = User(email=email, password=hashed_password,
                     fname=fname, lname=lname, birthday=birthday)
         db.session.add(user)
         db.session.commit()
-        return redirect('/categories')
+        # session['user_id'] = q.user_id
+    return redirect('/categories')
+
 
 @app.route('/login')
 def login_form():
     """Directs user to a login form."""
 
     return render_template('/login.html')
+
 
 @app.route('/login', methods=['POST'])
 def login():
@@ -69,7 +71,11 @@ def login():
         checked_hashed = check_password_hash(user.password, password)
         if checked_hashed:
             session['user_id'] = user.user_id
+            print session
             return redirect('/')
+        else:
+            flash('You have entered the wrong password!')
+            return redirect('/login')
 
     else:
         flash('Please check your email and password!')
@@ -80,7 +86,7 @@ def login():
 def logout():
     """Logs the user our from the session."""
     flash('You successfully logged out.')
-    session.pop('email', None)
+    session.pop('user_id', None)
     return redirect('/')
 
 
@@ -88,7 +94,7 @@ def logout():
 def categories():
     """Let's the user select multiple categories of cuisine."""
     categories = Category.query.all()
-    if session.get('email'):
+    if session.get('user_id'):
         return render_template('/categories.html', categories=categories)
     else:
         return redirect('/login')
@@ -97,24 +103,14 @@ def categories():
 def selected_categories():
     """Get all selected check boxes and add it to database Like."""
 
-    categories = Category.query.all()
-
     user = User.query.get(session['user_id'])
+    submitted = request.form.getlist('cat_id')
 
-    for cat_id in range(1, len(categories) + 1):
-        submitted = request.form.get('{}'.format(cat_id))
-        if submitted:
-            like = Like(user_id=user_id.user_id, cat_id=cat_id)
-
+    if submitted:
+        for ident in submitted:
+            like = Like(user_id=user.user_id, cat_id=ident)
+            
             db.session.add(like)
-
-            for category in categories:
-                if category.cat_id == cat_id:
-                    for restaurant in get_rest_alias_id():
-                        if category.cat_alias in restaurant:
-                            rest_cat = RestaurantCategory(rest_id=restaurant[1], cat_id=cat_id )
-
-                            db.session.add(rest_cat)
     db.session.commit()
 
     return redirect('/')

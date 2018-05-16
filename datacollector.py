@@ -1,4 +1,5 @@
-from pprint import pprint, pformat
+# from pprint import pprint
+import requests
 import json
 import os
 
@@ -6,6 +7,7 @@ import os
 API_KEY = os.environ['API_KEY'].strip()
 LIMIT_MAX_REQUEST = 50
 OFFSET_MAX_PULL = 1000
+
 
 # Restaurant
 def request_api_restaurants(offset):
@@ -36,6 +38,7 @@ def rest_json_file():
             except KeyError:
                 print response.json()
 
+
 def open_json_file(filename):
     """Open restaurants.json and append it to a list."""
 
@@ -55,13 +58,13 @@ def get_restaurants(filename):
     restaurants = open_json_file(filename)
     for restaurant in restaurants:
         restaurant_info[restaurant['alias']] = {'rest_id': restaurant['id'],
-                                  'rest_title': restaurant['name'],
-                                  'rest_alias': restaurant['alias'],
-                                  'rating': restaurant['rating'],
-                                  'num_reviews': restaurant['review_count'],
-                                  'address': restaurant['location']['display_address'],
-                                  'phone': restaurant['phone']
-                                  }
+                                                'rest_title': restaurant['name'],
+                                                'rest_alias': restaurant['alias'],
+                                                'rating': restaurant['rating'],
+                                                'num_reviews': restaurant['review_count'],
+                                                'address': restaurant['location']['display_address'],
+                                                'phone': restaurant['phone']
+                                                }
 
     return restaurant_info
 
@@ -95,12 +98,3 @@ def get_categories(filename):
                                     'cat_title': title}
 
     return category_info
-# g = get_categories('restaurants.json')
-# for i in g:
-#     print g[i]
-# print get_categories('restaurants.json')
-# print get_restaurants('restaurants.json')
-
-# get_restaurants(restaurants)
-# categories = append_categories(restaurants)
-# get_categories(categories)
