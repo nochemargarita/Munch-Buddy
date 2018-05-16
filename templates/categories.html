@@ -4,7 +4,7 @@
     <form action="/categories" method='POST'>
     {% for category in categories %}
         
-            <input type='checkbox' name='{{ category.cat_id }}'>
+            <input type='checkbox' name='cat_id' value='{{ category.cat_id }}'>
             {{ category.cat_title }}
             <br>
         

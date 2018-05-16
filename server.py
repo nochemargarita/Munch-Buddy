@@ -4,7 +4,7 @@ from flask_debugtoolbar import DebugToolbarExtension
 from werkzeug.security import generate_password_hash, check_password_hash
 from model import connect_to_db, db, User, Like , Restaurant, Category, Message, RestaurantCategory
 import os
-
+# from datacollector import get_rest_alias_id
 app = Flask(__name__)
 
 # Required to use Flask sessions and the debug toolbar
@@ -64,12 +64,12 @@ def login():
     email = request.form.get('email')
     password = request.form.get('password')
     user = db.session.query(User).filter(User.email == email).first()
-    checked_hashed = check_password_hash(user.password, password)
-    print checked_hashed
 
-    if user and checked_hashed:
-        session['email'] = email
-        return redirect('/')
+    if user:
+        checked_hashed = check_password_hash(user.password, password)
+        if checked_hashed:
+            session['user_id'] = user.user_id
+            return redirect('/')
 
     else:
         flash('Please check your email and password!')
@@ -98,31 +98,34 @@ def selected_categories():
     """Get all selected check boxes and add it to database Like."""
 
     categories = Category.query.all()
-    email = session.get('email')
-    user_id = User.query.filter(User.email == email).first()
 
-    for i in range(1, len(categories) + 1):
-        submitted = request.form.get('{}'.format(i))
+    user = User.query.get(session['user_id'])
+
+    for cat_id in range(1, len(categories) + 1):
+        submitted = request.form.get('{}'.format(cat_id))
         if submitted:
-            like = Like(user_id=user_id.user_id, cat_id=i)
+            like = Like(user_id=user_id.user_id, cat_id=cat_id)
 
             db.session.add(like)
 
+            for category in categories:
+                if category.cat_id == cat_id:
+                    for restaurant in get_rest_alias_id():
+                        if category.cat_alias in restaurant:
+                            rest_cat = RestaurantCategory(rest_id=restaurant[1], cat_id=cat_id )
+
+                            db.session.add(rest_cat)
     db.session.commit()
 
     return redirect('/')
 
 
-@app.route('/restaurants')
-def show_buddies():
-    """Directs user to a page of restaurant suggestions."""
 
-    rest_cat = RestaurantCategory.query.all()
+@app.route('/munchbuddies')
+def show_buddies():
+    """Directs user to a page of people who matched his/her choice of categories."""
 
     pass
-
-
-  
 
 if __name__ == "__main__":
     # set debug to True at the point of invoking the DebugToolbarExtension

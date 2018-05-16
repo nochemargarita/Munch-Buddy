@@ -2,31 +2,10 @@ from pprint import pprint, pformat
 import json
 import os
 
+
 API_KEY = os.environ['API_KEY'].strip()
 LIMIT_MAX_REQUEST = 50
 OFFSET_MAX_PULL = 1000
-
-
-# Category
-def cat_info(filename):
-    """Get category id, title, alias from json file."""
-    categories = {}
-    with open(filename) as filename:
-        for item in json.load(filename):
-            if 'restaurants' in item['parents']:
-                bl = item.get('country_blacklist')
-                wl = item.get('country_whitelist')
-                if item['alias'][-2::] == 'an' or item['alias'][-2::] == 'se':
-                    if not bl and not wl:
-                        categories[item['alias']] = {'alias': item['alias'],
-                                                     'title': item['title']}
-                    elif bl:
-                        if 'US' not in bl:
-                            categories[item['alias']] = {'alias': item['alias'],
-                                                         'title': item['title']}
-
-    return categories
-
 
 # Restaurant
 def request_api_restaurants(offset):
@@ -57,21 +36,71 @@ def rest_json_file():
             except KeyError:
                 print response.json()
 
+def open_json_file(filename):
+    """Open restaurants.json and append it to a list."""
 
-def get_restaurants_info(filename):
-    """Get all restaurants from the json file."""
-    restaurants = {}
+    restaurants = []
+
     with open(filename, 'r') as filename:
         for item in filename:
             info = json.loads(item)
-
-            restaurants[info['alias']] = {'rest_id': info['id'],
-                                          'rest_title': info['name'],
-                                          'rest_alias': info['alias'],
-                                          'rating': info['rating'],
-                                          'num_reviews': info['review_count'],
-                                          'address': info['location']['display_address'],
-                                          'phone': info['phone']
-                                          }
+            restaurants.append(info)
 
     return restaurants
+
+
+def get_restaurants(filename):
+    """Get all restaurants from the json file."""
+    restaurant_info = {}
+    restaurants = open_json_file(filename)
+    for restaurant in restaurants:
+        restaurant_info[restaurant['alias']] = {'rest_id': restaurant['id'],
+                                  'rest_title': restaurant['name'],
+                                  'rest_alias': restaurant['alias'],
+                                  'rating': restaurant['rating'],
+                                  'num_reviews': restaurant['review_count'],
+                                  'address': restaurant['location']['display_address'],
+                                  'phone': restaurant['phone']
+                                  }
+
+    return restaurant_info
+
+
+# Category
+def append_categories(filename):
+    """Get all restaurant categories from the json file."""
+    category_info = []
+    restaurants = open_json_file(filename)
+    for category in restaurants:
+        category_info.extend(category['categories'])
+
+    return category_info
+
+
+def get_categories(filename):
+    """Get all unque categories."""
+
+    category_info = {}
+    categories = append_categories(filename)
+    for cat in categories:
+        alias = cat['alias']
+        title = cat['title']
+        # if alias[-4:] != 'bars':
+            # print alias
+        # if 'wine' != alias[-4:] and 'bars' != alias[-4:] and
+        #    'shops' != alias[-5] and 'stores' != alias[-6] and
+        #    'markets' != alias[-7]:
+        if 'se' == alias[-2:] or 'an' == alias[-2:]:
+            category_info[alias] = {'cat_alias': alias,
+                                    'cat_title': title}
+
+    return category_info
+# g = get_categories('restaurants.json')
+# for i in g:
+#     print g[i]
+# print get_categories('restaurants.json')
+# print get_restaurants('restaurants.json')
+
+# get_restaurants(restaurants)
+# categories = append_categories(restaurants)
+# get_categories(categories)

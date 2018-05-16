@@ -4,7 +4,8 @@ from model import connect_to_db, db, User, Like, Restaurant, Category, Restauran
 from server import app
 from werkzeug.security import generate_password_hash
 from datetime import datetime
-from datacollector import cat_info, get_restaurants_info
+from datacollector import get_categories, get_restaurants
+from pprint import pprint
 
 # User
 def add_user_to_db(email, password, fname, lname, birthday):
@@ -30,23 +31,29 @@ def add_messages_to_db(from_user_id, to_user_id, messaged_on, message):
 
 
 # Category
-def add_cat_to_db():
-    """Add all categories to database."""
+def add_category_to_db():
+    """Add categories to the database."""
     for category in categories:
-        info = categories[category]
-        cat = Category(cat_title=info['title'],
-                       cat_alias=info['alias'])
+        cat_alias = categories[category]['cat_alias']
+        cat_title = categories[category]['cat_title']
+
+        # print cat_title
+
+        cat = Category(cat_title=cat_title, cat_alias=cat_alias)
 
         db.session.add(cat)
     db.session.commit()
+
+# RestaurantCategory
+
 
 
 # Restaurant
 def add_rest_to_db():
     """Add all restaurants and info to the database."""
 
-    for restaurant in rest_info:
-        info = rest_info[restaurant]
+    for restaurant in restaurants:
+        info = restaurants[restaurant]
         address = ', '.join(info['address'])
 
         category = Restaurant(rest_id=info['rest_id'],
@@ -62,35 +69,11 @@ def add_rest_to_db():
     db.session.commit()
 
 
-# RestaurantCategory
-def restaurant_category():
-    """add restaurant and category to RestaurantCategory database."""
-
-    like = Like.query.all()
-    res = RestaurantCategory.query.all()
-    print res
-    with open('restaurants.json', 'r') as filename:
-        for item in filename:
-            info = json.loads(item)
-
-
-            for i in range(len(info['categories'])):
-                for indx in range(len(like)):
-                    cat_alias = like[indx].category.cat_alias
-                    if cat_alias in info['categories'][i]['alias']:
-                        rest_cat = RestaurantCategory(rest_id=info['id'], cat_id=like[indx].cat_id)
-
-                        db.session.add(rest_cat)
-
-            db.session.commit()
-
-
 if __name__ == "__main__":
     connect_to_db(app)
-    restaurant_category()
-    # categories = cat_info('categories.json')
 
-    # rest_info = get_restaurants_info('restaurants.json')
+    categories = get_categories('restaurants.json')
+    restaurants = get_restaurants('restaurants.json')
     # add_user_to_db('marry@yahoo.com', '123', 'Mary', 'Poppins', '1965-08-25')
     # add_user_to_db('james@hotmail.com', '123', 'James', 'Corden', '1965-05-09')
     # add_user_to_db('hannah@gmail.com', '123', 'Hannah', 'Baker', '1945-02-05')
@@ -101,4 +84,4 @@ if __name__ == "__main__":
     # add_messages_to_db(3, 4, '2018-05-12', 'Hi Man, saw you like ethipian food. WOuld you wanna grab sometime this week?')
 
     # add_rest_to_db()
-    # add_cat_to_db()
+    # add_category_to_db()
