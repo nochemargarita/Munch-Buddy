@@ -1,64 +1,128 @@
-# In the current session, get user id
-# query the like table and get all data
-# then use that q to look for the categories that the current user liked
-# category chosen, current user, user1
-
-
-"""from math import sqrt
-user_1 = [2, 1, 2, 2, 1]
-user_2 = [1, 2, 2, 1, 2]
-user_3 = [2, 1, 1, 2, 1]
-
-
-zp = zip(user_1, user_3)
-ser_1, ser_2 = zip(*zp)
-sum_1 = sum(ser_1)
-sum_2 = sum(ser_2)
-sq_1 = sum([n * n for n in ser_1])
-sq_2 = sum([n * n for n in ser_2])
-prod_sum = sum([n * m for n, m in zp])
-size = len(zp)
-numerator = prod_sum - ((sum_1 * sum_2) / size)
-denom = sqrt((sq_1 - (sum_1 * sum_1)/size) * (sq_2 - (sum_2 * sum_2)/size))
-print numerator / denom"""
+from model import connect_to_db, db, User, Like, Restaurant, Category, RestaurantCategory, Message
+from server import app
     
 NUM_PEOPLE_MATCHED = 5
-def get_all_liked_cat():
-    """query the database and get all the info on that table.
+# Current user in session.
+def get_curr_user_liked(sess):
+    """Returns a list of category id that current user likes."""
+    current_user_liked = Like.query.filter(Like.user_id == sess).all()
 
-        use 1 for categories that were not chosen.
-        use 2 for categories that were chosen.
+    categories = []
+    for i in current_user_liked:
+        categories.append(i.cat_id)
 
+    return categories
+
+
+def track_liked(sess):
+    """Returns a list that contains 1 or 2.
+
+       1 if user did not like item.
+       2 if user liked it.
     """
-    current_user_id = session.get('user_id')
-    like = Like.query.all()
-    curr_user_liked = Like.query.filter(Like.user_id == current_user_id).all()
-
+    categories = Category.query.all()
     current_user = []
+    for category in categories:
+        if category.cat_id in get_curr_user_liked(sess):
+            current_user.append(2)
+        else:
+            current_user.append(1)
+
+    return current_user
+
+# Users from database.
+def find_matched_users(sess):
+    """Returns a dictionary of users and an empty list."""
+
+    users_like = Like.query.all()
 
     users = {}
+    for user in users_like:
+        user_id = user.user_id
+        if user.user_id != sess and \
+           len(users) < NUM_PEOPLE_MATCHED and \
+           user.user_id not in users:  # session.get('user_id')
+            users[user_id] = []
 
-    for l in like:
-        for cl in curr_user_liked:
-            if cl.cat_id == l:
-                current_user.append(2)
+    return users
+
+
+def add_value_to_list(sess):
+    """Returns a dictionary of users and list of chosen categories."""
+
+    users = find_matched_users(sess)
+    for user in users:
+        users_like = Like.query.filter(Like.user_id == user).all()
+        for item in users_like:
+            users[user].append(item.cat_id)
+
+    return users
+
+
+def map_each_user(sess):
+    """Returns a list that contains 1 or 2.
+
+       1 if user did not like item.
+       2 if user liked it.
+    """
+    mapped_users = find_matched_users(sess)
+    users = add_value_to_list(sess)
+    categories = Category.query.all()
+
+    for user_id, val in users.iteritems():
+        for category in categories:
+            if category.cat_id in val:
+                if user_id in mapped_users:
+                    mapped_users[user_id].append(2)
             else:
-                current_user.append(1)
+                mapped_users[user_id].append(1)
+
+    return mapped_users
+
+# Pearson
+from math import sqrt
+
+def pearson(pairs):
+    """Return Pearson correlation for pairs. -1..1"""
+
+    series_1, series_2 = zip(*pairs)
+
+    sum_1 = sum(series_1)
+    sum_2 = sum(series_2)
+
+    squares_1 = sum([n * n for n in series_1])
+    squares_2 = sum([n * n for n in series_2])
+
+    product_sum = sum([n * m for n, m in pairs])
+
+    size = len(pairs)
+
+    numerator = product_sum - ((sum_1 * sum_2) / size)
+
+    denominator = sqrt(
+                  (squares_1 - (sum_1 * sum_2) / size) *
+                  (squares_2 - (sum_2 * sum_2) / size)
+                  )
+
+    return numerator / denominator
 
 
-    while len(users) <= NUM_PEOPLE_MATCHED:
-        for user in like:
-            if current_user_id != item.user_id:
-                for liked in curr_user_liked:
-                    if user.cat_id == liked.cat_id:
-                        if user.user_id not in users:
-                            users[user.user_id] = [2]
-                        else:
-                            users[user.user_id].append(2)
-                    else:
-                        if user.user_id not in users:
-                            users[user.user_id] = [1]
-                        else:
-                            users[user.user_id].append(1)
+def get_pairs(sess):
 
-                      
+    mapped_users = map_each_user(sess)
+    current_user = track_liked(sess)
+    results = {}
+
+    for user_id, val in mapped_users.iteritems():
+        total = pearson(zip(current_user, val))
+        results[user_id] = total
+
+    return results
+
+if __name__ == "__main__":
+    connect_to_db(app)
+    # track_liked()
+    # find_matched_users()
+    # add_value_to_list()
+    # map_each_user()
+    print get_pairs(sess)

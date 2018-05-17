@@ -2,8 +2,9 @@ from jinja2 import StrictUndefined
 from flask import Flask, render_template, request, flash, redirect, session
 from flask_debugtoolbar import DebugToolbarExtension
 from werkzeug.security import generate_password_hash, check_password_hash
-from model import connect_to_db, db, User, Like , Restaurant, Category, Message, RestaurantCategory
-import os
+from model import connect_to_db, db, User, Like, Restaurant, Category, Message, RestaurantCategory
+import pearson_algorithm
+# import os
 # from datacollector import get_rest_alias_id
 app = Flask(__name__)
 
@@ -13,17 +14,20 @@ app.secret_key = "ABC"
 
 app.jinja_env.undefined = StrictUndefined
 
+
 @app.route('/')
 def homepage():
     """Homepage."""
 
     return render_template("homepage.html")
 
+
 @app.route('/signup')
 def signup_form():
     """Directs user to a form."""
 
     return render_template("signup.html")
+
 
 @app.route('/signup', methods=['POST'])
 def signup():
@@ -105,6 +109,7 @@ def categories():
     else:
         return redirect('/login')
 
+
 @app.route('/categories', methods=['POST'])
 def selected_categories():
     """Get all selected check boxes and add it to database Like."""
@@ -122,35 +127,25 @@ def selected_categories():
     return redirect('/')
 
 
-
 @app.route('/munchbuddies')
 def show_buddies():
     """Directs user to a page of people who matched his/her choice of categories."""
+    sess = session.get('user_id')
+    if sess:
+        results = pearson_algorithm.get_pairs(sess)
+        matches = []
+        for user_id, pearson in results.iteritems():
+            if pearson >= .7:
+                percentage = pearson * 100
+                user = User.query.filter(User.user_id == user_id).first()
+                fullname = "{} {} {}% match".format(user.fname, user.lname, percentage)
+                matches.append(fullname)
 
-    pass
+        return render_template('munchbuddies.html', matches=matches)
 
-NUM_PEOPLE_MATCHED = 5
-def get_all_liked_cat():
-    """query the database and get all the info on that table.
+    else:
+        return redirect('/login')
 
-        use 1 for categories that were not chosen.
-        use 2 for categories that were chosen.
-
-    """
-    current_user_id = session.get('user_id')
-    like = Like.query.all()
-    curr_user_liked = Like.query.filter(Like.user_id == current_user_id).all()
-
-    current_user = []
-
-    # users = {}
-
-    for l in like:
-        for cl in curr_user_liked:
-            if cl.cat_id == l:
-                current_user.append(2)
-            else:
-                current_user.append(1)
 
 if __name__ == "__main__":
     # set debug to True at the point of invoking the DebugToolbarExtension
