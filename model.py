@@ -26,12 +26,13 @@ class User(db.Model):
     fname = db.Column(db.String(30), nullable=False)
     lname = db.Column(db.String(30), nullable=False)
     birthday = db.Column(db.DateTime, nullable=False)
+    interests = db.Column(db.String(250))
 
     def __repr__(self):
         """Provide a helpful representation."""
 
-        return "<User user_id={} email={} fname={} lname={} birthday={}>".format(
-                self.user_id, self.email, self.fname, self.lname, self.birthday)
+        return "<User user_id={} fname={}>".format(
+               self.user_id, self.fname)
 
 
 class Category(db.Model):
@@ -39,14 +40,13 @@ class Category(db.Model):
 
     __tablename__ = "categories"
 
-    cat_id = db.Column(db.Integer, autoincrement=True, primary_key=True)
+    cat_id = db.Column(db.String(50), nullable=False, primary_key=True)
     cat_title = db.Column(db.String(50), nullable=False)
-    cat_alias = db.Column(db.String(50), nullable=False)
 
     def __repr__(self):
         """Provide a helpful representation."""
         return "<Category cat_id={} cat_title={}>".format(
-                self.cat_id, self.cat_title)
+               self.cat_id, self.cat_title)
 
 
 class Like(db.Model):
@@ -56,7 +56,7 @@ class Like(db.Model):
 
     like_id = db.Column(db.Integer, autoincrement=True, primary_key=True)
     user_id = db.Column(db.Integer, db.ForeignKey("users.user_id"), nullable=False)
-    cat_id = db.Column(db.Integer, db.ForeignKey("categories.cat_id"), nullable=False)
+    cat_id = db.Column(db.String(50), db.ForeignKey("categories.cat_id"), nullable=False)
 
     # Define relationship to User.
     user = db.relationship("User", backref=db.backref("likes", order_by=like_id))
@@ -68,7 +68,7 @@ class Like(db.Model):
         """Provide useful representation."""
 
         return "<Like like_id={} user_id={} cat_id={}>".format(
-                self.like_id, self.user_id, self.cat_id)
+               self.like_id, self.user_id, self.cat_id)
 
 
 class Restaurant(db.Model):
@@ -88,7 +88,7 @@ class Restaurant(db.Model):
         """Provide a helpful representation."""
 
         return "<Restaurant rest_id={} rest_name={}>".format(
-                self.rest_id, self.rest_title.encode('ascii', 'replace'))
+               self.rest_id, self.rest_title.encode('ascii', 'replace'))
 
 
 class RestaurantCategory(db.Model):
@@ -98,7 +98,7 @@ class RestaurantCategory(db.Model):
 
     rest_cat_id = db.Column(db.Integer, autoincrement=True, primary_key=True)
     rest_id = db.Column(db.String(50), db.ForeignKey("restaurants.rest_id"), nullable=False)
-    cat_id = db.Column(db.Integer, db.ForeignKey("categories.cat_id"), nullable=False)
+    cat_id = db.Column(db.String(50), db.ForeignKey("categories.cat_id"), nullable=False)
 
     # Define relationship to Restaurant.
     restaurant = db.relationship("Restaurant", backref=db.backref("restaurants_categories", order_by=rest_cat_id))
@@ -109,7 +109,7 @@ class RestaurantCategory(db.Model):
         """Provide a helpful representation."""
 
         return "<RestaurantCategory rest_cat_id={} rest_id={} cat_id={}>".format(
-                    self.rest_cat_id, self.rest_id, self.cat_id)
+               self.rest_cat_id, self.rest_id, self.cat_id)
 
 
 class Message(db.Model):
@@ -131,7 +131,7 @@ class Message(db.Model):
         """Provide useful representation."""
 
         return "<Message message_id={} from_user_id={} to_user_id={}>".format(
-                self.message_id, self.from_user_id, self.to_user_id)
+               self.message_id, self.from_user_id, self.to_user_id)
 
 
 ##############################################################################

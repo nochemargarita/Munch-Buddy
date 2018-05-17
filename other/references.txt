@@ -27,3 +27,9 @@ USEFUL:
 HASHING:
     -https://blog.miguelgrinberg.com/post/the-flask-mega-tutorial-part-v-user-logins
     -https://www.youtube.com/watch?v=jJ4awOToB6k  
+
+JINJA:
+    -https://github.com/ansible/ansible/issues/1944
+
+HTML:
+    -https://www.webdeveloper.com/forum/d/121536-text-align-right-a-hyperlink/3

@@ -1,8 +1,14 @@
 {% extends 'base.html'%}
 {% block content %}
-    <h3>Your Buddies:</h3>
-    {% for p in matches %}
-        {{ p }}
-        <br>
-    {% endfor %}
+    <a href="/logout" style="float:right">Log Out</a>
+    {% if matches|length %}
+        <h3>Your Buddies:</h3>
+        {% for p in matches %}
+            {{ p }}
+            <br>
+        {% endfor %}
+        
+    {% else %}
+        <h3>I didn't find a buddy today.</h3>
+    {% endif %}
 {% endblock %}

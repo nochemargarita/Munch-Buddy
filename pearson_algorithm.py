@@ -1,7 +1,8 @@
 from model import connect_to_db, db, User, Like, Restaurant, Category, RestaurantCategory, Message
 from server import app
-    
-NUM_PEOPLE_MATCHED = 5
+from math import sqrt
+
+
 # Current user in session.
 def get_curr_user_liked(sess):
     """Returns a list of category id that current user likes."""
@@ -30,23 +31,24 @@ def track_liked(sess):
 
     return current_user
 
+
 # Users from database.
 def find_matched_users(sess):
     """Returns a dictionary of users and an empty list."""
-
+    # len(users) < NUM_PEOPLE_MATCHED and
     users_like = Like.query.all()
 
     users = {}
     for user in users_like:
         user_id = user.user_id
         if user.user_id != sess and \
-           len(users) < NUM_PEOPLE_MATCHED and \
-           user.user_id not in users:  # session.get('user_id')
+           user.user_id not in users:
             users[user_id] = []
 
     return users
 
 
+# NEED TO OPTIMIZE, NESTED FOR LOOPS
 def add_value_to_list(sess):
     """Returns a dictionary of users and list of chosen categories."""
 
@@ -59,6 +61,7 @@ def add_value_to_list(sess):
     return users
 
 
+# NEED TO OPTIMIZE, NESTED FOR LOOPS
 def map_each_user(sess):
     """Returns a list that contains 1 or 2.
 
@@ -79,12 +82,10 @@ def map_each_user(sess):
 
     return mapped_users
 
-# Pearson
-from math import sqrt
 
+# Pearson
 def pearson(pairs):
     """Return Pearson correlation for pairs. -1..1"""
-
     series_1, series_2 = zip(*pairs)
 
     sum_1 = sum(series_1)
@@ -99,10 +100,8 @@ def pearson(pairs):
 
     numerator = product_sum - ((sum_1 * sum_2) / size)
 
-    denominator = sqrt(
-                  (squares_1 - (sum_1 * sum_2) / size) *
-                  (squares_2 - (sum_2 * sum_2) / size)
-                  )
+    denominator = sqrt(abs((squares_1 - (sum_1 * sum_2) / size) *
+                  (squares_2 - (sum_2 * sum_2) / size)))
 
     return numerator / denominator
 
@@ -111,18 +110,20 @@ def get_pairs(sess):
 
     mapped_users = map_each_user(sess)
     current_user = track_liked(sess)
-    results = {}
 
+    results = {}
     for user_id, val in mapped_users.iteritems():
         total = pearson(zip(current_user, val))
+
         results[user_id] = total
 
     return results
 
 if __name__ == "__main__":
     connect_to_db(app)
-    # track_liked()
-    # find_matched_users()
-    # add_value_to_list()
-    # map_each_user()
-    print get_pairs(sess)
+    # print get_curr_user_liked(3)
+    # print track_liked(3)
+    # print find_matched_users(3)
+    # print add_value_to_list(3)
+    # print map_each_user(3)
+    get_pairs(1)

@@ -86,16 +86,16 @@ def get_categories(filename):
     category_info = {}
     categories = append_categories(filename)
     for cat in categories:
-        alias = cat['alias']
-        title = cat['title']
+        cat_id = cat['alias']
+        cat_title = cat['title']
         # if alias[-4:] != 'bars':
             # print alias
         # if 'wine' != alias[-4:] and 'bars' != alias[-4:] and
         #    'shops' != alias[-5] and 'stores' != alias[-6] and
         #    'markets' != alias[-7]:
-        if 'se' == alias[-2:] or 'an' == alias[-2:]:
-            category_info[alias] = {'cat_alias': alias,
-                                    'cat_title': title}
+        if 'se' == cat_id[-2:] or 'an' == cat_id[-2:]:
+            category_info[cat_id] = {'cat_id': cat_id,
+                                    'cat_title': cat_title}
 
     return category_info
 

@@ -38,6 +38,7 @@ def signup():
     fname = request.form.get('fname')
     lname = request.form.get('lname')
     birthday = request.form.get('birthday')
+    interests = request.form.get('interests')
 
     hashed_password = generate_password_hash(password)
     q = db.session.query(User).filter(User.email == email).first()
@@ -49,7 +50,7 @@ def signup():
     else:
         flash('Yay! You are now a Munch Buddy!')
         user = User(email=email, password=hashed_password,
-                    fname=fname, lname=lname, birthday=birthday)
+                    fname=fname, lname=lname, birthday=birthday, interests=interests)
         db.session.add(user)
         db.session.commit()
         session['email'] = email
@@ -112,7 +113,7 @@ def categories():
 
 @app.route('/categories', methods=['POST'])
 def selected_categories():
-    """Get all selected check boxes and add it to database Like."""
+    """Get all selected check boxes and add it to database, Like."""
 
     user = User.query.get(session['user_id'])
     submitted = request.form.getlist('cat_id')
@@ -129,18 +130,16 @@ def selected_categories():
 
 @app.route('/munchbuddies')
 def show_buddies():
-    """Directs user to a page of people who matched his/her choice of categories."""
+    """Directs user to a page with list of people who matched his/her choice of categories."""
     sess = session.get('user_id')
     if sess:
         results = pearson_algorithm.get_pairs(sess)
         matches = []
         for user_id, pearson in results.iteritems():
-            if pearson >= .7:
-                percentage = pearson * 100
+            if pearson >= .5:
                 user = User.query.filter(User.user_id == user_id).first()
-                fullname = "{} {} {}% match".format(user.fname, user.lname, percentage)
+                fullname = "{} {}".format(user.fname, user.lname)
                 matches.append(fullname)
-
         return render_template('munchbuddies.html', matches=matches)
 
     else:
