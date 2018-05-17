@@ -5,7 +5,7 @@ from math import sqrt
 
 # Current user in session.
 def get_curr_user_liked(sess):
-    """Returns a list of category id that current user likes."""
+    """Returns a list of category idq that current user likes."""
     current_user_liked = Like.query.filter(Like.user_id == sess).all()
 
     categories = []
@@ -119,6 +119,60 @@ def get_pairs(sess):
 
     return results
 
+
+# show restaurants
+def get_liked_cat(user_id):
+    """Returns a list of cat_id chosen by the user."""
+
+    liked = Like.query.filter(Like.user_id == user_id).all()
+
+    # print [i.cat_id for i in liked i.cat_id]
+    store_liked = []
+    for like in liked:
+        if like.cat_id not in store_liked:
+            store_liked.append(like.cat_id)
+
+    return store_liked
+
+
+def query_restaurants_categories(user_id):
+    """Returns a list of Restaurant object."""
+
+    restaurants_obj = []
+    for like in get_liked_cat(user_id):
+        # print like
+        rest_cat = RestaurantCategory.query.filter(RestaurantCategory.cat_id == like).all()
+        restaurants_obj.extend(rest_cat)
+    return restaurants_obj
+
+def get_rest_id(user_id):
+    """Returns a list of restaurant ids."""
+
+    restaurant_id = []
+    for rest in query_restaurants_categories(user_id):
+        restaurant_id.append(rest.rest_id)
+
+    return restaurant_id
+
+
+def get_all_restaurants(user_id):
+    """Returns obj"""
+    # Do i want the value to be dictionary or tuple?
+    # Use dictionary instead
+    restaurants = {}
+    for rest in get_rest_id(user_id):
+        restaurant = Restaurant.query.filter(Restaurant.rest_id == rest).one()
+
+        restaurants[restaurant.rest_id] = {'rest_title': restaurant.rest_title,
+                                           'rating': restaurant.rating,
+                                           'num_reviews': restaurant.num_reviews,
+                                           'address': restaurant.address,
+                                           'phone': restaurant.phone
+                                           }
+
+    return restaurants
+
+
 if __name__ == "__main__":
     connect_to_db(app)
     # print get_curr_user_liked(3)
@@ -126,4 +180,6 @@ if __name__ == "__main__":
     # print find_matched_users(3)
     # print add_value_to_list(3)
     # print map_each_user(3)
-    get_pairs(1)
+    # get_liked_cat()
+    get_pairs(sess)
+    get_all_restaurants(user_id)

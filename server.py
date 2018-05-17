@@ -128,6 +128,17 @@ def selected_categories():
     return redirect('/')
 
 
+def show_rest_suggestions(sess):
+    """Directs user to the munchbuddies page that will display restaurant suggestions."""
+
+    restaurants = pearson_algorithm.get_all_restaurants(sess)
+    results = []
+    for rest_id, info in restaurants.iteritems():
+        results.append(info)
+
+    return results
+
+
 @app.route('/munchbuddies')
 def show_buddies():
     """Directs user to a page with list of people who matched his/her choice of categories."""
@@ -140,10 +151,14 @@ def show_buddies():
                 user = User.query.filter(User.user_id == user_id).first()
                 fullname = "{} {}".format(user.fname, user.lname)
                 matches.append(fullname)
-        return render_template('munchbuddies.html', matches=matches)
+        restaurants = show_rest_suggestions(sess)
+        return render_template('munchbuddies.html', matches=matches, restaurants=restaurants)
 
     else:
         return redirect('/login')
+
+
+
 
 
 if __name__ == "__main__":

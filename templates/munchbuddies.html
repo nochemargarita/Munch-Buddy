@@ -3,12 +3,25 @@
     <a href="/logout" style="float:right">Log Out</a>
     {% if matches|length %}
         <h3>Your Buddies:</h3>
-        {% for p in matches %}
-            {{ p }}
+        {% for match in matches %}
+            {{ match }}
             <br>
         {% endfor %}
         
     {% else %}
         <h3>I didn't find a buddy today.</h3>
     {% endif %}
+    <h3>Here are some restaurants you might like:</h3>
+    {% for restaurant in restaurants %}
+            <h5>{{ restaurant['rest_title'] }}</h5>
+            rating: {{ restaurant['rating'] }}
+            <br>
+            number of reviews: {{ restaurant['num_reviews'] }}
+            <br>
+            address: {{ restaurant['address'] }}
+            <br>
+            phone: {{ restaurant['phone'] }}
+            <br>
+    {% endfor %}
+
 {% endblock %}
