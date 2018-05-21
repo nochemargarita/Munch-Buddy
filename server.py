@@ -1,18 +1,30 @@
 from jinja2 import StrictUndefined
 from flask import Flask, render_template, request, flash, redirect, session
-from flask_debugtoolbar import DebugToolbarExtension
+# from flask_debugtoolbar import DebugToolbarExtension
 from werkzeug.security import generate_password_hash, check_password_hash
 from model import connect_to_db, db, User, Like, Restaurant, Category, Message, RestaurantCategory
 import pearson_algorithm
+from flask_socketio import SocketIO, emit, disconnect
 # import os
 # from datacollector import get_rest_alias_id
+async_mode = None
 app = Flask(__name__)
 
 # Required to use Flask sessions and the debug toolbar
 app.secret_key = "ABC"
-
+socketio = SocketIO(app, async_mode=async_mode)
+thread = None
 
 app.jinja_env.undefined = StrictUndefined
+
+
+def background_thread():
+    """Example of how to send generated events to clients."""
+    count= 0
+    while True:
+        socketio.sleep(10)
+        count += 1
+        socketio.emit('my_response', {'data': 'Server generated event', 'count': count}, namespace='/test')
 
 
 @app.route('/')
@@ -128,17 +140,6 @@ def selected_categories():
     return redirect('/')
 
 
-def show_rest_suggestions(sess):
-    """Directs user to the munchbuddies page that will display restaurant suggestions."""
-
-    restaurants = pearson_algorithm.get_all_restaurants(sess)
-    results = []
-    for rest_id, info in restaurants.iteritems():
-        results.append(info)
-
-    return results
-
-
 @app.route('/munchbuddies')
 def show_buddies():
     """Directs user to a page with list of people who matched his/her choice of categories."""
@@ -151,22 +152,19 @@ def show_buddies():
                 user = User.query.filter(User.user_id == user_id).first()
                 fullname = "{} {}".format(user.fname, user.lname)
                 matches.append(fullname)
-        restaurants = show_rest_suggestions(sess)
+        restaurants = pearson_algorithm.show_rest_suggestions(sess)
         return render_template('munchbuddies.html', matches=matches, restaurants=restaurants)
 
     else:
         return redirect('/login')
 
-
-
-
-
 if __name__ == "__main__":
     # set debug to True at the point of invoking the DebugToolbarExtension
-    # app.debug = True
+    app.debug = True
 
     connect_to_db(app)
+    # socketio.run(app, host="0.0.0.0", port=5000)
 
-    DebugToolbarExtension(app)
+    # DebugToolbarExtension(app)
 
     app.run(host="0.0.0.0")

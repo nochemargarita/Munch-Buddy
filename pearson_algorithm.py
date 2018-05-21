@@ -8,11 +8,7 @@ def get_curr_user_liked(sess):
     """Returns a list of category idq that current user likes."""
     current_user_liked = Like.query.filter(Like.user_id == sess).all()
 
-    categories = []
-    for i in current_user_liked:
-        categories.append(i.cat_id)
-
-    return categories
+    return [i.cat_id for i in current_user_liked]
 
 
 def track_liked(sess):
@@ -35,7 +31,6 @@ def track_liked(sess):
 # Users from database.
 def find_matched_users(sess):
     """Returns a dictionary of users and an empty list."""
-    # len(users) < NUM_PEOPLE_MATCHED and
     users_like = Like.query.all()
 
     users = {}
@@ -100,8 +95,8 @@ def pearson(pairs):
 
     numerator = product_sum - ((sum_1 * sum_2) / size)
 
-    denominator = sqrt(abs((squares_1 - (sum_1 * sum_2) / size) *
-                  (squares_2 - (sum_2 * sum_2) / size)))
+    denominator = sqrt((squares_1 - (sum_1 ** 2) / size) *
+                  (squares_2 - (sum_2 ** 2) / size))
 
     return numerator / denominator
 
@@ -114,10 +109,10 @@ def get_pairs(sess):
     results = {}
     for user_id, val in mapped_users.iteritems():
         total = pearson(zip(current_user, val))
-
         results[user_id] = total
 
     return results
+    # return {'user_id': pearson(zip(current_user, val)) for user_id, val in mapped_users.iteritems()}
 
 
 # show restaurants
@@ -126,13 +121,7 @@ def get_liked_cat(user_id):
 
     liked = Like.query.filter(Like.user_id == user_id).all()
 
-    # print [i.cat_id for i in liked i.cat_id]
-    store_liked = []
-    for like in liked:
-        if like.cat_id not in store_liked:
-            store_liked.append(like.cat_id)
-
-    return store_liked
+    return {like.cat_id for like in liked}
 
 
 def query_restaurants_categories(user_id):
@@ -140,25 +129,20 @@ def query_restaurants_categories(user_id):
 
     restaurants_obj = []
     for like in get_liked_cat(user_id):
-        # print like
         rest_cat = RestaurantCategory.query.filter(RestaurantCategory.cat_id == like).all()
         restaurants_obj.extend(rest_cat)
+
     return restaurants_obj
+
 
 def get_rest_id(user_id):
     """Returns a list of restaurant ids."""
 
-    restaurant_id = []
-    for rest in query_restaurants_categories(user_id):
-        restaurant_id.append(rest.rest_id)
-
-    return restaurant_id
+    return [rest.rest_id for rest in query_restaurants_categories(user_id)]
 
 
 def get_all_restaurants(user_id):
     """Returns obj"""
-    # Do i want the value to be dictionary or tuple?
-    # Use dictionary instead
     restaurants = {}
     for rest in get_rest_id(user_id):
         restaurant = Restaurant.query.filter(Restaurant.rest_id == rest).one()
@@ -173,6 +157,13 @@ def get_all_restaurants(user_id):
     return restaurants
 
 
+def show_rest_suggestions(sess):
+    """Directs user to the munchbuddies page that will display restaurant suggestions."""
+
+    restaurants = get_all_restaurants(sess)
+    return [info for rest_id, info in restaurants.iteritems()]
+
+
 if __name__ == "__main__":
     connect_to_db(app)
     # print get_curr_user_liked(3)
@@ -183,3 +174,4 @@ if __name__ == "__main__":
     # get_liked_cat()
     get_pairs(sess)
     get_all_restaurants(user_id)
+    show_rest_suggestions(sess)
