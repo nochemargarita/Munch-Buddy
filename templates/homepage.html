@@ -1,6 +1,6 @@
 {% extends 'base.html' %}
 {% block content %}
-
+    <h1>Munch Buddy</h1>
     {% if 'user_id' not in session %}
         <p><a href="/signup">Sign Up</a></p>
         <br><br>
@@ -10,6 +10,8 @@
         <p><a href="/categories">Categories</a></p>
         <br><br>
         <p><a href="/munchbuddies">My Match</a></p>
+        <br><br>
+        <p><a href="/chat">Chat</a></p>
         <br><br>
         <p><a href="/logout">Log Out</a>
             

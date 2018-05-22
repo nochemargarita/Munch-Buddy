@@ -1,7 +1,7 @@
 {% extends 'base.html'%}
 {% block content %}
     <a href="/logout" style="float:right">Log Out</a>
-    <h3>Choose 5 categories.</h3>
+    <h3>Choose categories: </h3>
     <form action="/categories" method='POST'>
     {% for category in categories %}
         

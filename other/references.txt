@@ -33,3 +33,7 @@ JINJA:
 
 HTML:
     -https://www.webdeveloper.com/forum/d/121536-text-align-right-a-hyperlink/3
+    -https://stackoverflow.com/questions/19307596/wrapping-text-to-new-line-inside-div
+
+WEBSOCKET
+    -https://socket.io/get-started/chat/

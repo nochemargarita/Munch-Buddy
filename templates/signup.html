@@ -3,7 +3,7 @@
 <h2>Sign Up</h2>
 <h4>It's free and always will be.</h4>
     
-    <form action='/signup' method='POST'>
+    <form action='/signup' method='POST' id="frm">
         
         First name <input type="text" name="fname" required>
         <br>
@@ -16,6 +16,8 @@
         Birthday: <input type="date" name='birthday' required>
         <br>
         <input type='submit' value="Sign Up">
-
+        <br>
+        <textarea rows="4" cols="50" maxlength="250" name="interests" form="frm">
     </form>
+    
 {% endblock %}

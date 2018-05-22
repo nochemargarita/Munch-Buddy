@@ -2,26 +2,30 @@
 {% block content %}
     <a href="/logout" style="float:right">Log Out</a>
     {% if matches|length %}
-        <h3>Your Buddies:</h3>
-        {% for match in matches %}
-            {{ match }}
+        <h2>Your Buddies:</h2>
+        {% for user in matches %}
+            <h4>{{ user }}</h4>
+            {% if matches[user][0] %}
+                <i>Interests: {{ matches[user][0] }}</i>
+                <br>
+            {% endif %}
+            Restaurant: {{ matches[user][1]['rest_title'] }}
             <br>
+            Rating: {{ matches[user][1]['rating'] }}
+            <br>
+            Number of Reviews: {{ matches[user][1]['num_reviews'] }}
+            <br>
+            Address: {{ matches[user][1]['address'] }}
+            <br>
+            Phone: <a href="tel:{{ matches[user][1]['phone'] }}">{{ matches[user][1]['phone'] }}</a> 
+            
+            <br><br>
+
         {% endfor %}
-        
+
     {% else %}
         <h3>I didn't find a buddy today.</h3>
     {% endif %}
-    <h3>Here are some restaurants you might like:</h3>
-    {% for restaurant in restaurants %}
-            <h5>{{ restaurant['rest_title'] }}</h5>
-            rating: {{ restaurant['rating'] }}
-            <br>
-            number of reviews: {{ restaurant['num_reviews'] }}
-            <br>
-            address: {{ restaurant['address'] }}
-            <br>
-            phone: {{ restaurant['phone'] }}
-            <br>
-    {% endfor %}
 
+    
 {% endblock %}

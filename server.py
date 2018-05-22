@@ -5,26 +5,18 @@ from werkzeug.security import generate_password_hash, check_password_hash
 from model import connect_to_db, db, User, Like, Restaurant, Category, Message, RestaurantCategory
 import pearson_algorithm
 from flask_socketio import SocketIO, emit, disconnect
+from random import choice
 # import os
 # from datacollector import get_rest_alias_id
-async_mode = None
+# async_mode = None
 app = Flask(__name__)
 
 # Required to use Flask sessions and the debug toolbar
 app.secret_key = "ABC"
-socketio = SocketIO(app, async_mode=async_mode)
-thread = None
+socketio = SocketIO(app)
+
 
 app.jinja_env.undefined = StrictUndefined
-
-
-def background_thread():
-    """Example of how to send generated events to clients."""
-    count= 0
-    while True:
-        socketio.sleep(10)
-        count += 1
-        socketio.emit('my_response', {'data': 'Server generated event', 'count': count}, namespace='/test')
 
 
 @app.route('/')
@@ -88,8 +80,8 @@ def login():
         checked_hashed = check_password_hash(user.password, password)
         if checked_hashed:
             session['user_id'] = user.user_id
-            print session
-            return redirect('/')
+            flash('You successfully logged in.')
+            return redirect('/munchbuddies')
         else:
             flash('You have entered the wrong password!')
             return redirect('/login')
@@ -137,7 +129,7 @@ def selected_categories():
             db.session.add(like)
     db.session.commit()
 
-    return redirect('/')
+    return redirect('/munchbuddies')
 
 
 @app.route('/munchbuddies')
@@ -145,26 +137,38 @@ def show_buddies():
     """Directs user to a page with list of people who matched his/her choice of categories."""
     sess = session.get('user_id')
     if sess:
-        results = pearson_algorithm.get_pairs(sess)
-        matches = []
-        for user_id, pearson in results.iteritems():
-            if pearson >= .5:
+        results = pearson_algorithm.get_all_restaurants(sess)
+        matches = {}
+        for user_id, restaurant in results.iteritems():
                 user = User.query.filter(User.user_id == user_id).first()
                 fullname = "{} {}".format(user.fname, user.lname)
-                matches.append(fullname)
-        restaurants = pearson_algorithm.show_rest_suggestions(sess)
-        return render_template('munchbuddies.html', matches=matches, restaurants=restaurants)
+                matches[fullname] = [user.interests, choice(restaurant)]
+                
+        return render_template('munchbuddies.html', matches=matches )
 
     else:
         return redirect('/login')
+
+
+@app.route('/chat')
+def chat_bud():
+    return render_template('chat.html')
+
+# receiving messages
+@socketio.on('my event')
+def handle_my_custom_event(json):
+    print('received json: ' + str(json))
+
+
+
 
 if __name__ == "__main__":
     # set debug to True at the point of invoking the DebugToolbarExtension
     app.debug = True
 
     connect_to_db(app)
-    # socketio.run(app, host="0.0.0.0", port=5000)
+    socketio.run(app, host="0.0.0.0", port=5000)
 
     # DebugToolbarExtension(app)
 
-    app.run(host="0.0.0.0")
+    # app.run(host="0.0.0.0")

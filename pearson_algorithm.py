@@ -1,5 +1,5 @@
 from model import connect_to_db, db, User, Like, Restaurant, Category, RestaurantCategory, Message
-from server import app
+# from server import app
 from math import sqrt
 
 
@@ -115,53 +115,92 @@ def get_pairs(sess):
     # return {'user_id': pearson(zip(current_user, val)) for user_id, val in mapped_users.iteritems()}
 
 
-# show restaurants
-def get_liked_cat(user_id):
-    """Returns a list of cat_id chosen by the user."""
 
-    liked = Like.query.filter(Like.user_id == user_id).all()
+def get_the_match(sess):
+    """Returns a dictionary of users who scored .5 and above."""
+    users = {}
+    for user, score in get_pairs(sess).iteritems():
+        if score > .5:
+            users[user] = []
 
-    return {like.cat_id for like in liked}
+    return users
 
 
-def query_restaurants_categories(user_id):
+def get_liked_cat(sess):
+    """Returns a list of user matched objects."""
+
+    users_and_restaurants = []
+    for user, lst in get_the_match(sess).iteritems():
+        liked = Like.query.filter(Like.user_id == user).all()
+        users_and_restaurants.extend(liked)
+
+    return users_and_restaurants
+
+
+def matched_category(sess):
+    """Matched categories per user."""
+
+    suggestions = {}
+    for user in get_liked_cat(sess):
+        if user.user_id not in suggestions:
+            suggestions[user.user_id] = [user.cat_id]
+        else:
+            suggestions[user.user_id].append(user.cat_id)
+
+    return suggestions
+
+
+def query_restaurants_categories(sess):
     """Returns a list of Restaurant object."""
 
-    restaurants_obj = []
-    for like in get_liked_cat(user_id):
-        rest_cat = RestaurantCategory.query.filter(RestaurantCategory.cat_id == like).all()
-        restaurants_obj.extend(rest_cat)
+    restaurants_obj = {}
+    for user, category in matched_category(sess).iteritems():
+        for item in category:
+            rest_cat = RestaurantCategory.query.filter(RestaurantCategory.cat_id == item).all()
+            if user not in restaurants_obj:
+                restaurants_obj[user] = rest_cat
+            else:
+                if rest_cat not in restaurants_obj[user]:
+                    restaurants_obj[user].extend(rest_cat)
 
     return restaurants_obj
 
-
-def get_rest_id(user_id):
+def get_rest_id(sess):
     """Returns a list of restaurant ids."""
 
-    return [rest.rest_id for rest in query_restaurants_categories(user_id)]
-
-
-def get_all_restaurants(user_id):
-    """Returns obj"""
     restaurants = {}
-    for rest in get_rest_id(user_id):
-        restaurant = Restaurant.query.filter(Restaurant.rest_id == rest).one()
-
-        restaurants[restaurant.rest_id] = {'rest_title': restaurant.rest_title,
-                                           'rating': restaurant.rating,
-                                           'num_reviews': restaurant.num_reviews,
-                                           'address': restaurant.address,
-                                           'phone': restaurant.phone
-                                           }
+    for user, rest_id in query_restaurants_categories(sess).iteritems():
+        for rest in rest_id:
+            if user not in restaurants:
+                restaurants[user] = [rest.rest_id]
+            else:
+                restaurants[user].append(rest.rest_id)
 
     return restaurants
 
 
-def show_rest_suggestions(sess):
-    """Directs user to the munchbuddies page that will display restaurant suggestions."""
+def get_all_restaurants(sess):
+    """Returns obj"""
+    restaurants = {}
+    for user, rest_id in get_rest_id(sess).iteritems():
+        for rest in rest_id:
+            restaurant = Restaurant.query.filter(Restaurant.rest_id == rest).one()
+            if user not in restaurants:
+                restaurants[user] = [{'rest_title': restaurant.rest_title,
+                                     'rating': restaurant.rating,
+                                     'num_reviews': restaurant.num_reviews,
+                                     'address': restaurant.address,
+                                     'phone': restaurant.phone
+                                    }]
+            else:
+                restaurants[user].append({'rest_title': restaurant.rest_title,
+                                          'rating': restaurant.rating,
+                                          'num_reviews': restaurant.num_reviews,
+                                          'address': restaurant.address,
+                                          'phone': restaurant.phone
+                                        })
 
-    restaurants = get_all_restaurants(sess)
-    return [info for rest_id, info in restaurants.iteritems()]
+    return restaurants
 
 
 if __name__ == "__main__":
@@ -172,6 +211,11 @@ if __name__ == "__main__":
     # print add_value_to_list(3)
     # print map_each_user(3)
     # get_liked_cat()
-    get_pairs(sess)
-    get_all_restaurants(user_id)
-    show_rest_suggestions(sess)
+    # print get_pairs(3)
+    # get_all_restaurants(user_id)
+    # show_rest_suggestions(sess)
+    # print get_the_match(3)
+    # print get_liked_cat(3)
+    # print query_restaurants_categories(3)
+    # print get_rest_id(3)
+    get_all_restaurants(sess)
