@@ -8,12 +8,12 @@ from flask_socketio import SocketIO, emit, disconnect
 from random import choice
 # import os
 # from datacollector import get_rest_alias_id
-# async_mode = None
+async_mode = None
 app = Flask(__name__)
 
 # Required to use Flask sessions and the debug toolbar
 app.secret_key = "ABC"
-socketio = SocketIO(app)
+socketio = SocketIO(app, async_mode=async_mode)
 
 
 app.jinja_env.undefined = StrictUndefined
@@ -23,7 +23,7 @@ app.jinja_env.undefined = StrictUndefined
 def homepage():
     """Homepage."""
 
-    return render_template("homepage.html")
+    return render_template("homepage.html", async_mode=socketio.async_mode)
 
 
 @app.route('/signup')
@@ -154,11 +154,36 @@ def show_buddies():
 def chat_bud():
     return render_template('chat.html')
 
-# receiving messages
-@socketio.on('my event')
-def handle_my_custom_event(json):
-    print('received json: ' + str(json))
+# To receive WebSocket messages from the client the application defines event handlers
+# using the socketio.on decorator.
 
+# custom events deliver a JSON payload in a form of python dic
+# namespace is an optional argument
+# allows client to open multiple connections to the server that are multiplexed in a single socket
+# default: attachec to the global namespace
+@socketio.on('my_event', namespace='/chat')
+def test_message(message):
+    #emit is a function that sends message udner a custom event name
+    print 'working'
+    emit('my_response', {'data': message['data']})
+
+
+@socketio.on('my_broadcast_event', namespace='/chat')
+def test_broadcast_message(message):
+    # broadcast is an optional argument, so all clients connected to the namespace will receive the message
+    # message will be senr to the connected client by default
+    print 'working'
+    emit('my_response', {'data': message['data']}, broadcast=True)
+
+
+# @socketio.on('connect', namespace='/chat')
+# def test_connect():
+#     emit('my response', {'data': 'Connected'})
+
+
+# @socketio.on('disconnect', namespace='/chat')
+# def test_disconnect():
+#     print('Client disconnected')
 
 
 

@@ -1,6 +1,6 @@
 <!doctype html>
 <html>
-    <head>
+<!--     <head>
     <style type="text/css">
       body {
             width: 50% ;
@@ -26,23 +26,112 @@
         <ul id="messages"></ul>
         <form action="">
             <input id="m" autocomplete="off" /><button>Send</button>
+        </form> -->
+
+        <h2>Send:</h2>
+        <form id="emit" method="POST" action='#'>
+            <input type="text" name="emit_data" id="emit_data" placeholder="Message">
+            <input type="submit" value="Echo">
         </form>
+        <form id="broadcast" method="POST" action='#'>
+            <input type="text" name="broadcast_data" id="broadcast_data" placeholder="Message">
+            <input type="submit" value="Broadcast">
+        </form>
+        <form id="close" method="POST" action="#">
+            <input type="text" name="close_room" id="close_room" placeholder="Room Name">
+            <input type="submit" value="Close Room">
+        </form>
+        <form id="disconnect" method="POST" action="#">
+            <input type="submit" value="Disconnect">
+        </form>
+        <h2>Receive:</h2>
+        <div id="log"></div>
+
 
         <script type="text/javascript" src="/socket.io/socket.io.js"></script>
         <script src="https://code.jquery.com/jquery-1.11.1.js"></script>
-        <script>
-          $(function () {
-            let socket = io();
-              $('form').submit(function(){
-                socket.emit('chat message', $('#m').val());
-                $('#m').val('');
-                return false;
+        <script type="text/javascript" charset="utf-8">
+            $(document).ready(function() {
+              // namespace set to an empty string since multiple channels are not needed
+              namespace='';
+
+              // connect to the SOCKET.IO server.
+              // URL format
+              let socket = io.connect(location.protocol + '//' + document.domain + ':' + location.port + namespace);
+
+              // socket.on use to define event handler
+
+              // event handler for new connection
+              // Callback funtion is invoked when a connection with the server is established
+              socket.on('connect', function() {
+                socket.emit('my event', {data: 'I\'m connected!'});
+              });
+
+              // event handler for server sent data
+              // Callback function is invoked whenever the server emits data to the client. 
+              // data will be displayed in the Receive section of the page
+              socket.on('response', function(msg) {
+                $('#log').append('<br>' + $('<div>').text('Received #' + msg.count + ': ' + msg.data).html());
+              });
+
+              // Interval function that tests message latency by sending a "ping" message.
+              // THen server responsds with "pong" message. 
+              // Roundtrip time is measured.
+              // 1000 is 1 second
+              let ping_pong_times = [];
+              let start_time;
+              window.setInterval(function(){
+                start_time = (new Date).getTime()
+                socket.emit('my_ping');
+              }, 1000);
+
+              // Handler for the pong message.
+              // When received, the time from ping is stored, and
+              // the verage of last 30 samples and displayed
+              socket.on('my_pong' function() {
+                let latency = (new Date).getTime() - start_time;
+                ping_pong_times.push(latency);
+                ping_pong_times = ping_pong_times.slice(-30); // last 30 samples
+                let sum = 0;
+
+                for (let i =0; i < ping_pong_times.length; i++){
+                  sum += ping_pong_times[i]
+                }
+                $('#ping-pong').text(Math.round(10 * sum / ping_pong_times.length) / 10);
+              });
+
+              //Handlers for the different forms in the page
+             // Accepts data from the user and send it to the server in a different ways
+               $('form#emit').submit(function(event) {
+                  socket.emit('my_event', {data: $('#emit_data').val()});
+                  return false;
+               });
+               $('form#broadcast').submit(function(event) {
+                  socket.emit('my_broadcast_event', {data: $('#broadcast_data').val()});
+                  return false;       
+               });
+               $('form#close').submit(function(event) {
+                  socket.emit('close_room', {room: $('#close_room').val()});
+                  return false;
+               });
+               $('form#disconnect').submit(function(event) {
+                  socket.emit('disconnect_request');
+                  return false;
+               });
             });
-              socket.on('chat message', function(msg){
-                $('#messages').append($('<li>').text(msg));
-                // window.scrollTo(0, document.body.scrollHeight);
-              })
-          });
+
+          // $(function () {
+          //   let socket = io();
+          //     $('form').submit(function(){
+          //       socket.emit('chat message', $('#m').val());
+          //       $('#m').val('');
+          //       return false;
+          //   });
+          //     socket.on('chat message', function(msg){
+          //       $('#messages').append($('<li>').text(msg));
+          //       // window.scrollTo(0, document.body.scrollHeight);
+          //     })
+          // });
         </script>
      
     </body>
