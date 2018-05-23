@@ -118,6 +118,7 @@ class Message(db.Model):
     __tablename__ = "messages"
 
     message_id = db.Column(db.Integer, autoincrement=True, primary_key=True)
+    sess_id = db.Column(db.Integer, db.ForeignKey("messages_sessions.sess_id"), nullable=False)
     from_user_id = db.Column(db.Integer, db.ForeignKey("users.user_id"), nullable=False)
     to_user_id = db.Column(db.Integer, db.ForeignKey("users.user_id"), nullable=False)
     messaged_on = db.Column(db.DateTime, nullable=False)
@@ -127,12 +128,22 @@ class Message(db.Model):
 
     to_user = db.relationship("User", foreign_keys=[to_user_id], backref=db.backref("messages_received", order_by=message_id))
 
+    mess_sess = db.relationship("MessageSession", backref=db.backref("messages", order_by=message_id))
+    
     def __repr__(self):
         """Provide useful representation."""
 
         return "<Message message_id={} from_user_id={} to_user_id={}>".format(
                self.message_id, self.from_user_id, self.to_user_id)
 
+class MessageSession(db.Model):
+    """Users unique session id."""
+
+    __tablename__ = "messages_sessions"
+
+    sess_id = db.Column(db.Integer, autoincrement=True, primary_key=True)
+    from_user_id = db.Column(db.Integer, db.ForeignKey("users.user_id"), nullable=False)
+    to_user_id = db.Column(db.Integer, db.ForeignKey("users.user_id"), nullable=False)
 
 ##############################################################################
 # Helper functions
@@ -144,8 +155,7 @@ def connect_to_db(app):
     app.config["SQLALCHEMY_DATABASE_URI"] = "PostgreSQL:///munch"
     app.config["SQLALCHEMY_TRACK_MODIFICATIONS"] = False
     db.app = app
-    db.init_app(
-        app)
+    db.init_app(app)
 
 
 if __name__ == "__main__":

@@ -37,3 +37,6 @@ HTML:
 
 WEBSOCKET
     -https://socket.io/get-started/chat/
+
+JQUERY
+    -http://jsfiddle.net/vVxM2/

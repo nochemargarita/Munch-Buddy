@@ -5,7 +5,7 @@
     <form action="/categories" method='POST'>
     {% for category in categories %}
         
-            <input type='checkbox' name='cat_id' value='{{ category.cat_id }}'>
+            <input type='checkbox' class='single-checkbox' name='cat_id' value='{{ category.cat_id }}'>
             {{ category.cat_title }}
             <br>
         
@@ -16,6 +16,13 @@
 
         <script src="https://code.jquery.com/jquery-3.2.1.min.js"></script>
         <script>
+            let limit = 5;
+            $('input.single-checkbox').on('change', function(evt) {
+               if($(this).siblings(':checked').length >= limit) {
+                   this.checked = false;
+               }
+            });
         </script>
     
 {% endblock %}
+ß

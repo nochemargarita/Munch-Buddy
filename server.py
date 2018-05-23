@@ -2,18 +2,18 @@ from jinja2 import StrictUndefined
 from flask import Flask, render_template, request, flash, redirect, session
 # from flask_debugtoolbar import DebugToolbarExtension
 from werkzeug.security import generate_password_hash, check_password_hash
-from model import connect_to_db, db, User, Like, Restaurant, Category, Message, RestaurantCategory
+from model import connect_to_db, db, User, Like, Restaurant, Category, Message, MessageSession, RestaurantCategory
 import pearson_algorithm
-from flask_socketio import SocketIO, emit, disconnect
+from flask_socketio import SocketIO, emit, disconnect, join_room, rooms
 from random import choice
 # import os
 # from datacollector import get_rest_alias_id
-async_mode = None
+# async_mode = None , async_mode=async_mode
 app = Flask(__name__)
 
 # Required to use Flask sessions and the debug toolbar
 app.secret_key = "ABC"
-socketio = SocketIO(app, async_mode=async_mode)
+socketio = SocketIO(app)
 
 
 app.jinja_env.undefined = StrictUndefined
@@ -22,8 +22,10 @@ app.jinja_env.undefined = StrictUndefined
 @app.route('/')
 def homepage():
     """Homepage."""
-
-    return render_template("homepage.html", async_mode=socketio.async_mode)
+    if 'user_id' in session:
+        return redirect('/munchbuddies')
+    else:
+        return render_template("homepage.html")
 
 
 @app.route('/signup')
@@ -64,8 +66,10 @@ def signup():
 @app.route('/login')
 def login_form():
     """Directs user to a login form."""
-
-    return render_template('/login.html')
+    if 'user_id' in session:
+        return redirect('/munchbuddies')
+    else:
+        return render_template('/login.html')
 
 
 @app.route('/login', methods=['POST'])
@@ -94,10 +98,13 @@ def login():
 @app.route('/logout')
 def logout():
     """Logs the user our from the session."""
-    flash('You successfully logged out.')
-    session.pop('user_id', None)
-    return redirect('/')
-
+    if 'user_id' in session:
+        flash('You successfully logged out.')
+        session.pop('user_id', None)
+        return redirect('/')
+    else:
+        return render_template('/login.html')
+    
 
 @app.route('/categories')
 def categories():
@@ -132,27 +139,56 @@ def selected_categories():
     return redirect('/munchbuddies')
 
 
+def create_session(sess):
+
+    # sess = session.get('user_id')
+
+    for match in pearson_algorithm.get_the_match(sess):
+        pair = MessageSession.query.filter( ((MessageSession.from_user_id == sess) |
+                                            (MessageSession.from_user_id == match)) &
+                                            ((MessageSession.to_user_id == match) |  
+                                            (MessageSession.to_user_id == sess)) ).first()
+        if not pair:
+            new_pair = MessageSession(from_user_id=sess, to_user_id=match)
+            db.session.add(new_pair)
+
+    db.session.commit()
+
+
 @app.route('/munchbuddies')
 def show_buddies():
     """Directs user to a page with list of people who matched his/her choice of categories."""
     sess = session.get('user_id')
+    # q_name = User.query.filter(User.user_id == sess).first()
+    # name = q_name.fname
+    create_session(sess)
     if sess:
         results = pearson_algorithm.get_all_restaurants(sess)
         matches = {}
         for user_id, restaurant in results.iteritems():
                 user = User.query.filter(User.user_id == user_id).first()
-                fullname = "{} {}".format(user.fname, user.lname)
-                matches[fullname] = [user.interests, choice(restaurant)]
-                
-        return render_template('munchbuddies.html', matches=matches )
+                matches[user.user_id] = [user.fname, user.interests, choice(restaurant)]
+
+        return render_template('munchbuddies.html', matches=matches,  sess=sess, async_mode=socketio.async_mode)
 
     else:
         return redirect('/login')
 
+# @app.route('/munchbuddies/chat')
+# def chat_page():
+#     """Directs user to the chat page."""
 
-@app.route('/chat')
-def chat_bud():
-    return render_template('chat.html')
+#     if sess:
+#         user = User.query.filter(User.user_id == sess).first()
+#         messages = Message.query.filter(user_id == sess)
+#         name = user.fname
+
+#         return render_template('chat.html', name=name, sess=sess, async_mode=socketio.async_mode)
+
+
+
+
+
 
 # To receive WebSocket messages from the client the application defines event handlers
 # using the socketio.on decorator.
@@ -161,37 +197,27 @@ def chat_bud():
 # namespace is an optional argument
 # allows client to open multiple connections to the server that are multiplexed in a single socket
 # default: attachec to the global namespace
-@socketio.on('my_event', namespace='/chat')
+@socketio.on('my_event', namespace='/munchbuddies')
 def test_message(message):
-    #emit is a function that sends message udner a custom event name
+    #emit is a function that sends message user a custom event name
     print 'working'
     emit('my_response', {'data': message['data']})
 
+@socketio.on('join', namespace='/munchbuddies')
+def join(message):
+    join_room(message['room'])
+    emit('my_response',
+         {'data': 'In rooms: ' + ', '.join(rooms())})
 
-@socketio.on('my_broadcast_event', namespace='/chat')
-def test_broadcast_message(message):
-    # broadcast is an optional argument, so all clients connected to the namespace will receive the message
-    # message will be senr to the connected client by default
-    print 'working'
-    emit('my_response', {'data': message['data']}, broadcast=True)
-
-
-# @socketio.on('connect', namespace='/chat')
-# def test_connect():
-#     emit('my response', {'data': 'Connected'})
-
-
-# @socketio.on('disconnect', namespace='/chat')
-# def test_disconnect():
-#     print('Client disconnected')
-
-
+@socketio.on('my_room_event', namespace='/munchbuddies')
+def send_room_message(message):
+    emit('my_response', {'data': message['data']}, room=message['room'])
 
 if __name__ == "__main__":
     # set debug to True at the point of invoking the DebugToolbarExtension
     app.debug = True
-
     connect_to_db(app)
+
     socketio.run(app, host="0.0.0.0", port=5000)
 
     # DebugToolbarExtension(app)

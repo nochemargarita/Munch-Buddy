@@ -1,5 +1,6 @@
 from model import connect_to_db, db, User, Like, Restaurant, Category, RestaurantCategory, Message
 # from server import app
+
 from math import sqrt
 
 
@@ -203,6 +204,10 @@ def get_all_restaurants(sess):
     return restaurants
 
 
+
+
+
+
 if __name__ == "__main__":
     connect_to_db(app)
     # print get_curr_user_liked(3)
@@ -214,8 +219,9 @@ if __name__ == "__main__":
     # print get_pairs(3)
     # get_all_restaurants(user_id)
     # show_rest_suggestions(sess)
-    # print get_the_match(3)
+    get_the_match(sess)
     # print get_liked_cat(3)
     # print query_restaurants_categories(3)
     # print get_rest_id(3)
     get_all_restaurants(sess)
+    # create_session(sess)
