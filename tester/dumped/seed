@@ -132,3 +132,16 @@ munchbuddies.html
            });
         });
     </script>
+
+
+
+  # @app.route('/munchbuddies/chat')
+# def chat_page():
+#     """Directs user to the chat page."""
+
+#     if sess:
+#         user = User.query.filter(User.user_id == sess).first()
+#         messages = Message.query.filter(user_id == sess)
+#         name = user.fname
+
+#         return render_template('chat.html', name=name, sess=sess, async_mode=socketio.async_mode)

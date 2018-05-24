@@ -4,7 +4,7 @@ from flask import Flask, render_template, request, flash, redirect, session
 from werkzeug.security import generate_password_hash, check_password_hash
 from model import connect_to_db, db, User, Like, Restaurant, Category, Message, MessageSession, RestaurantCategory
 import pearson_algorithm
-from flask_socketio import SocketIO, emit, disconnect, join_room, rooms
+from flask_socketio import SocketIO, emit, disconnect, join_room, leave_room, rooms
 from random import choice
 # import os
 # from datacollector import get_rest_alias_id
@@ -139,53 +139,28 @@ def selected_categories():
     return redirect('/munchbuddies')
 
 
-def create_session(sess):
-
-    # sess = session.get('user_id')
-
-    for match in pearson_algorithm.get_the_match(sess):
-        pair = MessageSession.query.filter( ((MessageSession.from_user_id == sess) |
-                                            (MessageSession.from_user_id == match)) &
-                                            ((MessageSession.to_user_id == match) |  
-                                            (MessageSession.to_user_id == sess)) ).first()
-        if not pair:
-            new_pair = MessageSession(from_user_id=sess, to_user_id=match)
-            db.session.add(new_pair)
-
-    db.session.commit()
-
-
 @app.route('/munchbuddies')
 def show_buddies():
     """Directs user to a page with list of people who matched his/her choice of categories."""
     sess = session.get('user_id')
-    # q_name = User.query.filter(User.user_id == sess).first()
-    # name = q_name.fname
-    create_session(sess)
+
     if sess:
         results = pearson_algorithm.get_all_restaurants(sess)
         matches = {}
         for user_id, restaurant in results.iteritems():
                 user = User.query.filter(User.user_id == user_id).first()
-                matches[user.user_id] = [user.fname, user.interests, choice(restaurant)]
+                sess_id = MessageSession.query.filter( ((MessageSession.from_user_id == sess) |
+                                            (MessageSession.from_user_id == user_id)) &
+                                            ((MessageSession.to_user_id == user_id) |  
+                                            (MessageSession.to_user_id == sess)) ).first()
+                matches[user.user_id] = [user.fname, user.interests, sess_id.sess_id, choice(restaurant)]
+                
 
-        return render_template('munchbuddies.html', matches=matches,  sess=sess, async_mode=socketio.async_mode)
+        pearson_algorithm.create_session(sess)
+        return render_template('munchbuddies.html', matches=matches, async_mode=socketio.async_mode)
 
     else:
         return redirect('/login')
-
-# @app.route('/munchbuddies/chat')
-# def chat_page():
-#     """Directs user to the chat page."""
-
-#     if sess:
-#         user = User.query.filter(User.user_id == sess).first()
-#         messages = Message.query.filter(user_id == sess)
-#         name = user.fname
-
-#         return render_template('chat.html', name=name, sess=sess, async_mode=socketio.async_mode)
-
-
 
 
 
@@ -212,6 +187,19 @@ def join(message):
 @socketio.on('my_room_event', namespace='/munchbuddies')
 def send_room_message(message):
     emit('my_response', {'data': message['data']}, room=message['room'])
+
+
+@socketio.on('leave', namespace='/munchbuddies')
+def leave(message):
+    leave_room(message['room'])
+    emit('my_response',
+         {'data': 'In rooms: ' + ', '.join(rooms())})
+
+@socketio.on('disconnect_request', namespace='/munchbuddies')
+def disconnect_request():
+    emit('my_response',
+         {'data': 'Disconnected!'})
+    disconnect()
 
 if __name__ == "__main__":
     # set debug to True at the point of invoking the DebugToolbarExtension

@@ -1,4 +1,4 @@
-from model import connect_to_db, db, User, Like, Restaurant, Category, RestaurantCategory, Message
+from model import connect_to_db, db, User, Like, Restaurant, Category, RestaurantCategory, Message, MessageSession
 # from server import app
 
 from math import sqrt
@@ -204,10 +204,28 @@ def get_all_restaurants(sess):
     return restaurants
 
 
+# add to database the pairs and give unique id
+def create_session(sess):
+
+    for match in get_the_match(sess):
+        pair = MessageSession.query.filter( ((MessageSession.from_user_id == sess) |
+                                            (MessageSession.from_user_id == match)) &
+                                            ((MessageSession.to_user_id == match) |  
+                                            (MessageSession.to_user_id == sess)) ).first()
+        if not pair:
+            new_pair = MessageSession(from_user_id=sess, to_user_id=match)
+            db.session.add(new_pair)
+
+    db.session.commit()
 
 
-
-
+# def get_sess_id(sess):
+#     for match in get_the_match(sess):
+#         sess_id = MessageSession.query.filter( ((MessageSession.from_user_id == sess) |
+#                                             (MessageSession.from_user_id == match)) &
+#                                             ((MessageSession.to_user_id == match) |  
+#                                             (MessageSession.to_user_id == sess)) ).first()
+#     return sess_id.sess_id
 if __name__ == "__main__":
     connect_to_db(app)
     # print get_curr_user_liked(3)
@@ -224,4 +242,4 @@ if __name__ == "__main__":
     # print query_restaurants_categories(3)
     # print get_rest_id(3)
     get_all_restaurants(sess)
-    # create_session(sess)
+    create_session(sess)

@@ -1,13 +1,12 @@
 {% extends 'base.html'%}
 {% block content %}
-    <meta id="curr_user" content="{{ sess }}">
     
     <a href="/logout" style="float:right">Log Out</a>
     {% if matches|length %}
     <h2>Your Buddies:</h2>
     {% for user in matches %}
  
-        <h4>{{ matches[user][0] }} <button class='user-id' target='{{ user }}'><img src="http://www.myiconfinder.com/uploads/iconsets/256-256-f269bbc2a3bd8805b0dccb6c36dd2fac.png" width="16" height="16"></button></h4> 
+        <h4>{{ matches[user][0] }} <button class='user-id' target='{{ matches[user][2] }}'><img src="http://www.myiconfinder.com/uploads/iconsets/256-256-f269bbc2a3bd8805b0dccb6c36dd2fac.png" width="16" height="16"></button></h4> 
 
         {% if matches[user][1] %}
             <i>Interests: {{ matches[user][0] }}</i>
@@ -15,15 +14,15 @@
         {% endif %}
 
         </form>
-        Restaurant: {{ matches[user][2]['rest_title'] }}
+        Restaurant: {{ matches[user][3]['rest_title'] }}
         <br>
-        Rating: {{ matches[user][2]['rating'] }}
+        Rating: {{ matches[user][3]['rating'] }}
         <br>
-        Number of Reviews: {{ matches[user][2]['num_reviews'] }}
+        Number of Reviews: {{ matches[user][3]['num_reviews'] }}
         <br>
-        Address: {{ matches[user][2]['address'] }}
+        Address: {{ matches[user][3]['address'] }}
         <br>
-        Phone: <a href="tel:{{ matches[user][2]['phone'] }}">{{ matches[user][2]['phone'] }}</a> 
+        Phone: <a href="tel:{{ matches[user][3]['phone'] }}">{{ matches[user][3]['phone'] }}</a> 
         
         <br><br>
 
@@ -36,6 +35,15 @@
             <input type="text" name="room_name" id="room_name" value='3'>
             <input type="text" name="room_data" id="room_data" placeholder="Message">
             <input type="submit" value="Send">
+        </form>
+
+        <form id="leave" method="POST" action='#'>
+            <input type="text" name="leave_room" id="leave_room" placeholder="Room Name">
+            <input type="submit" value="Leave Room">
+        </form>
+
+        <form id="disconnect" method="POST" action="#">
+            <input type="submit" value="Disconnect">
         </form>
 
     {% else %}
@@ -59,7 +67,7 @@
           // Callback function is invoked whenever the server emits data to the client. 
           // data will be displayed in the Receive section of the page
             socket.on('my_response', function(msg) {
-                $('#log').append('<p>{{ sess }}: ' + msg.data + '</p>');
+                $('#log').append('<p>M: ' + msg.data + '</p>');
    
           });
           //Handlers for the different forms in the page
@@ -73,6 +81,10 @@
             $('form.mess').submit(function(event) {
                 socket.emit('my_room_event', {room: $('#room_name').val(), data: $('#room_data').val()});
                 socket.emit('my_event', {data: $('#room_data').val()})
+                return false;
+            });
+            $('form#leave').submit(function(event) {
+                socket.emit('leave', {room: $('#leave_room').val()});
                 return false;
             });
            $('form#disconnect').submit(function(event) {
