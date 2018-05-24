@@ -6,6 +6,7 @@ from model import connect_to_db, db, User, Like, Restaurant, Category, Message, 
 import pearson_algorithm
 from flask_socketio import SocketIO, emit, disconnect, join_room, leave_room, rooms
 from random import choice
+from datetime import datetime
 # import os
 # from datacollector import get_rest_alias_id
 # async_mode = None , async_mode=async_mode
@@ -145,6 +146,9 @@ def show_buddies():
     sess = session.get('user_id')
 
     if sess:
+        user = User.query.filter(User.user_id == sess).first()
+        session['name'] = user.fname
+        name = session.get('name')
         results = pearson_algorithm.get_all_restaurants(sess)
         matches = {}
         for user_id, restaurant in results.iteritems():
@@ -156,11 +160,10 @@ def show_buddies():
                 matches[user.user_id] = [user.fname, user.interests, sess_id.sess_id, choice(restaurant)]
 
         pearson_algorithm.create_session(sess)
-        return render_template('munchbuddies.html', matches=matches, async_mode=socketio.async_mode)
+        return render_template('munchbuddies.html', matches=matches, sess=sess, name=name, async_mode=socketio.async_mode)
 
     else:
         return redirect('/login')
-
 
 # To receive WebSocket messages from the client the application defines event handlers
 # using the socketio.on decorator.
@@ -169,6 +172,8 @@ def show_buddies():
 # namespace is an optional argument
 # allows client to open multiple connections to the server that are multiplexed in a single socket
 # default: attachec to the global namespace
+
+
 @socketio.on('my_event', namespace='/munchbuddies')
 def test_message(message):
     #emit is a function that sends message user a custom event name
@@ -185,7 +190,7 @@ def join(message):
 
 @socketio.on('my_room_event', namespace='/munchbuddies')
 def send_room_message(message):
-    emit('my_response', {'data': message['data']}, room=message['room'])
+    emit('my_response', message, room=message['room'])
 
 
 @socketio.on('leave', namespace='/munchbuddies')
@@ -195,15 +200,10 @@ def leave(message):
          {'data': 'In rooms: ' + ', '.join(rooms())})
 
 
-@socketio.on('disconnect_request', namespace='/munchbuddies')
-def disconnect_request():
-    emit('my_response',
-         {'data': 'Disconnected!'})
-    disconnect()
-
 if __name__ == "__main__":
     # set debug to True at the point of invoking the DebugToolbarExtension
     app.debug = True
+    app.jinja_env.auto_reload = app.debug
     connect_to_db(app)
 
     socketio.run(app, host="0.0.0.0", port=5000)

@@ -1,6 +1,6 @@
 {% extends 'base.html'%}
 {% block content %}
-    
+    <meta id="curr_user" name="current_session" content="{{ sess|string + name|string }}">
     <a href="/logout" style="float:right">Log Out</a>
     {% if matches|length %}
     <h2>Your Buddies:</h2>
@@ -27,7 +27,7 @@
         <br><br>
 
     {% endfor %}
-    
+        <div id="notif"></div>
         <h2>Messages</h2>
         <div id="log"></div>
 
@@ -61,19 +61,19 @@
             // event handler for server sent data
             // Callback function is invoked whenever the server emits data to the client. 
             // data will be displayed in the Receive section of the page
-            socket.on('my_response', function(msg) {
-                $('#log').append('<p>M: ' + msg.data + '</p>');
 
-            });
               //Handlers for the different forms in the page
              // Accepts data from the user and send it to the server in a different ways 
-            socket.emit('join', {room: $('#curr_user').attr('content')});
+            // $( window ).load(function(){
+            //     socket.emit('join', {room: $('#curr_user').attr('content')});
+            // });
             $('.user-id').click(function(event){
-                rm = $(this).attr('target')
+                let rm = $(this).attr('target')
                 socket.emit('join', {room: rm});
-
+                // socket.emit('leave', {room: $('#curr_user').attr('content')});
+                
                 $('form.mess').submit(function(event) {
-                    socket.emit('my_room_event', {room: rm, data: $('#room_data').val()});
+                    socket.emit('my_room_event', {sender: '{{ name }}', room: rm, data: $('#room_data').val()});
                     $('#room_data').val('');
                     return false;
                 });
@@ -82,6 +82,10 @@
                     socket.emit('leave', {room: rm});
                     return false;
                 });
+                
+            });
+            socket.on('my_response', function(msg) {
+                    $('#log').append('<p>' + msg.sender + ': ' + msg.data + '</p>');
             });
        });
     </script>
