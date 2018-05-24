@@ -149,20 +149,17 @@ def show_buddies():
         matches = {}
         for user_id, restaurant in results.iteritems():
                 user = User.query.filter(User.user_id == user_id).first()
-                sess_id = MessageSession.query.filter( ((MessageSession.from_user_id == sess) |
-                                            (MessageSession.from_user_id == user_id)) &
-                                            ((MessageSession.to_user_id == user_id) |  
-                                            (MessageSession.to_user_id == sess)) ).first()
+                sess_id = MessageSession.query.filter(((MessageSession.from_user_id == sess) |
+                                                       (MessageSession.from_user_id == user_id)) &
+                                                      ((MessageSession.to_user_id == user_id) |
+                                                       (MessageSession.to_user_id == sess))).first()
                 matches[user.user_id] = [user.fname, user.interests, sess_id.sess_id, choice(restaurant)]
-                
 
         pearson_algorithm.create_session(sess)
         return render_template('munchbuddies.html', matches=matches, async_mode=socketio.async_mode)
 
     else:
         return redirect('/login')
-
-
 
 
 # To receive WebSocket messages from the client the application defines event handlers
@@ -175,14 +172,16 @@ def show_buddies():
 @socketio.on('my_event', namespace='/munchbuddies')
 def test_message(message):
     #emit is a function that sends message user a custom event name
-    print 'working'
     emit('my_response', {'data': message['data']})
+
 
 @socketio.on('join', namespace='/munchbuddies')
 def join(message):
-    join_room(message['room'])
+    room = message['room']
+    join_room(room)
     emit('my_response',
          {'data': 'In rooms: ' + ', '.join(rooms())})
+
 
 @socketio.on('my_room_event', namespace='/munchbuddies')
 def send_room_message(message):
@@ -194,6 +193,7 @@ def leave(message):
     leave_room(message['room'])
     emit('my_response',
          {'data': 'In rooms: ' + ', '.join(rooms())})
+
 
 @socketio.on('disconnect_request', namespace='/munchbuddies')
 def disconnect_request():
