@@ -1,6 +1,7 @@
 """Models and database for Munch Buddy project."""
 
 from flask_sqlalchemy import SQLAlchemy
+from datetime import datetime
 # from werkzeug.security import generate_password_hash, check_password_hash
 
 
@@ -121,7 +122,7 @@ class Message(db.Model):
     sess_id = db.Column(db.Integer, db.ForeignKey("messages_sessions.sess_id"), nullable=False)
     from_user_id = db.Column(db.Integer, db.ForeignKey("users.user_id"), nullable=False)
     to_user_id = db.Column(db.Integer, db.ForeignKey("users.user_id"), nullable=False)
-    messaged_on = db.Column(db.DateTime, nullable=False)
+    messaged_on = db.Column(db.DateTime, nullable=False, default=datetime.utcnow)  # auto add/fill
     message = db.Column(db.String(300))
 
     from_user = db.relationship("User", foreign_keys=[from_user_id], backref=db.backref("messages_sent", order_by=message_id))
@@ -129,12 +130,13 @@ class Message(db.Model):
     to_user = db.relationship("User", foreign_keys=[to_user_id], backref=db.backref("messages_received", order_by=message_id))
 
     mess_sess = db.relationship("MessageSession", backref=db.backref("messages", order_by=message_id))
-    
+
     def __repr__(self):
         """Provide useful representation."""
 
         return "<Message message_id={} from_user_id={} to_user_id={}>".format(
                self.message_id, self.from_user_id, self.to_user_id)
+
 
 class MessageSession(db.Model):
     """Users unique session id."""

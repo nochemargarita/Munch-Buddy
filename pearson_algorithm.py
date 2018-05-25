@@ -101,7 +101,6 @@ def pearson(pairs):
 
     return numerator / denominator
 
-
 def get_pairs(sess):
 
     mapped_users = map_each_user(sess)
@@ -113,8 +112,9 @@ def get_pairs(sess):
         results[user_id] = total
 
     return results
-    # return {'user_id': pearson(zip(current_user, val)) for user_id, val in mapped_users.iteritems()}
+    # return {user_id: pearson(zip(current_user, val)) for user_id, val in mapped_users.iteritems()}
 
+# create a helper function to call the get pairs and returns the list of pearson correlation
 
 
 def get_the_match(sess):
@@ -165,6 +165,7 @@ def query_restaurants_categories(sess):
                     restaurants_obj[user].extend(rest_cat)
 
     return restaurants_obj
+
 
 def get_rest_id(sess):
     """Returns a list of restaurant ids."""

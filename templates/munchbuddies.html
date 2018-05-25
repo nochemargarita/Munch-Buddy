@@ -6,7 +6,7 @@
     <h2>Your Buddies:</h2>
     {% for user in matches %}
  
-        <h4>{{ matches[user][0] }} <button class='user-id' target='{{ matches[user][2] }}'><img src="http://www.myiconfinder.com/uploads/iconsets/256-256-f269bbc2a3bd8805b0dccb6c36dd2fac.png" width="16" height="16"></button></h4> 
+        <h4>{{ matches[user][0] }} <button class='user-id' target='{{ matches[user][2] }}' name="{{ matches[user][4] }}"><img src="http://www.myiconfinder.com/uploads/iconsets/256-256-f269bbc2a3bd8805b0dccb6c36dd2fac.png" width="16" height="16"></button></h4> 
 
         {% if matches[user][1] %}
             <i>Interests: {{ matches[user][0] }}</i>
@@ -69,21 +69,43 @@
             // });
             $('.user-id').click(function(event){
                 let rm = $(this).attr('target')
+                let name_id = $(this).attr('name')
                 socket.emit('join', {room: rm});
                 // socket.emit('leave', {room: $('#curr_user').attr('content')});
+                '{% for m in all_messages %}'
+                    if ('{{ m }}' == rm){
+                        '{% for i in all_messages[m] %}'
+                           $('#log').append('<p>' + '{{i["to"]}}' + ': ' + '{{i["message"]}} ' + '<small><small> <i>' + '<br>' + '&ensp; '+ '{{i["date"]}}' +'</i></small></small></p>');
+                           $('#log').append('');
+                        '{% endfor %}'
+                    }
+                    
+                '{% endfor %}'
                 
                 $('form.mess').submit(function(event) {
-                    socket.emit('my_room_event', {sender: '{{ name }}', room: rm, data: $('#room_data').val()});
+                    socket.emit('my_room_event', {sender: '{{ name }}', 
+                                                  receiver_id: name_id,
+                                                  room: rm, 
+                                                  data: $('#room_data').val()});
                     $('#room_data').val('');
                     return false;
                 });
 
                 $('form#leave').submit(function(event) {
-                    socket.emit('leave', {room: rm});
+                    socket.emit('disconnect_request');
+                    setInterval(function(){
+                        window.location.reload(true);
+                    }, 1000);
+
                     return false;
                 });
-                
+
+                // $('form#leave').submit(function(event) {
+                //     socket.emit('leave', {room: rm});
+                //     return false;
+                // });
             });
+            
             socket.on('my_response', function(msg) {
                     $('#log').append('<p>' + msg.sender + ': ' + msg.data + '</p>');
             });
