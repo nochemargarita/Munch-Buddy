@@ -154,10 +154,12 @@ def show_buddies():
         for user_id, restaurant in results.iteritems():
             user = pearson_algorithm.query_user_in_session(user_id)
             sess_id = pearson_algorithm.query_message_session(sess, user_id)
-            matches[user.user_id] = [user.fname, user.interests, sess_id.sess_id, choice(restaurant), user_id]
-            all_messages.append(pearson_algorithm.query_message_of_matches(sess, user_id))
-
-        pearson_algorithm.create_session(sess)
+            if sess_id:
+                matches[user.user_id] = [user.fname, user.interests, sess_id.sess_id, choice(restaurant), user_id]
+                all_messages.append(pearson_algorithm.query_message_of_matches(sess, user_id))
+         
+            else:
+                pearson_algorithm.create_session(sess)
         return render_template('munchbuddies.html', matches=matches,
                                 sess=sess, name=name, all_messages=all_messages,
                                 async_mode=socketio.async_mode)
