@@ -1,9 +1,85 @@
 {% extends 'base.html'%}
 {% block content %}
 
+    <h2>Messages</h2>
+    <div id="log"></div>
 
+    <form id="send_room" class="mess" method="POST" action='#'>
+
+        <input type="text" name="room_data" id="room_data" placeholder="Message">
+        <input type="submit" value="Send">
+    </form>
+
+    <form id="leave" method="POST" action='#'>
+          <input type="submit" value="Close">
+    </form>
     
+    <script src="https://code.jquery.com/jquery-1.11.1.js"></script>
+    <script type="text/javascript" src="//cdnjs.cloudflare.com/ajax/libs/socket.io/1.3.5/socket.io.min.js"></script>
+    <script type="text/javascript" charset="utf-8">
+        $(document).ready(function() {
+          // namespace are set to a route string since multiple channels are needed
+            namespace='/munchbuddies';
 
+            // connect to the SOCKET.IO server.
+            // URL format
+            let socket = io.connect(location.protocol + '//' + document.domain + ':' + location.port + namespace);
+
+            // socket.on use to define event handler
+
+            // event handler for server sent data
+            // Callback function is invoked whenever the server emits data to the client. 
+            // data will be displayed in the Receive section of the page
+
+              //Handlers for the different forms in the page
+             // Accepts data from the user and send it to the server in a different ways 
+            // $( window ).load(function(){
+            //     socket.emit('join', {room: $('#curr_user').attr('content')});
+            // });
+            $('.user-id').click(function(event){
+                let rm = $(this).attr('target')
+                let name_id = $(this).attr('name')
+                socket.emit('join', {room: rm});
+                // socket.emit('leave', {room: $('#curr_user').attr('content')});
+                '{% for m in all_messages %}'
+                    if ('{{ m }}' == rm){
+                        '{% for i in all_messages[m] %}'
+                           $('#log').append('<p>' + '{{i["to"]}}' + ': ' + '{{i["message"]}} ' + '<small><small> <i>' + '<br>' + '&ensp; '+ '{{i["date"]}}' +'</i></small></small></p>');
+                           $('#log').append('');
+                        '{% endfor %}'
+                    }
+                    
+                '{% endfor %}'
+                
+                $('form.mess').submit(function(event) {
+                    socket.emit('my_room_event', {sender: '{{ name }}', 
+                                                  receiver_id: name_id,
+                                                  room: rm, 
+                                                  data: $('#room_data').val()});
+                    $('#room_data').val('');
+                    return false;
+                });
+
+                $('form#leave').submit(function(event) {
+                    socket.emit('disconnect_request');
+                    setInterval(function(){
+                        window.location.reload(true);
+                    }, 1000);
+
+                    return false;
+                });
+
+                // $('form#leave').submit(function(event) {
+                //     socket.emit('leave', {room: rm});
+                //     return false;
+                // });
+            });
+            
+            socket.on('my_response', function(msg) {
+                    $('#log').append('<p>' + msg.sender + ': ' + msg.data + '</p>');
+            });
+       });
+    </script>
 
 
 {% endblock %}

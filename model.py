@@ -147,6 +147,11 @@ class MessageSession(db.Model):
     from_user_id = db.Column(db.Integer, db.ForeignKey("users.user_id"), nullable=False)
     to_user_id = db.Column(db.Integer, db.ForeignKey("users.user_id"), nullable=False)
 
+    def __repr__(self):
+        """Provide a helpful representation."""
+        return "<MessageSession sess_id={} from_user_id={} to_user_id={}>".format(
+                self.sess_id, self.from_user_id, self.to_user_id)
+
 ##############################################################################
 # Helper functions
 
@@ -166,4 +171,4 @@ if __name__ == "__main__":
 
     from server import app
     connect_to_db(app)
-    print "Connected to DB."
+    print("Connected to DB.")

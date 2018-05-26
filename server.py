@@ -7,9 +7,7 @@ import pearson_algorithm
 from flask_socketio import SocketIO, emit, disconnect, join_room, leave_room, close_room, rooms
 from random import choice
 from datetime import datetime
-# import os
-# from datacollector import get_rest_alias_id
-# async_mode = None , async_mode=async_mode
+
 app = Flask(__name__)
 
 # Required to use Flask sessions and the debug toolbar
@@ -79,12 +77,15 @@ def login():
 
     email = request.form.get('email')
     password = request.form.get('password')
+    # replace with helper function
     user = db.session.query(User).filter(User.email == email).first()
 
     if user:
         checked_hashed = check_password_hash(user.password, password)
         if checked_hashed:
             session['user_id'] = user.user_id
+            session['name'] = user.fname
+            print session.get('name')
             flash('You successfully logged in.')
             return redirect('/munchbuddies')
         else:
@@ -105,7 +106,6 @@ def logout():
         return redirect('/')
     else:
         return render_template('/login.html')
-    
 
 @app.route('/categories')
 def categories():
@@ -116,6 +116,7 @@ def categories():
         email = session.pop('email')
         user = db.session.query(User).filter(User.email == email).first()
         session['user_id'] = user.user_id
+        session['name'] = user.fname
         return render_template('/categories.html', categories=categories)
     elif session.get('user_id'):
         return render_template('/categories.html', categories=categories)
@@ -146,39 +147,24 @@ def show_buddies():
     sess = session.get('user_id')
 
     if sess:
-        user = User.query.filter(User.user_id == sess).first()
-        session['name'] = user.fname
         name = session.get('name')
         results = pearson_algorithm.get_all_restaurants(sess)
         matches = {}
-        all_messages = {}
+        all_messages = []
         for user_id, restaurant in results.iteritems():
-                user = User.query.filter(User.user_id == user_id).first()
-                sess_id = MessageSession.query.filter(((MessageSession.from_user_id == sess) |
-                                                       (MessageSession.from_user_id == user_id)) &
-                                                      ((MessageSession.to_user_id == user_id) |
-                                                       (MessageSession.to_user_id == sess))).first()
-                messages = Message.query.filter(Message.sess_id == sess_id.sess_id).all()
-
-                if messages:
-                    for message in messages: 
-                        from_user_name = User.query.filter(User.user_id == message.from_user_id).first()
-                        to_user_name = User.query.filter(User.user_id == message.to_user_id).first()
-
-                        if message.sess_id not in all_messages:
-                            str_date = message.messaged_on.strftime('%a %b %d')
-                            all_messages[message.sess_id] = [{'from': from_user_name.fname, 'to': to_user_name.fname, 'message': message.message, 'date': str_date}]
-                        else:
-                            all_messages[message.sess_id].append({'from': from_user_name.fname, 'to': to_user_name.fname, 'message': message.message, 'date': str_date})
-
-
-                matches[user.user_id] = [user.fname, user.interests, sess_id.sess_id, choice(restaurant), user_id]
+            user = pearson_algorithm.query_user_in_session(user_id)
+            sess_id = pearson_algorithm.query_message_session(sess, user_id)
+            matches[user.user_id] = [user.fname, user.interests, sess_id.sess_id, choice(restaurant), user_id]
+            all_messages.append(pearson_algorithm.query_message_of_matches(sess, user_id))
 
         pearson_algorithm.create_session(sess)
-        return render_template('munchbuddies.html', matches=matches, sess=sess, name=name, all_messages=all_messages, async_mode=socketio.async_mode)
+        return render_template('munchbuddies.html', matches=matches,
+                                sess=sess, name=name, all_messages=all_messages,
+                                async_mode=socketio.async_mode)
 
     else:
         return redirect('/login')
+
 # To receive WebSocket messages from the client the application defines event handlers
 # using the socketio.on decorator.
 
@@ -212,15 +198,9 @@ def send_room_message(message):
     db.session.commit()
 
 
-# @socketio.on('close_room', namespace='/munchbuddies')
-# def close(message):
-#     close_room(message['room'])
-#     emit('my_response', {'data': 'Room '})
-
 @socketio.on('disconnect_request', namespace='/munchbuddies')
 def disconnect_request():
-    emit('my_response',
-         {'data': 'Disconnected!'})
+    """Completely disconnects the user """
     disconnect()
 
 

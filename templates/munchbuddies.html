@@ -1,9 +1,9 @@
 {% extends 'base.html'%}
 {% block content %}
-    <meta id="curr_user" name="current_session" content="{{ sess|string + name|string }}">
+
     <a href="/logout" style="float:right">Log Out</a>
     {% if matches|length %}
-    <h2>Your Buddies:</h2>
+    <h2>{{name}}'s Buddie/s:</h2>
     {% for user in matches %}
  
         <h4>{{ matches[user][0] }} <button class='user-id' target='{{ matches[user][2] }}' name="{{ matches[user][4] }}"><img src="http://www.myiconfinder.com/uploads/iconsets/256-256-f269bbc2a3bd8805b0dccb6c36dd2fac.png" width="16" height="16"></button></h4> 
@@ -71,15 +71,15 @@
                 let rm = $(this).attr('target')
                 let name_id = $(this).attr('name')
                 socket.emit('join', {room: rm});
-                // socket.emit('leave', {room: $('#curr_user').attr('content')});
-                '{% for m in all_messages %}'
-                    if ('{{ m }}' == rm){
-                        '{% for i in all_messages[m] %}'
-                           $('#log').append('<p>' + '{{i["to"]}}' + ': ' + '{{i["message"]}} ' + '<small><small> <i>' + '<br>' + '&ensp; '+ '{{i["date"]}}' +'</i></small></small></p>');
-                           $('#log').append('');
-                        '{% endfor %}'
-                    }
-                    
+                
+                '{% for message in all_messages %}'
+                    '{% for room in message %}'
+                        if ('{{ room }}' == rm){
+                            '{% for chat in message[room] %}'
+                               $('#log').append('<p><small><small><i> {{chat["date"]}}</i></small></small> <br>{{chat["from"]}}: {{chat["message"]}}</p>');
+                            '{% endfor %}'
+                    };
+                    '{% endfor %}'  
                 '{% endfor %}'
                 
                 $('form.mess').submit(function(event) {

@@ -220,13 +220,47 @@ def create_session(sess):
     db.session.commit()
 
 
-# def get_sess_id(sess):
-#     for match in get_the_match(sess):
-#         sess_id = MessageSession.query.filter( ((MessageSession.from_user_id == sess) |
-#                                             (MessageSession.from_user_id == match)) &
-#                                             ((MessageSession.to_user_id == match) |  
-#                                             (MessageSession.to_user_id == sess)) ).first()
-#     return sess_id.sess_id
+def query_user_in_session(user):
+    """Returns an object of information about the current user in session."""
+    user = User.query.filter(User.user_id == user).first()
+
+    return user
+
+
+def query_message_session(sess, user_id):
+
+    message_session = MessageSession.query.filter(((MessageSession.from_user_id == sess) |
+                                       (MessageSession.from_user_id == user_id)) &
+                                      ((MessageSession.to_user_id == user_id) |
+                                       (MessageSession.to_user_id == sess))).first()
+    return message_session
+
+
+def query_message_of_matches(sess, user_id):
+    """Returns a dictionary of messages of current user and his/her matches."""
+
+    all_messages = {}
+    messages = Message.query.filter(Message.sess_id == query_message_session(sess, user_id).sess_id).all()
+
+    if messages:
+        for message in messages:
+            from_user_name = query_user_in_session(message.from_user_id)
+            to_user_name = query_user_in_session(message.to_user_id)
+            
+            if message.sess_id not in all_messages:
+                str_date = message.messaged_on.strftime('%a %b %d')
+                all_messages[message.sess_id] = [{'from': from_user_name.fname,
+                                                  'to': to_user_name.fname,
+                                                  'message': message.message,
+                                                  'date': str_date}]
+            else:
+                all_messages[message.sess_id].append({'from': from_user_name.fname,
+                                                      'to': to_user_name.fname,
+                                                      'message': message.message,
+                                                      'date': str_date})
+
+    return all_messages
+    
 if __name__ == "__main__":
     connect_to_db(app)
     # print get_curr_user_liked(3)
