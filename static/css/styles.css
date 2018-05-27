@@ -1,3 +1,16 @@
 .right {
     text-align: right;
 }
+
+div.ex1 {
+    width: 300px;
+    height: 400px;
+    overflow: scroll;
+}
+
+#send_room, #leave, #header_message {
+
+display:none;
+
+}
+

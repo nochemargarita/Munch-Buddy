@@ -1,50 +1,62 @@
 {% extends 'base.html'%}
 {% block content %}
+    <div class="container-fluid">
+        <a href="/logout" style="float:right">Log Out</a>
+        <div class="row">
+            <div class="col-sm-8">
+                {% if matches|length %}
+                <h2>{{name}}'s Buddie/s:</h2>
+                {% for user in matches %}
+             
+                    <h4>{{ matches[user][0] }} <button class='user-id' target='{{ matches[user][2] }}' name="{{ matches[user][4] }}"><img src="http://www.myiconfinder.com/uploads/iconsets/256-256-f269bbc2a3bd8805b0dccb6c36dd2fac.png" width="16" height="16"></button></h4> 
 
-    <a href="/logout" style="float:right">Log Out</a>
-    {% if matches|length %}
-    <h2>{{name}}'s Buddie/s:</h2>
-    {% for user in matches %}
- 
-        <h4>{{ matches[user][0] }} <button class='user-id' target='{{ matches[user][2] }}' name="{{ matches[user][4] }}"><img src="http://www.myiconfinder.com/uploads/iconsets/256-256-f269bbc2a3bd8805b0dccb6c36dd2fac.png" width="16" height="16"></button></h4> 
+                    {% if matches[user][1] %}
+                        <i>Interests: {{ matches[user][0] }}</i>
+                        <br>
+                    {% endif %}
 
-        {% if matches[user][1] %}
-            <i>Interests: {{ matches[user][0] }}</i>
-            <br>
-        {% endif %}
+                    </form>
+                    Restaurant: {{ matches[user][3]['rest_title'] }}
+                    <br>
+                    Rating: {{ matches[user][3]['rating'] }}
+                    <br>
+                    Number of Reviews: {{ matches[user][3]['num_reviews'] }}
+                    <br>
+                    Address: {{ matches[user][3]['address'] }}
+                    <br>
+                    Phone: <a href="tel:{{ matches[user][3]['phone'] }}">{{ matches[user][3]['phone'] }}</a> 
+                    
+                    <br><br>
 
-        </form>
-        Restaurant: {{ matches[user][3]['rest_title'] }}
-        <br>
-        Rating: {{ matches[user][3]['rating'] }}
-        <br>
-        Number of Reviews: {{ matches[user][3]['num_reviews'] }}
-        <br>
-        Address: {{ matches[user][3]['address'] }}
-        <br>
-        Phone: <a href="tel:{{ matches[user][3]['phone'] }}">{{ matches[user][3]['phone'] }}</a> 
-        
-        <br><br>
+                {% endfor %}
 
-    {% endfor %}
-        <div id="notif"></div>
-        <h2>Messages</h2>
-        <div id="log"></div>
+            </div>
+            <div class="col-sm-4">
+                <h2 id="header_message">Messages</h2>
+                <div class="row ex1">
+                    <div id="log"></div>
+                </div>
+                    <form id="send_room" class="mess" method="POST" action='#'>
+                        <input type="text" name="room_data" id="room_data" placeholder="Message">
+                        <input type="submit" value="Send">
+                    </form>
 
-        <form id="send_room" class="mess" method="POST" action='#'>
-
-            <input type="text" name="room_data" id="room_data" placeholder="Message">
-            <input type="submit" value="Send">
-        </form>
-
-        <form id="leave" method="POST" action='#'>
-              <input type="submit" value="Close">
-        </form>
+                    <form id="leave" method="POST" action='#'>
+                          <input type="submit" value="Close">
+                    </form>
+                <div class="row ex1">
+                    NOTHING IN HERE YET
+                </div>
+            </div>
+        </div>
+    </div>
 
     {% else %}
         <h3>I didn't find a buddy today.</h3>
     {% endif %}
-
+    <script src="https://code.jquery.com/jquery-3.3.1.slim.min.js" integrity="sha384-q8i/X+965DzO0rT7abK41JStQIAqVgRVzpbzo5smXKp4YfRvH+8abtTE1Pi6jizo" crossorigin="anonymous"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/popper.js/1.14.3/umd/popper.min.js" integrity="sha384-ZMP7rVo3mIykV+2+9J3UJ46jBk0WLaUAdn689aCwoqbBJiSnjAK/l8WvCWPIPm49" crossorigin="anonymous"></script>
+    <script src="https://stackpath.bootstrapcdn.com/bootstrap/4.1.1/js/bootstrap.min.js" integrity="sha384-smHYKdLADwkXOn1EmN1qk/HfnUcbVRZyYmZ4qpPea6sjB/pTJ0euyQp0Mk8ck+5T" crossorigin="anonymous"></script>
     <script src="https://code.jquery.com/jquery-1.11.1.js"></script>
     <script type="text/javascript" src="//cdnjs.cloudflare.com/ajax/libs/socket.io/1.3.5/socket.io.min.js"></script>
     <script type="text/javascript" charset="utf-8">
@@ -68,10 +80,14 @@
             //     socket.emit('join', {room: $('#curr_user').attr('content')});
             // });
             $('.user-id').click(function(event){
+                $("h2#header_message").show();
+                $("form#send_room").show();
+                $("form#leave").show();
+
                 let rm = $(this).attr('target')
                 let name_id = $(this).attr('name')
                 socket.emit('join', {room: rm});
-                
+
                 '{% for message in all_messages %}'
                     '{% for room in message %}'
                         if ('{{ room }}' == rm){

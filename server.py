@@ -157,7 +157,7 @@ def show_buddies():
             if sess_id:
                 matches[user.user_id] = [user.fname, user.interests, sess_id.sess_id, choice(restaurant), user_id]
                 all_messages.append(pearson_algorithm.query_message_of_matches(sess, user_id))
-         
+
             else:
                 pearson_algorithm.create_session(sess)
         return render_template('munchbuddies.html', matches=matches,
