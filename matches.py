@@ -239,6 +239,15 @@ def query_message_of_matches(user_id):
     return all_messages
 
 
+def get_profile_picture():
+    """Returns the path of current user's profile picture."""
+
+    user = db.session.query(User).filter(User.user_id == session.get('user_id')).first() 
+    if user.profile_picture:
+        return user.profile_picture
+    else:
+        return "static/img/blank.png"
+
 if __name__ == "__main__":
     connect_to_db(app)
     get_pearson_correlation()
@@ -246,3 +255,4 @@ if __name__ == "__main__":
     matches_liked_categories()
     get_all_restaurants()
     create_room_session()
+    get_profile_picture()

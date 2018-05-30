@@ -5,11 +5,15 @@ from werkzeug.security import generate_password_hash, check_password_hash
 from model import connect_to_db, db, User, Like, Restaurant, Category, Message, MessageSession, RestaurantCategory, Image, UserImage
 import matches as pearson_algorithm
 from flask_socketio import SocketIO, emit, disconnect, join_room, leave_room, close_room, rooms
+from flask_uploads import UploadSet, configure_uploads, IMAGES
 from random import choice
 from datetime import datetime
 
 app = Flask(__name__)
-
+# Images is the type of file that will be uploaded
+photos = UploadSet('photos', IMAGES)
+app.config['UPLOADED_PHOTOS_DEST'] = 'static/img'
+configure_uploads(app, photos)
 # Required to use Flask sessions and the debug toolbar
 app.secret_key = "ABC"
 socketio = SocketIO(app)
@@ -57,10 +61,35 @@ def signup():
         db.session.add(user)
         db.session.commit()
         session['email'] = email
-    return redirect('/categories')
+    return render_template('upload.html')
 
 
-# @app.route()
+@app.route('/upload', methods=['GET', 'POST'])
+def upload():
+    """Allows the user to upload profile picture."""
+    user_email = session.get('email')
+
+    if user_email:
+        email = session.pop('email')
+        user = db.session.query(User).filter(User.email == email).first()
+        session['user_id'] = user.user_id
+        session['name'] = user.fname
+        user_id = session.get('user_id')
+        url = str(user_id) + ".jpg"
+
+        if request.method == 'POST' and 'photo' in request.files:
+            request.files['photo'].filename = url
+            filename = photos.save(request.files['photo'])
+            user_session = User.query.get(user_id)
+            user_session.profile_picture = app.config['UPLOADED_PHOTOS_DEST'] + '/' + url
+            db.session.commit()
+        return redirect('/categories')
+
+    else:
+        flash('wrong')
+        return redirect('/')
+
+
 @app.route('/login')
 def login_form():
     """Directs user to a login form."""
@@ -76,7 +105,6 @@ def login():
 
     email = request.form.get('email')
     password = request.form.get('password')
-    # replace with helper function
     user = db.session.query(User).filter(User.email == email).first()
 
     if user:
@@ -111,17 +139,9 @@ def logout():
 def categories():
     """Let's the user select multiple categories of cuisine."""
     categories = Category.query.all()
-    images = db.session.query(Image).all()
 
-    if session.get('email'):
-        email = session.pop('email')
-        user = db.session.query(User).filter(User.email == email).first()
-        session['user_id'] = user.user_id
-        session['name'] = user.fname
-        return render_template('/categories.html', categories=categories, images=images)
-
-    elif session.get('user_id'):
-        return render_template('/categories.html', categories=categories, images=images)
+    if session.get('user_id'):
+        return render_template('/categories.html', categories=categories)
 
     else:
         return redirect('/login')
@@ -157,6 +177,7 @@ def show_buddies():
 
     if sess:
         name = session.get('name')
+        profile_picture = pearson_algorithm.get_profile_picture()
         results = pearson_algorithm.get_all_restaurants()
         matches = {}
         all_messages = []
@@ -173,8 +194,9 @@ def show_buddies():
             else:
                 pearson_algorithm.create_room_session()
         return render_template('munchbuddies.html', matches=matches,
-                               sess=sess, name=name, all_messages=all_messages, chat_session_ids=chat_session_ids,
-                               async_mode=socketio.async_mode)
+                               sess=sess, name=name,
+                               all_messages=all_messages, chat_session_ids=chat_session_ids,
+                               profile_picture=profile_picture, async_mode=socketio.async_mode)
 
     else:
         return redirect('/login')

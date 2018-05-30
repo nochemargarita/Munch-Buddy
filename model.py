@@ -27,7 +27,8 @@ class User(db.Model):
     fname = db.Column(db.String(30), nullable=False)
     lname = db.Column(db.String(30), nullable=False)
     birthday = db.Column(db.DateTime, nullable=False)
-    interests = db.Column(db.String(250))
+    interests = db.Column(db.String(250), nullable=True)
+    profile_picture = db.Column(db.String(250), nullable=True)
 
     def __repr__(self):
         """Provide a helpful representation."""
