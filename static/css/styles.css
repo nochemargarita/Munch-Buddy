@@ -8,9 +8,36 @@ div.ex1 {
     overflow: scroll;
 }
 
-#send_room, #leave, #header_message {
+#send_room, #leave, #header_message, #m {
 
 display:none;
 
 }
 
+.style1{
+    background-color:red;
+    color:white;
+    font-size:44px;
+}
+
+.button-profile-picture input[type="radio"] {
+    display: none;
+}
+
+.profile_picture {
+    border: 1px solid black;
+    border-radius: 4px;
+    padding: 5px;
+    width: 100px;
+    height: 100px;
+
+}
+
+.profile_picture_2 {
+    border: 1px solid black;
+    border-radius: 4px;
+    padding: 5px;
+    width: 70px;
+    height: 70px;
+
+}

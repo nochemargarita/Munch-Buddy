@@ -1,14 +1,18 @@
 {% extends 'base.html'%}
 {% block content %}
+<body>
     <div class="container-fluid">
         <a href="/logout" style="float:right">Log Out</a>
         <div class="row">
             <div class="col-sm-8">
                 {% if matches|length %}
-                <h2>{{name}}'s Buddie/s:</h2>
+                <h2 id="foo">{{name}}'s Buddie/s:</h2>
+                
                 {% for user in matches %}
              
-                    <h4>{{ matches[user][0] }} <button class='user-id' target='{{ matches[user][2] }}' name="{{ matches[user][4] }}"><img src="http://www.myiconfinder.com/uploads/iconsets/256-256-f269bbc2a3bd8805b0dccb6c36dd2fac.png" width="16" height="16"></button></h4> 
+                    <h4>{{ matches[user][0] }} 
+                        <input type="image" class='user-id' src="static/images/chat-icon.png" target='{{ matches[user][2] }}' name="{{ matches[user][4] }}" width="16" height="16">
+                        </h4> 
 
                     {% if matches[user][1] %}
                         <i>Interests: {{ matches[user][0] }}</i>
@@ -16,9 +20,11 @@
                     {% endif %}
 
                     </form>
-                    Restaurant: {{ matches[user][3]['rest_title'] }}
+                    Restaurant: {{ matches[user][3]['rest_title'] }}&nbsp;<button class="btn btn-primary btn-sm"><i class="fas fa-heart"></i></button>
                     <br>
-                    Rating: {{ matches[user][3]['rating'] }}
+                    {% for star in range(matches[user][3]['rating']) %} 
+                        <i class="fas fa-star"></i>
+                    {% endfor %}
                     <br>
                     Number of Reviews: {{ matches[user][3]['num_reviews'] }}
                     <br>
@@ -32,6 +38,7 @@
 
             </div>
             <div class="col-sm-4">
+                <div id="divCheckbox" hidden="true"></div>
                 <h2 id="header_message">Messages</h2>
                 <div class="row ex1">
                     <div id="log"></div>
@@ -45,7 +52,8 @@
                           <input type="submit" value="Close">
                     </form>
                 <div class="row ex1">
-                    NOTHING IN HERE YET
+                    <h2>Saved Restaurants</h2>
+
                 </div>
             </div>
         </div>
@@ -54,6 +62,7 @@
     {% else %}
         <h3>I didn't find a buddy today.</h3>
     {% endif %}
+
     <script src="https://code.jquery.com/jquery-3.3.1.slim.min.js" integrity="sha384-q8i/X+965DzO0rT7abK41JStQIAqVgRVzpbzo5smXKp4YfRvH+8abtTE1Pi6jizo" crossorigin="anonymous"></script>
     <script src="https://cdnjs.cloudflare.com/ajax/libs/popper.js/1.14.3/umd/popper.min.js" integrity="sha384-ZMP7rVo3mIykV+2+9J3UJ46jBk0WLaUAdn689aCwoqbBJiSnjAK/l8WvCWPIPm49" crossorigin="anonymous"></script>
     <script src="https://stackpath.bootstrapcdn.com/bootstrap/4.1.1/js/bootstrap.min.js" integrity="sha384-smHYKdLADwkXOn1EmN1qk/HfnUcbVRZyYmZ4qpPea6sjB/pTJ0euyQp0Mk8ck+5T" crossorigin="anonymous"></script>
@@ -61,71 +70,74 @@
     <script type="text/javascript" src="//cdnjs.cloudflare.com/ajax/libs/socket.io/1.3.5/socket.io.min.js"></script>
     <script type="text/javascript" charset="utf-8">
         $(document).ready(function() {
-          // namespace are set to a route string since multiple channels are needed
             namespace='/munchbuddies';
 
-            // connect to the SOCKET.IO server.
-            // URL format
             let socket = io.connect(location.protocol + '//' + document.domain + ':' + location.port + namespace);
 
-            // socket.on use to define event handler
-
-            // event handler for server sent data
-            // Callback function is invoked whenever the server emits data to the client. 
-            // data will be displayed in the Receive section of the page
-
-              //Handlers for the different forms in the page
-             // Accepts data from the user and send it to the server in a different ways 
-            // $( window ).load(function(){
-            //     socket.emit('join', {room: $('#curr_user').attr('content')});
-            // });
-            $('.user-id').click(function(event){
-                $("h2#header_message").show();
-                $("form#send_room").show();
-                $("form#leave").show();
-
-                let rm = $(this).attr('target')
-                let name_id = $(this).attr('name')
-                socket.emit('join', {room: rm});
-
-                '{% for message in all_messages %}'
-                    '{% for room in message %}'
-                        if ('{{ room }}' == rm){
-                            '{% for chat in message[room] %}'
-                               $('#log').append('<p><small><small><i> {{chat["date"]}}</i></small></small> <br>{{chat["from"]}}: {{chat["message"]}}</p>');
-                            '{% endfor %}'
-                    };
-                    '{% endfor %}'  
-                '{% endfor %}'
+            socket.on('connect', function() {
+                console.log('connected');
                 
-                $('form.mess').submit(function(event) {
-                    socket.emit('my_room_event', {sender: '{{ name }}', 
-                                                  receiver_id: name_id,
-                                                  room: rm, 
-                                                  data: $('#room_data').val()});
-                    $('#room_data').val('');
-                    return false;
+                {% if chat_session_ids %}
+                    {{ chat_session_ids|safe }}.forEach(function(userId) {
+                        socket.emit('join', { room: String(userId) });
+                    })
+                {% endif %}
+                
+                $("#divCheckbox").attr('hidden', false)
+                $('.user-id').click(function(event){
+                    $("#divCheckbox").attr('hidden', true)
+                    $("h2#header_message").show();
+                    $("form#send_room").show();
+                    $("form#leave").show();
+                    
+                    let rm = $(this).attr('target')
+                    let name_id = $(this).attr('name')
+                    socket.emit('join', {room: rm});
+                    
+                    '{% for message in all_messages %}'
+                        '{% for room in message %}'
+                            if ('{{ room }}' == rm){
+                                '{% for chat in message[room] %}'
+                                   $('#log').append('<p><small><small><i> {{chat["date"]}}</i></small></small> <br>{{chat["from"]}}: {{chat["message"]}}</p>');
+                                '{% endfor %}'
+                        };
+                        '{% endfor %}'  
+                    '{% endfor %}'
+                    
+                    $('form.mess').submit(function(event) {
+                        let msg = {sender: '{{ name }}', 
+                                                      receiver_id: name_id,
+                                                      room: rm, 
+                                                      meg: "You have a message from ",
+                                                      data: $('#room_data').val()}
+                        socket.emit('my_room_event', msg);
+                        $('#room_data').val('');
+                        
+                        return false;
+                    });
+
+                    $('form#leave').submit(function(event) {
+                            event.preventDefault()
+                            window.location.reload(true);
+                    });
+
+                    socket.on('my_response', function(msg) {
+                        $('#log').append('<p>' + msg.sender + ': ' + msg.data + '</p>');
+                    });
                 });
-
-                $('form#leave').submit(function(event) {
-                    socket.emit('disconnect_request');
-                    setInterval(function(){
-                        window.location.reload(true);
-                    }, 1000);
-
-                    return false;
+                    socket.on('my_response', function(msg) {
+                    $('#divCheckbox').append('<p>' + msg.meg + msg.sender + '</p>')
+                    $('#divCheckbox').fadeIn(100).fadeOut(10000);
                 });
+               
+            });
 
-                // $('form#leave').submit(function(event) {
-                //     socket.emit('leave', {room: rm});
-                //     return false;
-                // });
-            });
-            
-            socket.on('my_response', function(msg) {
-                    $('#log').append('<p>' + msg.sender + ': ' + msg.data + '</p>');
-            });
        });
+        
+      
     </script>
-
+</body>
 {% endblock %}
+
+                    
+            

@@ -104,6 +104,11 @@ def show_buddies():
 
 
 
-
+            console.log('connected');
+              {% if chat_session_ids %}
+              {{ chat_session_ids|safe }}.forEach(function(userId) {
+                socket.emit('join', { room: String(userId) });
+              })
+              {% endif %}
 
 

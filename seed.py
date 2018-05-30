@@ -1,7 +1,7 @@
 # import requests
 # import json
 # from pprint import pprint
-from model import connect_to_db, db, User, Like, Restaurant, Category, RestaurantCategory, Message
+from model import connect_to_db, db, User, Like, Restaurant, Category, RestaurantCategory, Message, Image
 from server import app
 from werkzeug.security import generate_password_hash
 from datetime import datetime
@@ -81,14 +81,34 @@ def add_messages_to_db(from_user_id, to_user_id, messaged_on, message):
     db.session.commit()
 
 
+def add_image_to_db(image_url):
+    """Add images from static folder to the database."""
+
+    image = Image(image_url=image_url)
+
+    db.session.add(image)
+    db.session.commit()
+
+
 # Match
 
 if __name__ == "__main__":
     connect_to_db(app)
 
-    categories = get_categories('restaurants.json')
-    restaurants = get_restaurants('restaurants.json')
-    rest = open_json_file('restaurants.json')
+    # categories = get_categories('restaurants.json')
+    # restaurants = get_restaurants('restaurants.json')
+    # rest = open_json_file('restaurants.json')
+
+    # add_image_to_db('static/profile-picture/bacon.png')
+    # add_image_to_db('static/profile-picture/beer.png')
+    # add_image_to_db('static/profile-picture/chopsticks.png')
+    # add_image_to_db('static/profile-picture/icecream.png')
+    # add_image_to_db('static/profile-picture/pancake.png')
+    # add_image_to_db('static/profile-picture/pizza.png')
+    # add_image_to_db('static/profile-picture/salad.png')
+    # add_image_to_db('static/profile-picture/sushi.png')
+    # add_image_to_db('static/profile-picture/taco.png')
+    # add_image_to_db('static/profile-picture/wine.png')
 
     # add_user_to_db('marry@yahoo.com', '123', 'Mary', 'Poppins', '1965-08-25')
     # add_user_to_db('james@hotmail.com', '123', 'James', 'Corden', '1965-05-09')

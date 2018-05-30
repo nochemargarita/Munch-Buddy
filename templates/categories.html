@@ -1,28 +1,33 @@
 {% extends 'base.html'%}
 {% block content %}
-    <a href="/logout" style="float:right">Log Out</a>
-    <h3>Choose categories: </h3>
-    <form action="/categories" method='POST'>
-    {% for category in categories %}
-        
-            <input type='checkbox' class='single-checkbox' name='cat_id' value='{{ category.cat_id }}'>
-            {{ category.cat_title }}
-            <br>
-        
-    {% endfor %}
+    <body>
+        <a href="/logout" style="float:right">Log Out</a>
+        <h3>Choose categories: </h3>
+        <form action="/categories" method='POST'>
+        {% for category in categories %}
+            
+                <input type='checkbox' class='single-checkbox' name='cat_id' value='{{ category.cat_id }}'>
+                {{ category.cat_title }}
+                <br>
+            
+        {% endfor %}
+        {% for image in images %}
+            <input type='radio' name="image_id" value='{{ image.image_id }}'> <img src="{{ image.image_url}}">
+        {% endfor %}
 
-        <input type='submit' name='submitted'>
-    </form>
 
-        <script src="https://code.jquery.com/jquery-3.2.1.min.js"></script>
-        <script>
-            let limit = 5;
-            $('input.single-checkbox').on('change', function(evt) {
-               if($(this).siblings(':checked').length >= limit) {
-                   this.checked = false;
-               }
-            });
-        </script>
+            <input type='submit' name='submitted'>
+        </form>
+
+            <script src="https://code.jquery.com/jquery-3.2.1.min.js"></script>
+            <script>
+                let limit = 6;
+                $('input.single-checkbox').on('change', function(evt) {
+                   if($(this).siblings(':checked').length >= limit) {
+                       this.checked = false;
+                   }
+                });
+            </script>
+    </body>
     
 {% endblock %}
-ß

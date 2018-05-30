@@ -2,8 +2,8 @@ from jinja2 import StrictUndefined
 from flask import Flask, render_template, request, flash, redirect, session
 # from flask_debugtoolbar import DebugToolbarExtension
 from werkzeug.security import generate_password_hash, check_password_hash
-from model import connect_to_db, db, User, Like, Restaurant, Category, Message, MessageSession, RestaurantCategory
-import pearson_algorithm
+from model import connect_to_db, db, User, Like, Restaurant, Category, Message, MessageSession, RestaurantCategory, Image, UserImage
+import matches as pearson_algorithm
 from flask_socketio import SocketIO, emit, disconnect, join_room, leave_room, close_room, rooms
 from random import choice
 from datetime import datetime
@@ -13,8 +13,6 @@ app = Flask(__name__)
 # Required to use Flask sessions and the debug toolbar
 app.secret_key = "ABC"
 socketio = SocketIO(app)
-
-
 app.jinja_env.undefined = StrictUndefined
 
 
@@ -62,6 +60,7 @@ def signup():
     return redirect('/categories')
 
 
+# @app.route()
 @app.route('/login')
 def login_form():
     """Directs user to a login form."""
@@ -107,19 +106,23 @@ def logout():
     else:
         return render_template('/login.html')
 
+
 @app.route('/categories')
 def categories():
     """Let's the user select multiple categories of cuisine."""
     categories = Category.query.all()
+    images = db.session.query(Image).all()
 
     if session.get('email'):
         email = session.pop('email')
         user = db.session.query(User).filter(User.email == email).first()
         session['user_id'] = user.user_id
         session['name'] = user.fname
-        return render_template('/categories.html', categories=categories)
+        return render_template('/categories.html', categories=categories, images=images)
+
     elif session.get('user_id'):
-        return render_template('/categories.html', categories=categories)
+        return render_template('/categories.html', categories=categories, images=images)
+
     else:
         return redirect('/login')
 
@@ -129,14 +132,20 @@ def selected_categories():
     """Get all selected check boxes and add it to database, Like."""
 
     user = User.query.get(session['user_id'])
-    submitted = request.form.getlist('cat_id')
+    submitted_categories = request.form.getlist('cat_id')
+    submitted_image = request.form.get('image_id')
 
-    if submitted:
-        for ident in submitted:
+    if submitted_categories:
+        for ident in submitted_categories:
             like = Like(user_id=user.user_id, cat_id=ident)
 
             db.session.add(like)
     db.session.commit()
+
+    if submitted_image:
+        user_image = UserImage(user_id=user.user_id, image_id=submitted_image)
+        db.session.add(user_image)
+        db.session.commit()
 
     return redirect('/munchbuddies')
 
@@ -148,46 +157,33 @@ def show_buddies():
 
     if sess:
         name = session.get('name')
-        results = pearson_algorithm.get_all_restaurants(sess)
+        results = pearson_algorithm.get_all_restaurants()
         matches = {}
         all_messages = []
+        chat_session_ids = []
         for user_id, restaurant in results.iteritems():
             user = pearson_algorithm.query_user_in_session(user_id)
-            sess_id = pearson_algorithm.query_message_session(sess, user_id)
-            if sess_id:
-                matches[user.user_id] = [user.fname, user.interests, sess_id.sess_id, choice(restaurant), user_id]
-                all_messages.append(pearson_algorithm.query_message_of_matches(sess, user_id))
+            session_id = pearson_algorithm.query_message_session(user_id)
+
+            if session_id:
+                chat_session_ids.append(session_id.sess_id)
+                matches[user.user_id] = [user.fname, user.interests, session_id.sess_id, choice(restaurant), user_id]
+                all_messages.append(pearson_algorithm.query_message_of_matches(user_id))
 
             else:
-                pearson_algorithm.create_session(sess)
+                pearson_algorithm.create_room_session()
         return render_template('munchbuddies.html', matches=matches,
-                                sess=sess, name=name, all_messages=all_messages,
-                                async_mode=socketio.async_mode)
+                               sess=sess, name=name, all_messages=all_messages, chat_session_ids=chat_session_ids,
+                               async_mode=socketio.async_mode)
 
     else:
         return redirect('/login')
-
-# To receive WebSocket messages from the client the application defines event handlers
-# using the socketio.on decorator.
-
-# custom events deliver a JSON payload in a form of python dic
-# namespace is an optional argument
-# allows client to open multiple connections to the server that are multiplexed in a single socket
-# default: attachec to the global namespace
-
-
-@socketio.on('my_event', namespace='/munchbuddies')
-def test_message(message):
-    #emit is a function that sends message user a custom event name
-    emit('my_response', {'data': message['data']})
 
 
 @socketio.on('join', namespace='/munchbuddies')
 def join(message):
     room = message['room']
     join_room(room)
-    emit('my_response',
-         {'data': 'In rooms: ' + ', '.join(rooms())})
 
 
 @socketio.on('my_room_event', namespace='/munchbuddies')

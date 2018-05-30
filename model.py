@@ -49,7 +49,6 @@ class Category(db.Model):
         return "<Category cat_id={} cat_title={}>".format(
                self.cat_id, self.cat_title)
 
-
 class Like(db.Model):
     """Restaurants that users liked."""
 
@@ -90,6 +89,22 @@ class Restaurant(db.Model):
 
         return "<Restaurant rest_id={} rest_name={}>".format(
                self.rest_id, self.rest_title.encode('ascii', 'replace'))
+
+class Like_Restaurant(db.Model):
+    """Restaurants that user liked."""
+
+    __tablename__ = "likes_restaurants"
+
+    likes_restaurants = db.Column(db.Integer, autoincrement=True, primary_key=True)
+    rest_id = db.Column(db.String(50), db.ForeignKey("restaurants.rest_id"), nullable=False)
+
+    like_restaurant = db.relationship("Restaurant", backref=db.backref("likes_restaurants", order_by=likes_restaurants))
+
+    def __repr__(self):
+        """Provide a helpful representation."""
+
+        return "<Like_Restaurant likes_restaurants={} rest_id={}>".format(
+                self.likes_restaurants, self.rest_id)
 
 
 class RestaurantCategory(db.Model):
@@ -151,6 +166,38 @@ class MessageSession(db.Model):
         """Provide a helpful representation."""
         return "<MessageSession sess_id={} from_user_id={} to_user_id={}>".format(
                 self.sess_id, self.from_user_id, self.to_user_id)
+
+
+class Image(db.Model):
+
+    __tablename__ = "images"
+    image_id = db.Column(db.Integer, autoincrement=True, primary_key=True)
+    image_url = db.Column(db.String(200))
+
+    def __repr__(self):
+        """Provide a helpful representation."""
+        return "<Image image_id={} image_url={}>".format(
+                self.image_id, self.image_url)
+
+
+class UserImage(db.Model):
+
+    __tablename__ = "users_images"
+
+    user_image_id = db.Column(db.Integer, autoincrement=True, primary_key=True)
+    image_id = db.Column(db.Integer, db.ForeignKey("images.image_id"), nullable=False)
+    user_id = db.Column(db.Integer, db.ForeignKey("users.user_id"), nullable=False)
+
+    image = db.relationship("Image", backref=db.backref("users_images", order_by=user_image_id))
+    # Define relationship to User.
+    user = db.relationship("User", backref=db.backref("users_images", order_by=user_image_id))
+
+    def __repr__(self):
+        """Provide a helpful representation."""
+        return "<UserImage user_mage_id={} user_id={}>".format(
+                self.user_image_id, self.user_id)
+
+
 
 ##############################################################################
 # Helper functions

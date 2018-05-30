@@ -40,3 +40,7 @@ WEBSOCKET
 
 JQUERY
     -http://jsfiddle.net/vVxM2/
+    -https://www.tutorialrepublic.com/faq/how-to-add-attribute-to-an-html-element-in-jquery.php
+
+CSS
+    -http://jsfiddle.net/LgT4A/
