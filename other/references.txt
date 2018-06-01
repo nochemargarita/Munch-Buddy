@@ -44,3 +44,8 @@ JQUERY
 
 CSS
     -http://jsfiddle.net/LgT4A/
+
+UPLOAD PICTURE:
+    -Denise shared her code
+    -https://www.youtube.com/watch?v=Exf8RbgKmhM
+    -https://flask-uploads.readthedocs.io/en/latest/

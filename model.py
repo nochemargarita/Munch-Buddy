@@ -84,6 +84,8 @@ class Restaurant(db.Model):
     num_reviews = db.Column(db.Integer, nullable=False)
     address = db.Column(db.String(200), nullable=False)
     phone = db.Column(db.String(20), nullable=False)
+    link = db.Column(db.String(300), nullable=False)
+    image_url = db.Column(db.String(300), nullable=False)
 
     def __repr__(self):
         """Provide a helpful representation."""
@@ -91,12 +93,13 @@ class Restaurant(db.Model):
         return "<Restaurant rest_id={} rest_name={}>".format(
                self.rest_id, self.rest_title.encode('ascii', 'replace'))
 
-class Like_Restaurant(db.Model):
+class LikeRestaurant(db.Model):
     """Restaurants that user liked."""
 
     __tablename__ = "likes_restaurants"
 
     likes_restaurants = db.Column(db.Integer, autoincrement=True, primary_key=True)
+    user_id = db.Column(db.Integer, db.ForeignKey("users.user_id"), nullable=False)
     rest_id = db.Column(db.String(50), db.ForeignKey("restaurants.rest_id"), nullable=False)
 
     like_restaurant = db.relationship("Restaurant", backref=db.backref("likes_restaurants", order_by=likes_restaurants))

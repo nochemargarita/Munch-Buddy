@@ -1,0 +1,32 @@
+{% extends 'base.html' %}
+{% block content %}
+    <body class="text-center">
+        <h1>Munch Buddy</h1>
+        <a href="/logout" style="float:right">Log Out</a>
+
+        <form method=POST enctype=multipart/form-data action='{{ url_for("update_edit_profile") }}'>
+            <input type=file name='photo'>
+            <input type='submit'>
+        </form>
+
+        <form action='/editprofile' method='POST'>
+            Edit Profile Picture:
+            <br>
+            <img src="{{ profile_picture }}" width="100" height="100">
+            <br>
+            Edit Display Name:
+            <br>
+            <input type="text" name="fname" value='{{ fname }}'>
+            <br><br>
+            Edit Interests:
+            <br><br>
+            <textarea rows="4" cols="30" maxlength="250" name="interests">{{ interests }}</textarea>
+            <br>
+            <input type='submit' value='Update'>
+        </form>
+        <a href="/munchbuddies">Cancel</a>
+         <br>
+         <br>
+         
+    </body>
+{% endblock %}

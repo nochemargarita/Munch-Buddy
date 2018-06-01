@@ -63,7 +63,9 @@ def get_restaurants(filename):
                                                 'rating': restaurant['rating'],
                                                 'num_reviews': restaurant['review_count'],
                                                 'address': restaurant['location']['display_address'],
-                                                'phone': restaurant['phone']
+                                                'phone': restaurant['phone'],
+                                                'link': restaurant['url'],
+                                                'image_url': restaurant['image_url']
                                                 }
 
     return restaurant_info

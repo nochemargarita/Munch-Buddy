@@ -169,14 +169,20 @@ def get_all_restaurants():
                                      'rating': restaurant.rating,
                                      'num_reviews': restaurant.num_reviews,
                                      'address': restaurant.address,
-                                     'phone': restaurant.phone
+                                     'phone': restaurant.phone,
+                                     'link': restaurant.link,
+                                     'image_url': restaurant.image_url,
+                                     'rest_id': restaurant.rest_id
                                       }]
             else:
                 restaurants[user].append({'rest_title': restaurant.rest_title,
                                           'rating': restaurant.rating,
                                           'num_reviews': restaurant.num_reviews,
                                           'address': restaurant.address,
-                                          'phone': restaurant.phone
+                                          'phone': restaurant.phone,
+                                          'link': restaurant.link,
+                                          'image_url': restaurant.image_url,
+                                          'rest_id': restaurant.rest_id
                                           })
 
     return restaurants
@@ -242,11 +248,20 @@ def query_message_of_matches(user_id):
 def get_profile_picture():
     """Returns the path of current user's profile picture."""
 
-    user = db.session.query(User).filter(User.user_id == session.get('user_id')).first() 
+    user = db.session.query(User).filter(User.user_id == session.get('user_id')).first()
     if user.profile_picture:
         return user.profile_picture
     else:
         return "static/img/blank.png"
+
+
+def selected_category_name():
+    """Get the current user's selected category names."""
+
+    current_user_liked = Like.query.filter(Like.user_id == session.get('user_id')).all()
+
+    return [item.category.cat_title for item in current_user_liked]
+
 
 if __name__ == "__main__":
     connect_to_db(app)

@@ -52,7 +52,9 @@ def add_rest_to_db():
                               rating=info['rating'],
                               num_reviews=info['num_reviews'],
                               address=address,
-                              phone=info['phone']
+                              phone=info['phone'],
+                              link=info['link'],
+                              image_url=info['image_url']
                               )
 
         db.session.add(category)
@@ -95,20 +97,9 @@ def add_image_to_db(image_url):
 if __name__ == "__main__":
     connect_to_db(app)
 
-    # categories = get_categories('restaurants.json')
-    # restaurants = get_restaurants('restaurants.json')
-    # rest = open_json_file('restaurants.json')
-
-    # add_image_to_db('static/profile-picture/bacon.png')
-    # add_image_to_db('static/profile-picture/beer.png')
-    # add_image_to_db('static/profile-picture/chopsticks.png')
-    # add_image_to_db('static/profile-picture/icecream.png')
-    # add_image_to_db('static/profile-picture/pancake.png')
-    # add_image_to_db('static/profile-picture/pizza.png')
-    # add_image_to_db('static/profile-picture/salad.png')
-    # add_image_to_db('static/profile-picture/sushi.png')
-    # add_image_to_db('static/profile-picture/taco.png')
-    # add_image_to_db('static/profile-picture/wine.png')
+    categories = get_categories('restaurants.json')
+    restaurants = get_restaurants('restaurants.json')
+    rest = open_json_file('restaurants.json')
 
     # add_user_to_db('marry@yahoo.com', '123', 'Mary', 'Poppins', '1965-08-25')
     # add_user_to_db('james@hotmail.com', '123', 'James', 'Corden', '1965-05-09')
@@ -125,6 +116,6 @@ if __name__ == "__main__":
     # add_messages_to_db(3, 2, '2018-05-12', 'Yeah, that sounds really great. Do you have a restaurant in mind?')
     # add_messages_to_db(3, 4, '2018-05-12', 'Hi Man, saw you like ethipian food. WOuld you wanna grab sometime this week?')
 
-    # add_rest_to_db()
-    # add_category_to_db()
-    # add_rest_cat_to_db()
+    add_rest_to_db()
+    add_category_to_db()
+    add_rest_cat_to_db()

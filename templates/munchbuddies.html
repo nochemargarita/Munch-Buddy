@@ -2,27 +2,39 @@
 {% block content %}
 <body>
     <div class="container-fluid">
-        <a href="/logout" style="float:right">Log Out</a>
+        <p><img src="{{ profile_picture }}" style="float:right" width="100", heigth="100">
+        <a href="/editprofile" style="float:right">Edit Profile</a>
+        &nbsp;&nbsp;<a href="/logout" style="float:right">Log Out</a></p>
         <div class="row">
             <div class="col-sm-8">
                 {% if matches|length %}
-                <h2 id="foo"><img src="{{ profile_picture }}" width="150", heigth="150">{{ name }}'s Buddie/s:</h2>
-                
+                <h2>
+                    {{ name }}'s Buddie/s:
+                </h2>
+
                 {% for user in matches %}
-             
-                    <h4>{{ matches[user][0] }} 
+
+                    <h4>
+                        <img class="match_image" src="{{ matches[user][5] }}" alt="Avatar" style="width:100px">
+                        {{ matches[user][0] }}
                         <input type="image" class='user-id' src="static/images/chat-icon.png" target='{{ matches[user][2] }}' name="{{ matches[user][4] }}" width="16" height="16">
-                        </h4> 
+                        </h4>
 
                     {% if matches[user][1] %}
-                        <i>Interests: {{ matches[user][0] }}</i>
+                        <i>Interests: {{ matches[user][1] }}</i>
                         <br>
                     {% endif %}
 
                     </form>
-                    Restaurant: {{ matches[user][3]['rest_title'] }}&nbsp;<button class="btn btn-primary btn-sm"><i class="fas fa-heart"></i></button>
+                    <strong>For you and your buddy to try:</strong>
                     <br>
-                    {% for star in range(matches[user][3]['rating']) %} 
+                    <form action="/munchbuddies">
+                    <img src="{{ matches[user][3]['image_url'] }}" width="100", heigth="100">
+                    <a href="{{ matches[user][3]['link'] }}">{{ matches[user][3]['rest_title'] }}</a>
+                    &nbsp;<button name="rest_id" value="{{ matches[user][3]['rest_id'] }}" class="btn btn-primary btn-sm"><i class="fas fa-heart"></i></button>
+                    </form>
+                    <br>
+                    {% for star in range(matches[user][3]['rating']) %}
                         <i class="fas fa-star"></i>
                     {% endfor %}
                     <br>
@@ -30,8 +42,8 @@
                     <br>
                     Address: {{ matches[user][3]['address'] }}
                     <br>
-                    Phone: <a href="tel:{{ matches[user][3]['phone'] }}">{{ matches[user][3]['phone'] }}</a> 
-                    
+                    Phone: <a href="tel:{{ matches[user][3]['phone'] }}">{{ matches[user][3]['phone'] }}</a>
+
                     <br><br>
 
                 {% endfor %}
@@ -40,7 +52,7 @@
             <div class="col-sm-4">
                 <div id="divCheckbox" hidden="true"></div>
                 <h2 id="header_message">Messages</h2>
-                <div class="row ex1">
+                <div id="messages" class="row ex1">
                     <div id="log"></div>
                 </div>
                     <form id="send_room" class="mess" method="POST" action='#'>
@@ -51,9 +63,9 @@
                     <form id="leave" method="POST" action='#'>
                           <input type="submit" value="Close">
                     </form>
+                <h2>Saved Restaurants</h2>
                 <div class="row ex1">
-                    <h2>Saved Restaurants</h2>
-
+                    <div id="restaurants"></div>
                 </div>
             </div>
         </div>
@@ -70,74 +82,118 @@
     <script type="text/javascript" src="//cdnjs.cloudflare.com/ajax/libs/socket.io/1.3.5/socket.io.min.js"></script>
     <script type="text/javascript" charset="utf-8">
         $(document).ready(function() {
+            // Loads all the liked restaurant from the database.
+
+            function displayRestaurants(results) {
+                let restaurants = results;
+                $('#restaurants').html(restaurants);
+
+                for (let restaurant in restaurants) {
+                    console.log(restaurants[restaurant]['title']);
+                    $('#restaurants').append(`<p> <img src=${restaurants[restaurant]['image']} width="50px" height="50px"> 
+                                                  <a href=${restaurants[restaurant]['url']}>
+                                                    ${restaurants[restaurant]['title']}
+                                                  </a>
+                                             </p>
+                                             <button id=${restaurant} onClick='deleteRestaurant(this.id)'>DELETE</button>`)
+
+                }
+
+            }
+
+            function getRestaurants() {
+                $.get('/restaurants.json', displayRestaurants);
+            }
+
+            getRestaurants();
+
             namespace='/munchbuddies';
 
             let socket = io.connect(location.protocol + '//' + document.domain + ':' + location.port + namespace);
 
             socket.on('connect', function() {
                 console.log('connected');
-                
+
                 {% if chat_session_ids %}
                     {{ chat_session_ids|safe }}.forEach(function(userId) {
                         socket.emit('join', { room: String(userId) });
                     })
                 {% endif %}
-                
+
                 $("#divCheckbox").attr('hidden', false)
                 $('.user-id').click(function(event){
                     $("#divCheckbox").attr('hidden', true)
                     $("h2#header_message").show();
                     $("form#send_room").show();
                     $("form#leave").show();
-                    
+                    $("div#messages").show();
+
                     let rm = $(this).attr('target')
                     let name_id = $(this).attr('name')
+
                     socket.emit('join', {room: rm});
-                    
-                    '{% for message in all_messages %}'
-                        '{% for room in message %}'
-                            if ('{{ room }}' == rm){
-                                '{% for chat in message[room] %}'
-                                   $('#log').append('<p><small><small><i> {{chat["date"]}}</i></small></small> <br>{{chat["from"]}}: {{chat["message"]}}</p>');
-                                '{% endfor %}'
+
+                    function displayMessages(results) {
+                        let messages = results;
+                        $('#log').html(messages);
+                        for (let message of messages){
+                            for (let msge in message) {
+                                if (msge !== rm) {
+                                    continue;
+                                }
+                                for (let i in message[msge]){
+                                    $('#log').append(`
+                                        <p><small><small><i> 
+                                        ${message[msge][i]['date']} 
+                                        </i></small></small><br>
+                                        ${message[msge][i]['from']}: 
+                                        ${message[msge][i]['message']} </p>`);
+                                };
+                            };
                         };
-                        '{% endfor %}'  
-                    '{% endfor %}'
-                    
+                    };
+
+                    function getMessages() {
+                        $.get('/messages.json', displayMessages);
+                    };
+
+                    getMessages();
                     $('form.mess').submit(function(event) {
-                        let msg = {sender: '{{ name }}', 
-                                                      receiver_id: name_id,
-                                                      room: rm, 
-                                                      meg: "You have a message from ",
-                                                      data: $('#room_data').val()}
+                        let msg = {sender: '{{ name }}',
+                                  receiver_id: name_id,
+                                  room: rm,
+                                  meg: 'You have a message from',
+                                  data: $('#room_data').val()}
                         socket.emit('my_room_event', msg);
                         $('#room_data').val('');
-                        
+
                         return false;
                     });
 
                     $('form#leave').submit(function(event) {
-                            event.preventDefault()
-                            window.location.reload(true);
+                        event.preventDefault()
+                        setInterval(window.location.reload(), 1000);                
+                        return false;
                     });
 
                     socket.on('my_response', function(msg) {
-                        $('#log').append('<p>' + msg.sender + ': ' + msg.data + '</p>');
+                        $('#log').append(`<p> ${msg.sender}: ${msg.data}</p>`);
+
                     });
                 });
                     socket.on('my_response', function(msg) {
-                    $('#divCheckbox').append('<p>' + msg.meg + msg.sender + '</p>')
+                    $('#divCheckbox').append(`<p> ${msg.meg} ${msg.sender} </p>`)
                     $('#divCheckbox').fadeIn(100).fadeOut(10000);
                 });
-               
             });
+        });
 
-       });
-        
-      
+    </script>
+    <script>
+            function deleteRestaurant(some){
+                console.log(some) 
+                $.post('/delete_liked_restaurant', {data: some});
+            }
     </script>
 </body>
 {% endblock %}
-
-                    
-            

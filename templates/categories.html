@@ -2,6 +2,14 @@
 {% block content %}
     <body>
         <a href="/logout" style="float:right">Log Out</a>
+        {% if chosen_categories %}
+        <h3>Categories you currently like: </h3>
+        <small><i>Note: Changing this will change your current buddies.</i></small><i></i>
+        <br>
+            {% for category in chosen_categories %}
+                {{ category }} &nbsp; &nbsp;
+            {% endfor %}
+        {% endif %}
         <h3>Choose categories: </h3>
         <form action="/categories" method='POST'>
         {% for category in categories %}
@@ -12,14 +20,12 @@
             
         {% endfor %}
 
-
-
             <input type='submit' name='submitted'>
         </form>
 
             <script src="https://code.jquery.com/jquery-3.2.1.min.js"></script>
             <script>
-                let limit = 6;
+                let limit = 5;
                 $('input.single-checkbox').on('change', function(evt) {
                    if($(this).siblings(':checked').length >= limit) {
                        this.checked = false;
