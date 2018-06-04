@@ -3,7 +3,8 @@ from flask import Flask, render_template, request, flash, redirect, session, jso
 # from flask_debugtoolbar import DebugToolbarExtension
 from werkzeug.security import generate_password_hash, check_password_hash
 from model import connect_to_db, db, User, Like, Restaurant, Category, Message, MessageSession, RestaurantCategory, Image, UserImage, LikeRestaurant
-import matches as pearson_algorithm
+from matches import selected_category_name, get_profile_picture, query_user_in_session, query_message_session, get_all_restaurants, query_message_of_matches
+
 from flask_socketio import SocketIO, emit, disconnect, join_room, leave_room, close_room, rooms
 from flask_uploads import UploadSet, configure_uploads, IMAGES
 from random import choice
@@ -137,7 +138,7 @@ def logout():
 def categories():
     """Let's the user select multiple categories of cuisine."""
     categories = Category.query.all()
-    chosen_categories = pearson_algorithm.selected_category_name()
+    chosen_categories = selected_category_name()
 
     if session.get('user_id'):
         return render_template('/categories.html', categories=categories,
@@ -164,69 +165,77 @@ def selected_categories():
     return redirect('/munchbuddies')
 
 
-def get_liked_restaurants():
-    user_id = session.get('user_id')
-    rest_id = request.args.get('rest_id')
-
-    if rest_id:
-        current_likes = db.session.query(LikeRestaurant).filter(LikeRestaurant.user_id == user_id,
-                                                                LikeRestaurant.rest_id == rest_id).first()
-
-        if not current_likes:
-            add_like_to_db = LikeRestaurant(user_id=user_id, rest_id=rest_id)
-            db.session.add(add_like_to_db)
-            db.session.commit()
-
-
 @app.route('/munchbuddies')
 def show_buddies():
     """Directs user to a page with list of people who matched his/her choice of categories."""
     sess = session.get('user_id')
+    name = session.get('name')
 
     if sess:
-        name = session.get('name')
-        profile_picture = pearson_algorithm.get_profile_picture()
-        get_liked_restaurants()
-        results = pearson_algorithm.get_all_restaurants()
+        profile_picture = get_profile_picture()
+        results = get_all_restaurants()
         matches = {}
 
-        chat_session_ids = []
+
         for user_id, restaurant in results.iteritems():
-            user = pearson_algorithm.query_user_in_session(user_id)
-            session_id = pearson_algorithm.query_message_session(user_id)
+            user = query_user_in_session(user_id)
+            session_id = query_message_session(user_id)
 
             if session_id:
-                chat_session_ids.append(session_id.sess_id)
-                matches[user.user_id] = [user.fname, user.interests,
-                                         session_id.sess_id, choice(restaurant),
-                                         user_id, user.profile_picture]
+                matches[user.user_id] = {'fname': user.fname,
+                                         'interests': user.interests,
+                                         'session_id': session_id.sess_id,
+                                         'restaurant': choice(restaurant),
+                                         'user_id': user_id,
+                                         'profile_picture': user.profile_picture}
 
             else:
-                pearson_algorithm.create_room_session()
+                create_room_session()
 
         return render_template('munchbuddies.html', matches=matches,
-                               sess=sess, chat_session_ids=chat_session_ids,
-                               name=name, profile_picture=profile_picture,
-                               async_mode=socketio.async_mode)
+                               sess=sess, profile_picture=profile_picture,
+                               name=name, async_mode=socketio.async_mode)
 
     else:
         return redirect('/login')
 
 
+@app.route('/add_restaurant', methods=['POST'])
+def add_restaurant():
+    user_id = session.get('user_id')
+    restaurant_id = request.form['data']
+
+    if restaurant_id:
+        current_likes = db.session.query(LikeRestaurant).filter(LikeRestaurant.user_id == user_id,
+                                                                LikeRestaurant.rest_id == restaurant_id).first()
+
+        if not current_likes:
+            add_like_to_db = LikeRestaurant(user_id=user_id, rest_id=restaurant_id)
+            db.session.add(add_like_to_db)
+            db.session.commit()
+            restaurant = {}
+
+            new_liked_restaurant = db.session.query(LikeRestaurant).filter(LikeRestaurant.user_id == user_id,
+                                                                           LikeRestaurant.rest_id == restaurant_id).first()
+
+            restaurant[restaurant_id] = {'title': new_liked_restaurant.like_restaurant.rest_title,
+                                         'url': new_liked_restaurant.like_restaurant.link,
+                                         'image': new_liked_restaurant.like_restaurant.image_url
+                                         }
+            return jsonify(restaurant)
+
+
 @app.route('/delete_liked_restaurant', methods=['POST'])
 def delete_restaurant():
-    data = request.get_json()
     restaurant_id = request.form['data']
     user_id = session.get('user_id')
     if restaurant_id:
-        delete_likes = db.session.query(LikeRestaurant).filter(LikeRestaurant.user_id == user_id,
-                                                                LikeRestaurant.rest_id == restaurant_id).delete()
-        # delete_like_from_db = LikeRestaurant(user_id=session.get('user_id'), rest_id=restaurant_id)
-        # db.session.delete(delete_likes)
+        db.session.query(LikeRestaurant).filter(LikeRestaurant.user_id == user_id,
+                                                LikeRestaurant.rest_id == restaurant_id).delete()
         db.session.commit()
-        print 'yes'
 
-    return 'Hey'
+    return restaurant_id
+
 
 @app.route('/restaurants.json')
 def show_restaurants():
@@ -238,7 +247,7 @@ def show_restaurants():
             restaurants[restaurant.rest_id] = {'title': restaurant.like_restaurant.rest_title,
                                                'url': restaurant.like_restaurant.link,
                                                'image': restaurant.like_restaurant.image_url
-                                              }
+                                               }
 
     return jsonify(restaurants)
 
@@ -246,14 +255,14 @@ def show_restaurants():
 @app.route('/messages.json')
 def show_messages():
     all_messages = {}
-    results = pearson_algorithm.get_all_restaurants()
-    print pearson_algorithm.query_message_of_matches(2)
+    results = get_all_restaurants()
     for user_id, restaurant in results.iteritems():
-        session_id = pearson_algorithm.query_message_session(user_id)
-        # print session_id
+        session_id = query_message_session(user_id)
+
+
+
         if session_id:
-            print pearson_algorithm.query_message_of_matches(user_id)
-            all_messages[session_id] = pearson_algorithm.query_message_of_matches(user_id)
+            all_messages.update(query_message_of_matches(user_id))
 
     return jsonify(all_messages)
 
@@ -267,7 +276,7 @@ def edit_profile():
         interests = db.session.query(User).filter(User.user_id == user_id).first()
 
         return render_template('editprofile.html', interests=interests.interests,
-                                fname=interests.fname, profile_picture=interests.profile_picture)
+                               fname=interests.fname, profile_picture=interests.profile_picture)
 
     else:
         return redirect('/')
@@ -283,7 +292,7 @@ def update_edit_profile():
         db.session.query(User).filter(User.user_id == user_id).update(dict(interests=interests, fname=fname))
         db.session.commit()
 
-        user_name = session.pop('name', None)
+        session.pop('name', None)
         session['name'] = fname
 
     url = str(user_id)+"1" + ".jpg"
@@ -292,10 +301,32 @@ def update_edit_profile():
             filename = photos.save(request.files['photo'])
             profile_picture = app.config['UPLOADED_PHOTOS_DEST'] + '/' + url
             db.session.query(User).filter(User.user_id == user_id).update(dict(profile_picture=profile_picture))
-            print 'submitted'
             db.session.commit()
 
     return redirect('/munchbuddies')
+
+
+@app.route('/sender_name')
+def get_sender_name():
+    """Get the current user in session's name."""
+
+    name = session.get('name')
+
+    return name
+
+
+@app.route('/matches_for_chat.json')
+def session_id_for_matches():
+    """Returns all the session ids related to the current user."""
+    results = get_all_restaurants()
+    chat_session_ids = []
+    for user_id, restaurant in results.iteritems():
+        session_id = query_message_session(user_id)
+
+        if session_id:
+            chat_session_ids.append(session_id.sess_id)
+
+    return jsonify(chat_session_ids)
 
 
 @socketio.on('join', namespace='/munchbuddies')
@@ -316,6 +347,8 @@ def send_room_message(message):
 
 if __name__ == "__main__":
     # set debug to True at the point of invoking the DebugToolbarExtension
+    app.config["SQLALCHEMY_DATABASE_URI"] = "PostgreSQL:///munch"
+    app.config["SQLALCHEMY_TRACK_MODIFICATIONS"] = False
     app.debug = True
     app.jinja_env.auto_reload = app.debug
     connect_to_db(app)

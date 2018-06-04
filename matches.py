@@ -1,5 +1,5 @@
 from model import connect_to_db, db, User, Like, Restaurant, Category, RestaurantCategory, Message, MessageSession
-from server import app
+# from server import app
 from algorithm import pearson
 from flask import session
 
