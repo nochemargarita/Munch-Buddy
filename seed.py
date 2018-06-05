@@ -1,7 +1,7 @@
 # import requests
 # import json
 # from pprint import pprint
-from model import connect_to_db, db, User, Like, Restaurant, Category, RestaurantCategory, Message, Image
+from model import connect_to_db, db, User, LikeCategory, Restaurant, Category, RestaurantCategory, Message
 from server import app
 from werkzeug.security import generate_password_hash
 from datetime import datetime
@@ -61,12 +61,12 @@ def add_rest_to_db():
     db.session.commit()
 
 # User
-def add_user_to_db(email, password, fname, lname, birthday):
+def add_user_to_db(username, password, display, lname, birthday, interests):
     """Add fake users to database."""
 
-    birthday = datetime.strptime(birthday, '%Y-%m-%d')
     password = generate_password_hash(password)
-    user = User(email=email, password=password, fname=fname, lname=lname, birthday=birthday)
+    user = User(username=username, password=password, display_name=display_name,
+                interests=interests)
 
     db.session.add(user)
     db.session.commit()
@@ -83,13 +83,6 @@ def add_messages_to_db(from_user_id, to_user_id, messaged_on, message):
     db.session.commit()
 
 
-def add_image_to_db(image_url):
-    """Add images from static folder to the database."""
-
-    image = Image(image_url=image_url)
-
-    db.session.add(image)
-    db.session.commit()
 
 
 # Match

@@ -1,4 +1,4 @@
-from model import connect_to_db, db, User, Like, Restaurant, Category, RestaurantCategory, Message, MessageSession
+from model import connect_to_db, db, User, LikeCategory, Restaurant, Category, RestaurantCategory, Message, MessageSession
 # from server import app
 from algorithm import pearson
 from flask import session
@@ -6,7 +6,7 @@ from flask import session
 
 def get_user_selected_category():
     """Returns a list of category ids that the current user selected/likes."""
-    current_user_liked = Like.query.filter(Like.user_id == session.get('user_id')).all()
+    current_user_liked = LikeCategory.query.filter(LikeCategory.user_id == session.get('user_id')).all()
 
     return [item.cat_id for item in current_user_liked]
 
@@ -31,7 +31,7 @@ def map_selected_category():
 # Users from database.
 def find_matched_users():
     """Returns a dictionary of users and an empty list."""
-    users_like = Like.query.all()
+    users_like = LikeCategory.query.all()
 
     users = {}
     for user in users_like:
@@ -49,7 +49,7 @@ def add_to_matched_users():
 
     users = find_matched_users()
     for user in users:
-        users_like = Like.query.filter(Like.user_id == user).all()
+        users_like = LikeCategory.query.filter(LikeCategory.user_id == user).all()
         for item in users_like:
             users[user].append(item.cat_id)
 
@@ -109,7 +109,7 @@ def matches_liked_categories():
 
     users_and_restaurants = []
     for user_id, lst in get_current_user_matches().iteritems():
-        liked = Like.query.filter(Like.user_id == user_id).all()
+        liked = LikeCategory.query.filter(LikeCategory.user_id == user_id).all()
         users_and_restaurants.extend(liked)
 
     return users_and_restaurants
@@ -232,13 +232,13 @@ def query_message_of_matches(user_id):
 
             if message.sess_id not in all_messages:
                 str_date = message.messaged_on.strftime('%a %b %d')
-                all_messages[message.sess_id] = [{'from': from_user_name.fname,
-                                                  'to': to_user_name.fname,
+                all_messages[message.sess_id] = [{'from': from_user_name.display_name,
+                                                  'to': to_user_name.display_name,
                                                   'message': message.message,
                                                   'date': str_date}]
             else:
-                all_messages[message.sess_id].append({'from': from_user_name.fname,
-                                                      'to': to_user_name.fname,
+                all_messages[message.sess_id].append({'from': from_user_name.display_name,
+                                                      'to': to_user_name.display_name,
                                                       'message': message.message,
                                                       'date': str_date})
 
@@ -258,7 +258,7 @@ def get_profile_picture():
 def selected_category_name():
     """Get the current user's selected category names."""
 
-    current_user_liked = Like.query.filter(Like.user_id == session.get('user_id')).all()
+    current_user_liked = LikeCategory.query.filter(LikeCategory.user_id == session.get('user_id')).all()
 
     return [item.category.cat_title for item in current_user_liked]
 

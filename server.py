@@ -2,8 +2,8 @@ from jinja2 import StrictUndefined
 from flask import Flask, render_template, request, flash, redirect, session, jsonify
 # from flask_debugtoolbar import DebugToolbarExtension
 from werkzeug.security import generate_password_hash, check_password_hash
-from model import connect_to_db, db, User, Like, Restaurant, Category, Message, MessageSession, RestaurantCategory, Image, UserImage, LikeRestaurant
-from matches import selected_category_name, get_profile_picture, query_user_in_session, query_message_session, get_all_restaurants, query_message_of_matches
+from model import connect_to_db, db, User, LikeCategory, Restaurant, Category, Message, MessageSession, RestaurantCategory, LikeRestaurant
+from matches import create_room_session, selected_category_name, get_profile_picture, query_user_in_session, query_message_session, get_all_restaurants, query_message_of_matches
 
 from flask_socketio import SocketIO, emit, disconnect, join_room, leave_room, close_room, rooms
 from flask_uploads import UploadSet, configure_uploads, IMAGES
@@ -31,38 +31,33 @@ def homepage():
         return render_template("homepage.html")
 
 
-@app.route('/signup')
-def signup_form():
-    """Directs user to a form."""
-
-    return render_template("signup.html")
-
-
 @app.route('/signup', methods=['POST'])
 def signup():
     """Process signup using post request."""
 
-    email = request.form.get('email')
+    username = request.form.get('username')
     password = request.form.get('password')
-    fname = request.form.get('fname')
-    lname = request.form.get('lname')
-    birthday = request.form.get('birthday')
+    display_name = request.form.get('display_name')
     interests = request.form.get('interests')
 
+    print username
+    print password
+    print display_name
+
     hashed_password = generate_password_hash(password)
-    q = db.session.query(User).filter(User.email == email).first()
+    q = db.session.query(User).filter(User.username == username).first()
 
     if q:
-        flash('Email is already taken.')
+        flash('Username is already taken.')
         return redirect('/signup')
 
     else:
         flash('Yay! You are now a Munch Buddy!')
-        user = User(email=email, password=hashed_password,
-                    fname=fname, lname=lname, birthday=birthday, interests=interests)
+        user = User(username=username, password=hashed_password,
+                    display_name=display_name, interests=interests)
         db.session.add(user)
         db.session.commit()
-        session['email'] = email
+        session['username'] = username
     return render_template('upload.html')
 
 
@@ -70,11 +65,11 @@ def signup():
 def upload():
     """Allows the user to upload profile picture."""
 
-    if session.get('email'):
-        email = session.pop('email')
-        user = db.session.query(User).filter(User.email == email).first()
+    if session.get('username'):
+        username = session.pop('username')
+        user = db.session.query(User).filter(User.username == username).first()
         session['user_id'] = user.user_id
-        session['name'] = user.fname
+        session['name'] = user.display_name
         user_id = session.get('user_id')
         url = str(user_id) + ".jpg"
 
@@ -90,28 +85,19 @@ def upload():
         return redirect('/')
 
 
-@app.route('/login')
-def login_form():
-    """Directs user to a login form."""
-    if 'user_id' in session:
-        return redirect('/munchbuddies')
-    else:
-        return render_template('/login.html')
-
-
 @app.route('/login', methods=['POST'])
 def login():
     """Verify user and log the user in."""
 
-    email = request.form.get('email')
+    username = request.form.get('username')
     password = request.form.get('password')
-    user = db.session.query(User).filter(User.email == email).first()
+    user = db.session.query(User).filter(User.username == username).first()
 
     if user:
         checked_hashed = check_password_hash(user.password, password)
         if checked_hashed:
             session['user_id'] = user.user_id
-            session['name'] = user.fname
+            session['name'] = user.display_name
             flash('You successfully logged in.')
             return redirect('/munchbuddies')
         else:
@@ -119,7 +105,7 @@ def login():
             return redirect('/login')
 
     else:
-        flash('Please check your email and password!')
+        flash('Please check your username and password!')
         return redirect('/login')
 
 
@@ -150,14 +136,14 @@ def categories():
 
 @app.route('/categories', methods=['GET', 'POST'])
 def selected_categories():
-    """Get all selected check boxes and add it to database, Like."""
+    """Get all selected check boxes and add it to database, LikeCategory."""
 
     user = User.query.get(session['user_id'])
     submitted_categories = request.form.getlist('cat_id')
 
     if submitted_categories:
         for ident in submitted_categories:
-            like = Like(user_id=user.user_id, cat_id=ident)
+            like = LikeCategory(user_id=user.user_id, cat_id=ident)
 
             db.session.add(like)
     db.session.commit()
@@ -182,7 +168,7 @@ def show_buddies():
             session_id = query_message_session(user_id)
 
             if session_id:
-                matches[user.user_id] = {'fname': user.fname,
+                matches[user.user_id] = {'display_name': user.display_name,
                                          'interests': user.interests,
                                          'session_id': session_id.sess_id,
                                          'restaurant': choice(restaurant),
@@ -276,7 +262,7 @@ def edit_profile():
         interests = db.session.query(User).filter(User.user_id == user_id).first()
 
         return render_template('editprofile.html', interests=interests.interests,
-                               fname=interests.fname, profile_picture=interests.profile_picture)
+                               display_name=interests.display_name, profile_picture=interests.profile_picture)
 
     else:
         return redirect('/')
@@ -287,13 +273,13 @@ def update_edit_profile():
     """Update interests in the database."""
     user_id = session.get('user_id')
     interests = request.form.get('interests')
-    fname = request.form.get('fname')
-    if fname or interests:
-        db.session.query(User).filter(User.user_id == user_id).update(dict(interests=interests, fname=fname))
+    display_name = request.form.get('display_name')
+    if display_name or interests:
+        db.session.query(User).filter(User.user_id == user_id).update(dict(interests=interests, display_name=display_name))
         db.session.commit()
 
         session.pop('name', None)
-        session['name'] = fname
+        session['name'] = display_name
 
     url = str(user_id)+"1" + ".jpg"
     if request.method == 'POST' and 'photo' in request.files:
@@ -347,14 +333,15 @@ def send_room_message(message):
 
 if __name__ == "__main__":
     # set debug to True at the point of invoking the DebugToolbarExtension
+    connect_to_db(app)
     app.config["SQLALCHEMY_DATABASE_URI"] = "PostgreSQL:///munch"
     app.config["SQLALCHEMY_TRACK_MODIFICATIONS"] = False
     app.debug = True
     app.jinja_env.auto_reload = app.debug
-    connect_to_db(app)
-
+    
     socketio.run(app, host="0.0.0.0", port=5000)
 
     # DebugToolbarExtension(app)
 
     # app.run(host="0.0.0.0")
+

@@ -2,7 +2,69 @@
 {% block content %}
     <body class="text-center">
         <h1>Munch Buddy</h1>
-        <p><a href="/signup">Sign Up</a>    <a href="/login">Log In</a></p>
+        <button id='login'>Log in</button>
+        <button id='signup'>Sign up</button>
+        <br><br>
+        <form class='sign-in' action='/login' method='post' hidden='true'>
+            <input type='emal' name='email' placeholder='Email'>
+            <br>
+            <input type='password' name='password' placeholder='Password'>
+            <br>
+            <input type='submit' value='Log in'>
+        </form>
+
+    <h2 id='signup-header'hidden='true'>Sign Up</h2>
+        
+        <form action='/signup' method='POST' id="frm" hidden='true'>
+            
+            <input type="text" name="username" placeholder='username' required>
+            <br>
+            <input type="password" name="password" placeholder='password' required>
+            <br>
+            <input type="text" name="display_name" placeholder='display name' required>
+            <br>
+            <textarea rows="4" cols="30" maxlength="250" name="interests" placeholder="interests" form="frm"></textarea>
+            <br>
+            <input id='submit-info' type='submit' value="Sign Up">
+            <br>
+        </form>
+
+
+        <form id='upload-photo' method=POST enctype=multipart/form-data action='{{ url_for("upload") }}' hidden='true'>
+            <input type=file name='photo'>
+            <input type='submit'>
+        </form>
+
+        <script src="https://code.jquery.com/jquery-3.2.1.min.js"></script>
+        <script>
+
+            $('button#signup').on('click', function(evt) {
+                $('h2#signup-header').attr('hidden', false);
+                $('form#frm').attr('hidden', false);
+
+                $('form.sign-in').attr('hidden', true);
+
+            });
+
+            $('button#login').on('click', function(evt) {
+                $('h2#signup-header').attr('hidden', true);
+                $('form#frm').attr('hidden', true);
+
+                $('form.sign-in').attr('hidden', false);
+
+            });
+
+            $('input#submit-info').on('submit', function(evt) {
+                $('form#upload-photo').attr('hidden', false);
+
+                $('h2#signup-header').attr('hidden', true);
+                $('form#frm').attr('hidden', true);
+                $('h2#signup-header').attr('hidden', true);
+                $('form#frm').attr('hidden', true);
+
+            });
+
+        </script>
     </body>
 {% endblock %}
 

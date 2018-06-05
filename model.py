@@ -22,19 +22,17 @@ class User(db.Model):
     __tablename__ = "users"
 
     user_id = db.Column(db.Integer, autoincrement=True, primary_key=True)
-    email = db.Column(db.String(50), nullable=False)
+    username = db.Column(db.String(50), nullable=False)
     password = db.Column(db.String(250), nullable=False)
-    fname = db.Column(db.String(30), nullable=False)
-    lname = db.Column(db.String(30), nullable=False)
-    birthday = db.Column(db.DateTime, nullable=False)
+    display_name = db.Column(db.String(30), nullable=False)
     interests = db.Column(db.String(250), nullable=True)
     profile_picture = db.Column(db.String(250), nullable=True)
 
     def __repr__(self):
         """Provide a helpful representation."""
 
-        return "<User user_id={} fname={}>".format(
-               self.user_id, self.fname)
+        return "<User user_id={} display_name={}>".format(
+               self.user_id, self.display_name)
 
 
 class Category(db.Model):
@@ -50,25 +48,25 @@ class Category(db.Model):
         return "<Category cat_id={} cat_title={}>".format(
                self.cat_id, self.cat_title)
 
-class Like(db.Model):
+class LikeCategory(db.Model):
     """Restaurants that users liked."""
 
-    __tablename__ = "likes"
+    __tablename__ = "likes_categories"
 
     like_id = db.Column(db.Integer, autoincrement=True, primary_key=True)
     user_id = db.Column(db.Integer, db.ForeignKey("users.user_id"), nullable=False)
     cat_id = db.Column(db.String(50), db.ForeignKey("categories.cat_id"), nullable=False)
 
     # Define relationship to User.
-    user = db.relationship("User", backref=db.backref("likes", order_by=like_id))
+    user = db.relationship("User", backref=db.backref("likes_categories", order_by=like_id))
 
     # Define ralationship to Category
-    category = db.relationship("Category", backref=db.backref("likes", order_by=like_id))
+    category = db.relationship("Category", backref=db.backref("likes_categories", order_by=like_id))
 
     def __repr__(self):
         """Provide useful representation."""
 
-        return "<Like like_id={} user_id={} cat_id={}>".format(
+        return "<LikeCategory like_id={} user_id={} cat_id={}>".format(
                self.like_id, self.user_id, self.cat_id)
 
 
@@ -172,36 +170,6 @@ class MessageSession(db.Model):
                 self.sess_id, self.from_user_id, self.to_user_id)
 
 
-class Image(db.Model):
-
-    __tablename__ = "images"
-    image_id = db.Column(db.Integer, autoincrement=True, primary_key=True)
-    image_url = db.Column(db.String(200))
-
-    def __repr__(self):
-        """Provide a helpful representation."""
-        return "<Image image_id={} image_url={}>".format(
-                self.image_id, self.image_url)
-
-
-class UserImage(db.Model):
-
-    __tablename__ = "users_images"
-
-    user_image_id = db.Column(db.Integer, autoincrement=True, primary_key=True)
-    image_id = db.Column(db.Integer, db.ForeignKey("images.image_id"), nullable=False)
-    user_id = db.Column(db.Integer, db.ForeignKey("users.user_id"), nullable=False)
-
-    image = db.relationship("Image", backref=db.backref("users_images", order_by=user_image_id))
-    # Define relationship to User.
-    user = db.relationship("User", backref=db.backref("users_images", order_by=user_image_id))
-
-    def __repr__(self):
-        """Provide a helpful representation."""
-        return "<UserImage user_mage_id={} user_id={}>".format(
-                self.user_image_id, self.user_id)
-
-
 
 ##############################################################################
 # Helper functions
@@ -210,10 +178,12 @@ def connect_to_db(app):
     """Connect the database to Flask app."""
 
     # configure to user PostgreSQL database
+
     app.config["SQLALCHEMY_DATABASE_URI"] = "PostgreSQL:///munch"
     app.config["SQLALCHEMY_TRACK_MODIFICATIONS"] = False
     db.app = app
     db.init_app(app)
+
 
 
 if __name__ == "__main__":

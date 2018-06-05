@@ -91,11 +91,11 @@ def get_categories(filename):
         cat_id = cat['alias']
         cat_title = cat['title']
 
-        if 'se' == cat_id[-2:] or 'an' == cat_id[-2:]:
+        if ('se' == cat_id[-2:] or 'an' == cat_id[-2:] or
+           'filipino' == cat_id or 'greek' == cat_id or
+           'thai' == cat_id):
             category_info[cat_id] = {'cat_id': cat_id,
-                                    'cat_title': cat_title}
+                                     'cat_title': cat_title}
 
     return category_info
-
-
 
