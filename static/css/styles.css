@@ -10,6 +10,12 @@ div.ex1 {
     flex-direction: column-reverse;
 }
 
+div.ex2 {
+
+    height: 300px;
+    overflow: auto;
+}
+
 
 
 #send_room, #leave, #header_message, #m {

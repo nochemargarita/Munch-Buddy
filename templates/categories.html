@@ -2,25 +2,55 @@
 {% block content %}
     <body>
         <a href="/logout" style="float:right">Log Out</a>
-        {% if chosen_categories %}
-        <h3>Categories you currently like: </h3>
-        <small><i>Note: Changing this will change your current buddies.</i></small><i></i>
-        <br>
-            {% for category in chosen_categories %}
-                {{ category }} &nbsp; &nbsp;
-            {% endfor %}
-        {% endif %}
-        <h3>Choose categories: </h3>
+        
+        <h3>Choose 5 categories: </h3>
         <form action="/categories" method='POST'>
-        {% for category in categories %}
-            
-                <input type='checkbox' class='single-checkbox' name='cat_id' value='{{ category.cat_id }}'>
-                {{ category.cat_title }}
-                <br>
-            
+        {% for number in range(0, categories|length - 45) %}
+           <input type='checkbox' class='single-checkbox' name='cat_id' value='{{ categories[number].cat_id }}'>
+                {{ categories[number].cat_title }}
         {% endfor %}
-
-            <input type='submit' name='submitted'>
+        <br><br>
+        {% for number in range(5, categories|length - 40) %}
+           <input type='checkbox' class='single-checkbox' name='cat_id' value='{{ categories[number].cat_id }}'>
+                {{ categories[number].cat_title }}
+        {% endfor %}
+        <br><br>
+        {% for number in range(10, categories|length - 35) %}
+           <input type='checkbox' class='single-checkbox' name='cat_id' value='{{ categories[number].cat_id }}'>
+                {{ categories[number].cat_title }}
+        {% endfor %}
+        <br><br>
+        {% for number in range(15, categories|length - 30) %}
+           <input type='checkbox' class='single-checkbox' name='cat_id' value='{{ categories[number].cat_id }}'>
+                {{ categories[number].cat_title }}
+        {% endfor %}
+        <br><br>
+        {% for number in range(20, categories|length - 25) %}
+           <input type='checkbox' class='single-checkbox' name='cat_id' value='{{ categories[number].cat_id }}'>
+                {{ categories[number].cat_title }}
+        {% endfor %}
+        <br><br>
+        {% for number in range(25, categories|length - 20) %}
+           <input type='checkbox' class='single-checkbox' name='cat_id' value='{{ categories[number].cat_id }}'>
+                {{ categories[number].cat_title }}
+        {% endfor %}
+        <br><br>
+        {% for number in range(30, categories|length - 15) %}
+           <input type='checkbox' class='single-checkbox' name='cat_id' value='{{ categories[number].cat_id }}'>
+                {{ categories[number].cat_title }}
+        {% endfor %}
+        <br><br>
+        {% for number in range(35, categories|length - 10) %}
+           <input type='checkbox' class='single-checkbox' name='cat_id' value='{{ categories[number].cat_id }}'>
+                {{ categories[number].cat_title }}
+        {% endfor %}
+        <br><br>
+        {% for number in range(40, categories|length - 5) %}
+           <input type='checkbox' class='single-checkbox' name='cat_id' value='{{ categories[number].cat_id }}'>
+                {{ categories[number].cat_title }}
+        {% endfor %}
+        <br><br>
+            <input id='submit-categories' type='submit' name='submitted' hidden='true'>
         </form>
 
             <script src="https://code.jquery.com/jquery-3.2.1.min.js"></script>
@@ -28,9 +58,21 @@
                 let limit = 5;
                 $('input.single-checkbox').on('change', function(evt) {
                    if($(this).siblings(':checked').length >= limit) {
-                       this.checked = false;
+                        this.checked = false;
                    }
                 });
+
+                let counter = 0;
+                $('input.single-checkbox').on('click', function(evt){
+                    console.log(counter)
+                    if (counter >= 4) {
+                        $('#submit-categories').attr('hidden', false);
+                    }
+                    counter += 1;
+                })
+
+
+                
             </script>
     </body>
     

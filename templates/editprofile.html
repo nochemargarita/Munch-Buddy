@@ -3,7 +3,11 @@
     <body class="text-center">
         <h1>Munch Buddy</h1>
         <a href="/logout" style="float:right">Log Out</a>
-
+        <h6>Categories you currently like: </h6>
+        {% for category in chosen_categories %}
+            {{ category }} &nbsp; &nbsp;
+        {% endfor %}
+        <br><br>
         <form method=POST enctype=multipart/form-data action='{{ url_for("update_edit_profile") }}'>
             <input type=file name='photo'>
             <input type='submit'>
@@ -16,7 +20,7 @@
             <br>
             Edit Display Name:
             <br>
-            <input type="text" name="fname" value='{{ fname }}'>
+            <input type="text" name="display_name" value='{{ display_name }}'>
             <br><br>
             Edit Interests:
             <br><br>

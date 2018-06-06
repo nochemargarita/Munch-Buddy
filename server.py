@@ -102,11 +102,11 @@ def login():
             return redirect('/munchbuddies')
         else:
             flash('You have entered the wrong password!')
-            return redirect('/login')
+            return redirect('/')
 
     else:
         flash('Please check your username and password!')
-        return redirect('/login')
+        return redirect('/')
 
 
 @app.route('/logout')
@@ -117,21 +117,19 @@ def logout():
         session.pop('user_id', None)
         return redirect('/')
     else:
-        return render_template('/login.html')
+        return redirect('/')
 
 
 @app.route('/categories')
 def categories():
     """Let's the user select multiple categories of cuisine."""
-    categories = Category.query.all()
-    chosen_categories = selected_category_name()
+    categories = Category.query.order_by(Category.cat_id).all()
 
     if session.get('user_id'):
-        return render_template('/categories.html', categories=categories,
-                               chosen_categories=chosen_categories)
+        return render_template('/categories.html', categories=categories)
 
     else:
-        return redirect('/login')
+        return redirect('/')
 
 
 @app.route('/categories', methods=['GET', 'POST'])
@@ -162,7 +160,6 @@ def show_buddies():
         results = get_all_restaurants()
         matches = {}
 
-
         for user_id, restaurant in results.iteritems():
             user = query_user_in_session(user_id)
             session_id = query_message_session(user_id)
@@ -183,7 +180,7 @@ def show_buddies():
                                name=name, async_mode=socketio.async_mode)
 
     else:
-        return redirect('/login')
+        return redirect('/')
 
 
 @app.route('/add_restaurant', methods=['POST'])
@@ -260,9 +257,13 @@ def edit_profile():
 
     if user_id:
         interests = db.session.query(User).filter(User.user_id == user_id).first()
+        chosen_categories = selected_category_name()
 
-        return render_template('editprofile.html', interests=interests.interests,
-                               display_name=interests.display_name, profile_picture=interests.profile_picture)
+        return render_template('editprofile.html',
+                               interests=interests.interests,
+                               display_name=interests.display_name,
+                               profile_picture=interests.profile_picture,
+                               chosen_categories=chosen_categories)
 
     else:
         return redirect('/')
@@ -275,7 +276,8 @@ def update_edit_profile():
     interests = request.form.get('interests')
     display_name = request.form.get('display_name')
     if display_name or interests:
-        db.session.query(User).filter(User.user_id == user_id).update(dict(interests=interests, display_name=display_name))
+        db.session.query(User).filter(User.user_id == user_id).update(dict(interests=interests,
+                                                                           display_name=display_name))
         db.session.commit()
 
         session.pop('name', None)
@@ -325,8 +327,10 @@ def join(message):
 def send_room_message(message):
     emit('my_response', message, room=message['room'])
     sess = session.get('user_id')
-    message_to_db = Message(sess_id=message['room'], from_user_id=sess,
-                            to_user_id=message['receiver_id'], message=message['data'])
+    message_to_db = Message(sess_id=message['room'],
+                            from_user_id=sess,
+                            to_user_id=message['receiver_id'],
+                            message=message['data'])
     db.session.add(message_to_db)
     db.session.commit()
 

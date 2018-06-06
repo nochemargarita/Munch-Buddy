@@ -15,7 +15,7 @@
                 {% for user in matches %}
                     <h4>
                         <img class="match_image" src="{{ matches[user]['profile_picture'] }}" alt="Avatar" style="width:100px">
-                        {{ matches[user]['fname'] }}
+                        {{ matches[user]['display_name'] }}
                         <input type="image" class='user-id' src="static/images/chat-icon.png" target="{{ matches[user]['session_id'] }}" name="{{ matches[user]['user_id'] }}" width="16" height="16">
                         </h4>
 
@@ -23,26 +23,20 @@
                         <i>Interests: {{ matches[user]['interests'] }}</i>
                         <br>
                     {% endif %}
-
-                    </form>
                     <strong>For you and your buddy to try:</strong>
                     <br>
-                    
                     <img src="{{ matches[user]['restaurant']['image_url'] }}" width="100", heigth="100">
-                    <a href="{{ matches[user]['restaurant']['link'] }}">{{ matches[user]['restaurant']['rest_title'] }}</a>
+                    <a href="{{ matches[user]['restaurant']['link'] }}" target="_blank">{{ matches[user]['restaurant']['rest_title'] }}</a>
                     &nbsp;
                     <button name="rest_id" onClick="addRestaurant(this.value)" value="{{ matches[user]['restaurant']['rest_id'] }}" class="btn btn-primary btn-sm"><i class="fas fa-heart"></i></button>
-                
                     <br>
                     {% for star in range(matches[user]['restaurant']['rating']) %}
                         <i class="fas fa-star"></i>
                     {% endfor %}
                     <br>
-                    Number of Reviews: {{ matches[user]['restaurant']['num_reviews'] }}
+                    <i class="fas fa-map-marker">&nbsp;<a href="https://www.google.com/maps/dir//{{ matches[user]['restaurant']['address'] }}" target="_blank">{{ matches[user]['restaurant']['address'] }}</a></i>
                     <br>
-                    Address: {{ matches[user]['restaurant']['address'] }}
-                    <br>
-                    Phone: <a href="tel:{{ matches[user]['restaurant']['phone'] }}">{{ matches[user]['restaurant']['phone'] }}</a>
+                    <i class="fas fa-phone">&nbsp;<a href="tel:{{ matches[user]['restaurant']['phone'] }}">{{ matches[user]['restaurant']['phone'] }}</a></i></img>
 
                     <br><br>
 
@@ -64,7 +58,7 @@
                           <input type="submit" value="Close">
                     </form>
                 <h2>Saved Restaurants</h2>
-                <div class="row ex1">
+                <div class="row ex2">
                     <div id="restaurants"></div>
                 </div>
             </div>
