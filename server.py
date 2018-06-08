@@ -22,6 +22,7 @@ socketio = SocketIO(app)
 app.jinja_env.undefined = StrictUndefined
 
 
+
 @app.route('/')
 def homepage():
     """Homepage."""
@@ -29,6 +30,21 @@ def homepage():
         return redirect('/munchbuddies')
     else:
         return render_template("homepage.html")
+
+
+@app.route('/base')
+def base_page():
+
+    name = session.get('name')
+    profile_picture = get_profile_picture()
+
+    for_nav_bar = {}
+    if name:
+        for_nav_bar['name'] = name
+        for_nav_bar['profile_picture'] = profile_picture
+
+
+    return jsonify(for_nav_bar)
 
 
 @app.route('/signup', methods=['POST'])
@@ -148,6 +164,14 @@ def selected_categories():
 
     return redirect('/munchbuddies')
 
+@app.route('/saved-restaurants')
+def saved_restaurants():
+    """redirect users to saved restaurants."""
+    if session.get('user_id'):
+        return render_template('savedrestaurants.html')
+
+    else:
+        return redirect('/')
 
 @app.route('/munchbuddies')
 def show_buddies():

@@ -23,6 +23,7 @@ Server:
     
 USEFUL:
     -http://jsonprettyprint.com/
+    -http://gearside.com/easily-link-to-locations-and-directions-using-the-new-google-maps/
 
 HASHING:
     -https://blog.miguelgrinberg.com/post/the-flask-mega-tutorial-part-v-user-logins

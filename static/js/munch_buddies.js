@@ -9,30 +9,6 @@ $(document).ready(function() {
     }
     getSessionIds()
 
-    // Loads all the liked restaurant from the database.
-    function displayRestaurants(results) {
-        let restaurants = results;
-        $('#restaurants').html(restaurants);
-
-        for (let restaurant in restaurants) {
-            $('#restaurants').append(`<p id=${restaurant}> 
-                                          <img src=${restaurants[restaurant]['image']} width="50px" height="50px"> 
-                                          <a href=${restaurants[restaurant]['url']}>
-                                            ${restaurants[restaurant]['title']}
-                                          </a>
-                                          <button id=${restaurant} onClick='deleteRestaurant(this.id)'>DELETE</button>
-                                      </p>
-                                    `);
-
-        }
-
-    }
-
-    function getRestaurants() {
-        $.get('/restaurants.json', displayRestaurants);
-    }
-
-    getRestaurants();
 
     // Chat socket.io
     namespace='/munchbuddies';
@@ -48,13 +24,12 @@ $(document).ready(function() {
             });
         }
 
-        $("#divCheckbox").attr('hidden', false)
+        
         $('.user-id').click(function(event){
-            $("#divCheckbox").attr('hidden', true)
-            $("h2#header_message").show();
+            $(".notification-box").attr('hidden', true)
+            $('.panel-default').attr('hidden', false)
             $("form#send_room").show();
-            $("form#leave").show();
-            $("div#messages").show();
+            
 
             let room = $(this).attr('target')
             let name_id = $(this).attr('name')
@@ -106,7 +81,7 @@ $(document).ready(function() {
                 return false;
             });
 
-            $('form#leave').submit(function(event) {
+            $('.close-chat').click(function(event) {
                 event.preventDefault()
                 setInterval(window.location.reload(), 1000);                
                 return false;
@@ -118,18 +93,14 @@ $(document).ready(function() {
             });
         });
             socket.on('my_response', function(msg) {
-            $('#divCheckbox').append(`<p> ${msg.meg} ${msg.sender} </p>`)
-            $('#divCheckbox').fadeIn(100).fadeOut(10000);
+            $('.notification-box').append(`<p> ${msg.meg} ${msg.sender} </p>`)
+            $('.notification-box').fadeIn(100).fadeOut(10000);
         });
     });
 });
 
 
-function deleteRestaurant(restaurant){
-    $.post('/delete_liked_restaurant', {data: restaurant}, function(data){
-        $(`p#${data}`).empty()
-    });
-}
+
 
 function addRestaurant(restaurant){
     $.post('/add_restaurant', {data: restaurant}, function(data){
@@ -146,5 +117,16 @@ function addRestaurant(restaurant){
 }
 
 
+$('.restaurant-suggestion').on('click', function(evt) {
+    event.preventDefault()
+    let id = this.id;
+    console.log(id);
+    $('#card-'+id).attr('hidden', false);
+});
+
+$('.close-restaurant').on('click', function() {
+
+    $('.restaurant-card').attr('hidden', true);
+})
 
 

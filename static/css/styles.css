@@ -1,10 +1,186 @@
+
+
+.nav-brand {
+    font-family: 'Pacifico', cursive;
+    color: #E84855;
+    font-weight: 900;
+    font-size: 35px;
+}
+
+.user-name {
+    font-family: 'Nanum Gothic', sans-serif;
+    color: #1B79FC;
+    font-weight: 400;
+    font-size: 25px;
+}
+
+.user-picture {
+    object-fit: cover;
+    border-radius: 8px;
+    width: 40px;
+    height: 40px;
+}
+
+.jumbotron {
+    background-color: #E84855;
+
+}
+
+.banner, .nav-munch {
+    padding: 0;
+}
+.header-banner {
+    text-align: center;
+    color: white;
+    font-weight: 600;
+    font-size: 35px;
+
+}
+
+/*sign-in*/
+.form-signin {
+  width: 100%;
+  max-width: 330px;
+  padding: 15px;
+  margin: auto;
+}
+.form-signin .checkbox {
+  font-weight: 400;
+}
+.form-signin .form-control {
+  position: relative;
+  box-sizing: border-box;
+  height: auto;
+  padding: 10px;
+  font-size: 16px;
+}
+.form-signin .form-control:focus {
+  z-index: 2;
+}
+
+.form-signin input[type="password"] {
+  margin-bottom: 10px;
+  border-top-left-radius: 0;
+  border-top-right-radius: 0;
+}
+
+/* restaurants */
+.container-like-image .like-button {
+    position: absolute;
+    top: 10%;
+    left: 90%;
+    transform: translate(-50%, -50%);
+    -ms-transform: translate(-50%, -50%);
+    background-color: transparent;
+    color: #E84855;
+    font-size: 30px;
+    border: green;
+    cursor: pointer;
+    border-radius: 5px;
+    text-align: center;
+}
+
+
+.fa-heart {
+   -webkit-text-stroke-width: 3px;
+   -webkit-text-stroke-color: #3E3D49; 
+}
+
+.card-text {
+    font-size: 12px;
+}
+
+
+.fa-star {
+    color: #E84855;
+}
+
+
+.restaurant-link {
+    font-size: 16px; 
+    font-weight: 900;
+    text-decoration: none;
+}
+
+.restaurant-link:hover {
+    font-size: 16px;
+    font-weight: 900;
+    text-decoration: none;
+}
+
+.reviews {
+    font-size: 11px;
+    color: #5E5D70 ;
+}
+
+.fa-location-arrow {
+    color: #5E5D70 ;
+}
+
+.fa-phone {
+    color: #5E5D70 ;
+    -webkit-transform: scaleX(-1);
+    transform: scaleX(-1);
+}
+
+.get-directions, .call-restaurant {
+    font-size: 12px; 
+    text-decoration: none;
+}
+
+.get-directions:hover, .call-restaurant:hover {
+
+    font-size: 12px; 
+    text-decoration: none;
+}
+
+/* buddies */
+.chat-icon {
+     width: 16px;
+     height: 16px;
+}
+
+.box-shadow { box-shadow: 0 .25rem .75rem rgba(0, 0, 0, .05); 
+}
+
+.buddy-picture {
+    object-fit: cover;
+    min-height: 100px;
+    min-width: 100px;
+    max-height: 100px;
+    max-width: 100px;
+    border-radius: 8px;
+}
+
+.buddy-name {
+    color: #E84855;
+    font-size: 17px;
+    font-weight: 600;
+}
+
+.buddy-info {
+    color: #3E3D49;
+    font-size: 15px;
+}
+
+
+.buddy-col, .messaging-col {
+    margin-right: auto;
+    padding-right: 0;
+    display: inline-block;
+}
+
+/*other*/
+
+
 .right {
     text-align: right;
 }
 
-div.ex1 {
+div.message-box {
 
-    height: 300px;
+    height: 250px;
+    width: 300px;
     overflow: auto;
     display: flex;
     flex-direction: column-reverse;
@@ -15,8 +191,6 @@ div.ex2 {
     height: 300px;
     overflow: auto;
 }
-
-
 
 #send_room, #leave, #header_message, #m {
 
@@ -30,11 +204,7 @@ display:none;
     font-size:44px;
 }
 
-.button-profile-picture input[type="radio"] {
-    display: none;
-}
 
 
-.match_image {
-    border-radius: 60%;
-}
+/*test*/
+
