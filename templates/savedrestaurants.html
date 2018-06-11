@@ -1,6 +1,34 @@
 {% extends 'base.html' %}
 {% block content %}
     <body class="text-center bg-light">
+        <div class="container-fluid nav-munch">
+            <div class="col-12 nav-munch">
+            <nav class="navbar navbar-expand-lg navbar-light bg-light">
+                <span class="nav-brand"><i>Munch Buddy</span></i>
+                <button class="navbar-toggler" type="button" data-toggle="collapse" data-target="#navbarNavAltMarkup" aria-controls="navbarNavAltMarkup" aria-expanded="false" aria-label="Toggle navigation">
+                    <span class="navbar-toggler-icon"></span>
+                </button>
+                <div class="collapse navbar-collapse" id="navbarNavAltMarkup">
+                    <div class="navbar-nav">
+                        <a class="nav-item nav-link active" href="/munchbuddies">Home <span class="sr-only">(current)</span></a>
+                        <a class="nav-item nav-link" href="/saved-restaurants">Saved Restaurants</a>
+                        <a class="nav-item nav-link disable" href="#">{{ name }}</a>
+                    </div>
+                    <div class="dropdown">
+                        <button class="btn btn-default bg-light dropdown-toggle" type="button" id="menu1" data-toggle="dropdown">
+                            <img class="user-picture" src="{{ profile_picture }}">
+                        </button>
+                        <div class="dropdown-menu dropdown-menu-right">
+                            <a class="dropdown-item" href="/editprofile">Edit Profile</a>
+                            <a class="dropdown-item" href="/logout">Log Out</a>
+                        </div>
+                    </div>
+                </div>
+            </nav>
+            </div>
+        </div>
+
+
         <h2>Saved Restaurants</h2>
             <div class="row ex2">
                 <div id="restaurants"></div>

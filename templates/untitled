@@ -1,0 +1,93 @@
+<div class="col-md-8 buddy-col">
+            {% for user in matches %}
+                <div class="row buddies my-2 p-4 bg-white rounded box-shadow">
+
+                    <div class="col-md-2">                  
+                        <img class="buddy-picture" src="{{ matches[user]['profile_picture'] }}">
+                    </div>
+
+                    <div class="col-md-3 buddy-info">
+                        <span class="buddy-name">{{ matches[user]['display_name'] }}</span>
+                        <br>
+                        <span class="buddy-info">
+                            {% if matches[user]['interests'] %}
+                                Interests: {{ matches[user]['interests'] }}
+                                <br>
+                            {% endif %}
+                            <button class="user-id" target="{{ matches[user]['session_id'] }}" name="{{ matches[user]['user_id'] }}"><i class="fas fa-comment-alt"></i>&nbsp;Message</button>
+                            <br>
+                            <button class="restaurant-suggestion" id="{{ matches[user]['restaurant']['rest_id'] }}"><i class="fas fa-utensils"></i>&nbsp;Suggestion</button>
+                        </span>
+                    </div>
+                </div>
+
+                    <div class="col-4 restaurant-card" id="card-{{ matches[user]['restaurant']['rest_id'] }}" name="" hidden="true">
+                        <div class="card bg-light" style="width: 18rem;">
+                          <div class="container-like-image">
+                              <img class="card-img-top" src="{{ matches[user]['restaurant']['image_url'] }}" alt="Card image cap" style="height: 180px; width: 100%;">
+                              <button name="rest_id" onClick="addRestaurant(this.value)" value="{{ matches[user]['restaurant']['rest_id'] }}" class="btn btn-primary btn-sm like-button"><i class="fas fa-heart"></i></button>
+                          </div>
+
+                          <div class="card-body">
+                            <p class="card-text">
+                                <a class="restaurant-link" href="{{ matches[user]['restaurant']['link'] }}" target="_blank">{{ matches[user]['restaurant']['rest_title'] }}</a>
+                                <button type="button" class="close close-restaurant" aria-label="Close">
+                                  <span aria-hidden="true">&times;</span>
+                                </button>
+                                &nbsp;
+                                <br>
+                                
+                                {% for star in range(matches[user]['restaurant']['rating']) %}
+                                    <i class="fas fa-star"></i>
+                                {% endfor %}
+                                <span class="reviews">{{matches[user]['restaurant']['num_reviews']}} reviews</span>
+                                <br>
+                                <i class="fas fa-location-arrow"></i>&nbsp;<a class="get-directions" href="https://www.google.com/maps/dir/?api=1&destination={{ matches[user]['restaurant']['rest_title'] }}" target="_blank">{{ matches[user]['restaurant']['address'] }}</a>
+                                <br>
+                                <i class="fas fa-phone"></i>&nbsp;<a class="call-restaurant" href="tel:{{ matches[user]['restaurant']['phone'] }}">{{ matches[user]['restaurant']['phone'] }}</a></img>
+                            </p>
+                          </div>
+                        </div>
+                    </div>
+                </div>
+            {% endfor %}
+        </div>
+        <div class="col-2 offset messaging-col">
+            <div class="notification-box"></div>
+
+            <div class="panel panel-default" hidden="true">
+                <div class="panel-heading header_message">{{ name }}
+                    <button type="button" class="close close-chat" aria-label="Close">
+                        <span aria-hidden="true">&times;</span>
+                    </button>
+                </div>
+                <div class="panel-body">
+                    <div id="messages" class="message-box">
+                        <div id="log"></div>
+                    </div>
+                        <form id="send_room" class="mess" method="POST" action='#'>
+                            <input type="text" name="room_data" id="room_data" placeholder="Type message">
+                            <button type="submit" class="btn btn-success">
+                                <i class="fas fa-paper-plane"></i>
+                            </button>
+                        </form>
+
+                </div>
+            </div>
+        </div>
+
+
+
+         <div class="col-3">
+            <div class="container bg-light">
+                <div class="col-md-12">
+                    <div class="container bg-primary">Hi</div>
+
+                    <div class="container bg-white message-area">Hi</div>
+
+                    <div class="container bg-success type-message-area">
+
+                    </div>
+                </div>
+            </div>
+        </div>

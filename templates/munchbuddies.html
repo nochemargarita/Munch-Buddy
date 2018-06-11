@@ -1,115 +1,161 @@
 
 {% extends 'base.html'%}
 {% block content %}
+<body class="bg-light">
+    <div class="container-fluid nav-munch">
+        <div class="col-12 hi nav-munch">
+        <nav class="navbar navbar-expand-lg navbar-light bg-light fixed-top">
+            <span class="nav-brand"><i>Munch Buddy</span></i>
+            <button class="navbar-toggler" type="button" data-toggle="collapse" data-target="#navbarNavAltMarkup" aria-controls="navbarNavAltMarkup" aria-expanded="false" aria-label="Toggle navigation">
+                <span class="navbar-toggler-icon"></span>
+            </button>
+            <div class="collapse navbar-collapse" id="navbarNavAltMarkup">
+                <div class="navbar-nav ml-auto">
+                    <a class="nav-item nav-link" href="/saved-restaurants">Saved Restaurants</a>
+                    <a class="nav-item nav-link" href="#">&nbsp;&nbsp;|&nbsp;&nbsp;</a>
+                    <a class="nav-item nav-link disable button-name" href="#">{{ name }}</a>
+                </div>
+                <div class="dropdown">
+                    <button class="btn btn-default bg-light dropdown-toggle" type="button" id="menu1" data-toggle="dropdown">
+                        <img class="user-picture" src="{{ profile_picture }}">
+                    </button>
+                    <div class="dropdown-menu dropdown-menu-right">
+                        <a class="dropdown-item" href="/editprofile">Edit Profile</a>
+                        <a class="dropdown-item" href="/logout">Log Out</a>
+                    </div>
+                </div>
+            </div>
+        </nav>
+        </div>
+    </div>
+
 
     <div class="container-fluid banner">
         <div class="col-12 banner">
-            <div class="jumbotron">
+            <div class="jumbotron" id="banner">
                 <p class="header-banner">Welcome, {{ name }}!</p>
             </div>
         </div>
     </div>
 
-    <div class="container-fluid">
-        <div class="col-8 col-sm-6 col-md-8 buddy-col">
-            {% for user in matches %}
-                <div class="row buddies my-2 p-4 bg-white rounded box-shadow">
+    
+        <div class="container-fluid container-buddies">
+            <div class="col-md-6 padding-col">
+                {% for user in matches %}
 
-                    <div class="col-md-2">                  
-                        <img class="buddy-picture" src="{{ matches[user]['profile_picture'] }}">
-                    </div>
+                <div class="row buddies my-2 bg-white rounded box-shadow">
+                    <div class="row buddy-button">
+                        <div class="col-md-3 info-buddies pic">                  
+                            <img class="buddy-picture" src="{{ matches[user]['profile_picture'] }}">
+                        </div>
 
-                    <div class="col-md-3 buddy-info">
-                        <span class="buddy-name">{{ matches[user]['display_name'] }}</span>
-                        <br>
-                        <span class="buddy-info">
-                            {% if matches[user]['interests'] %}
-                                Interests: {{ matches[user]['interests'] }}
-                                <br>
-                            {% endif %}
-                            <button class="user-id" target="{{ matches[user]['session_id'] }}" name="{{ matches[user]['user_id'] }}"><i class="fas fa-comment-alt"></i>&nbsp;Message</button>
+                        <div class="col-md-8 buddy-info info-buddies">
+                            <span class="buddy-name">{{ matches[user]['display_name'] }}</span>
                             <br>
-                            <button class="restaurant-suggestion" id="{{ matches[user]['restaurant']['rest_id'] }}"><i class="fas fa-utensils"></i>&nbsp;Suggestion</button>
-                        </span>
-                    </div>
+                            <span class="buddy-info">
+                                {% if matches[user]['interests'] %}
+                                    <span class="interested"><small>INTERESTED IN</small></span>
+                                    <br>
+                                    <span class="color-font">{{ matches[user]['interests'] }}</span>
+                                    <br>
+                                {% endif %}
 
-                    <div class="col-4 col-sm-6 col-md-8 restaurant-card" id="card-{{ matches[user]['restaurant']['rest_id'] }}" name="" hidden="true">
-                        <div class="card bg-light" style="width: 18rem;">
-                          <div class="container-like-image">
-                              <img class="card-img-top" src="{{ matches[user]['restaurant']['image_url'] }}" alt="Card image cap" style="height: 180px; width: 100%;">
-                              <button name="rest_id" onClick="addRestaurant(this.value)" value="{{ matches[user]['restaurant']['rest_id'] }}" class="btn btn-primary btn-sm like-button"><i class="fas fa-heart"></i></button>
-                          </div>
-
-                          <div class="card-body">
-                            <p class="card-text">
-                                <a class="restaurant-link" href="{{ matches[user]['restaurant']['link'] }}" target="_blank">{{ matches[user]['restaurant']['rest_title'] }}</a>
-                                <button type="button" class="close close-restaurant" aria-label="Close">
-                                  <span aria-hidden="true">&times;</span>
-                                </button>
-                                &nbsp;
+                            <span class="interested"><small>CUISINE YOU BOTH LIKE</small></span>
                                 <br>
-                                
-                                {% for star in range(matches[user]['restaurant']['rating']) %}
-                                    <i class="fas fa-star"></i>
-                                {% endfor %}
-                                <span class="reviews">{{matches[user]['restaurant']['num_reviews']}} reviews</span>
-                                <br>
-                                <i class="fas fa-location-arrow"></i>&nbsp;<a class="get-directions" href="https://www.google.com/maps/dir/?api=1&destination={{ matches[user]['restaurant']['rest_title'] }}" target="_blank">{{ matches[user]['restaurant']['address'] }}</a>
-                                <br>
-                                <i class="fas fa-phone"></i>&nbsp;<a class="call-restaurant" href="tel:{{ matches[user]['restaurant']['phone'] }}">{{ matches[user]['restaurant']['phone'] }}</a></img>
-                            </p>
-                          </div>
+                            {% for category in matches[user]['matches_cat'] %}
+                                <span class="color-font-2">{{ category }}</span>
+                            {% endfor %}
+                                <hr/>
+                            </span>
                         </div>
                     </div>
-                </div>
-            {% endfor %}
-        </div>
-        <div class="col-2 offset messaging-col">
-            <div class="notification-box"></div>
 
-            <table class="table table-borderless table-dark table-responsive{-sm|-md|-lg|-xl}">
-              <thead>
-                <tr>
-                  <th scope="col">#</th>
-                </tr>
-              </thead>
-              <tbody>
-                <tr>
-                  <th scope="row">1dasdsda adhsahdgas dajshdb</th>
-                </tr>
-              </tbody>
-            </table>
+                    <div class="row buttons-row">
+                        <button data-toggle="tooltip" data-placement="top" title="Send a message" class="user-id btn btn-primary btn width-profile" target="{{ matches[user]['session_id'] }}" name="{{ matches[user]['user_id'] }}"><i class="fas fa-comment-alt"></i>&nbsp;MESSAGE</button>
+                        &nbsp;&nbsp;&nbsp;
 
-
-            <div class="panel panel-default" hidden="true">
-                <div class="panel-heading header_message">{{ name }}
-                    <button type="button" class="close close-chat" aria-label="Close">
-                        <span aria-hidden="true">&times;</span>
-                    </button>
-                </div>
-                <div class="panel-body">
-                    <div id="messages" class="message-box">
-                        <div id="log"></div>
+                        <button class="restaurant-suggestion btn btn-danger btn width-profile" id="{{ matches[user]['restaurant']['rest_id'] }}"><i class="fas fa-utensils"></i>&nbsp;SUGGESTION</button>
                     </div>
-                        <form id="send_room" class="mess" method="POST" action='#'>
-                            <input type="text" name="room_data" id="room_data" placeholder="Type message">
-                            <button type="submit" class="btn btn-success">
-                                <i class="fas fa-paper-plane"></i>
-                            </button>
-                        </form>
+                    
+                </div>
 
+
+                <div class="row buddies my-2 bg-white rounded box-shadow row-bud" id="row-{{ matches[user]['restaurant']['rest_id'] }}" hidden="true">
+
+                    <div class="col-md-6">
+                        <div class="container-like-image">
+                          <img class="card-img-top" src="{{ matches[user]['restaurant']['image_url'] }}" alt="Card image cap" style="height: 180px; width: 100%;">
+                          <button name="rest_id" onClick="addRestaurant(this.value)" value="{{ matches[user]['restaurant']['rest_id'] }}" class="btn btn-primary btn-sm like-button"><i class="fas fa-heart"></i></button>
+                        </div>
+                    </div>
+
+                    <div class="col-md-6">
+                        <a class="restaurant-link" href="{{ matches[user]['restaurant']['link'] }}" target="_blank">{{ matches[user]['restaurant']['rest_title'] }}</a>
+                        <button type="button" class="close close-restaurant" aria-label="Close">
+                          <span aria-hidden="true">&times;</span>
+                        </button>
+                        &nbsp;
+                        <br>
+                        
+                        {% for star in range(matches[user]['restaurant']['rating']) %}
+                            <i class="fas fa-star"></i>
+                        {% endfor %}
+                        <span class="reviews">{{matches[user]['restaurant']['num_reviews']}} reviews</span>
+                        
+                        <hr/>
+
+                        <i class="fas fa-location-arrow"></i>&nbsp;<a class="get-directions" href="https://www.google.com/maps/dir/?api=1&destination={{ matches[user]['restaurant']['rest_title'] }}" target="_blank">{{ matches[user]['restaurant']['address'] }}</a>
+                        <br>
+                        <i class="fas fa-phone"></i>&nbsp;<a class="call-restaurant" href="tel:{{ matches[user]['restaurant']['phone'] }}">{{ matches[user]['restaurant']['phone'] }}</a></img>
+                    </div>
+                    
+                </div>
+
+                {% endfor %}
+                
+            </div>
+
+            <div class="col-md-3 padding-col">
+                <div class="notification-box">
+                </div>
+
+                <div class="container-fluid bg-white chat-box">
+                    <div class="row bg-primary chat-header">
+                        <h5 class="chat-header-message">Munch Buddy Chat </h5>
+                        <button type="button" class="close close-chat" aria-label="Close">
+                            <span aria-hidden="true">&times;</span>
+                        </button>
+                    </div>
+                    <div id="messages" class="row exchanges-of-messages message-box">
+                        
+                        <div id="log"></div>
+
+                        <p class="temp-message">Message your buddy now!</p>
+
+                    </div>
+                    <div class="row bg-white chat-text-area">
+
+                        <form id="send_room" class="mess" method="POST" action='#' hidden="true">
+                            <input class="bg-light" type="text" name="room_data" id="room_data" placeholder="Type message" ><button type="submit" class="btn send-btn btn-primary">SEND</button>
+                        </form>
+                    </div>
                 </div>
             </div>
         </div>
-    </div>
-       
+
 
     <script src="https://code.jquery.com/jquery-3.3.1.slim.min.js" integrity="sha384-q8i/X+965DzO0rT7abK41JStQIAqVgRVzpbzo5smXKp4YfRvH+8abtTE1Pi6jizo" crossorigin="anonymous"></script>
     <script src="https://cdnjs.cloudflare.com/ajax/libs/popper.js/1.14.3/umd/popper.min.js" integrity="sha384-ZMP7rVo3mIykV+2+9J3UJ46jBk0WLaUAdn689aCwoqbBJiSnjAK/l8WvCWPIPm49" crossorigin="anonymous"></script>
     <script src="https://stackpath.bootstrapcdn.com/bootstrap/4.1.1/js/bootstrap.min.js" integrity="sha384-smHYKdLADwkXOn1EmN1qk/HfnUcbVRZyYmZ4qpPea6sjB/pTJ0euyQp0Mk8ck+5T" crossorigin="anonymous"></script>
     <script src="https://code.jquery.com/jquery-1.11.1.js"></script>
     <script type="text/javascript" src="//cdnjs.cloudflare.com/ajax/libs/socket.io/1.3.5/socket.io.min.js"></script>
+
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/popper.js/1.12.9/umd/popper.min.js"></script>
+
     <script src="static/js/munch_buddies.js" type="text/javascript"></script>
+
+
+
 
 </body>
 {% endblock %}

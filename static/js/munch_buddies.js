@@ -1,5 +1,7 @@
 $(document).ready(function() {
 
+
+
     let sessionIds = [];
 
     function getSessionIds(){
@@ -26,9 +28,12 @@ $(document).ready(function() {
 
         
         $('.user-id').click(function(event){
-            $(".notification-box").attr('hidden', true)
-            $('.panel-default').attr('hidden', false)
+            $('.temp-message').attr('hidden', true);
+            $(".notification-box").hide();
+            $('.panel-default').attr('hidden', false);
             $("form#send_room").show();
+            
+            $('.mess').attr('hidden', false);
             
 
             let room = $(this).attr('target')
@@ -45,7 +50,7 @@ $(document).ready(function() {
                                 <p><small><small><i> 
                                 ${messages[room][message]['date']} 
                                 </i></small></small><br>
-                                ${messages[room][message]['from']}: 
+                                <img class="sender-pic" src="${messages[room][message]['from']}">: 
                                 ${messages[room][message]['message']} </p>`);
                     }
                 }
@@ -58,11 +63,13 @@ $(document).ready(function() {
 
             getMessages();
 
-            let msgSender = new Object({name:""});
+            let msgSender = new Object({name:"",
+                                        displayName:""});
             function getSenderName(){
-                $.get('/sender_name', function(senderName){
+                $.get('/sender_name.json', function(senderName){
                     let result = senderName
-                    msgSender.name = result
+                    msgSender.name = result['profile_picture'];
+                    msgSender.displayName = result['display_name'];
                
                 });
             }
@@ -71,6 +78,7 @@ $(document).ready(function() {
 
             $('form.mess').submit(function(event) {
                 let msg = {sender: msgSender.name,
+                          senderDisplayName: msgSender.displayName,
                           receiver_id: name_id,
                           room: room,
                           meg: 'You have a message from',
@@ -88,13 +96,22 @@ $(document).ready(function() {
             });
 
             socket.on('my_response', function(msg) {
-                $('#log').append(`<p> ${msg.sender}: ${msg.data}</p>`);
+                console.log(msg.sender);
+                $('#log').append(`<p><img class="sender-pic" src="${msg.sender}">: ${msg.data}</p>`);
+
 
             });
         });
             socket.on('my_response', function(msg) {
-            $('.notification-box').append(`<p> ${msg.meg} ${msg.sender} </p>`)
-            $('.notification-box').fadeIn(100).fadeOut(10000);
+            $('.notification-box').append(`
+                <div class="alert alert-danger alert-dismissible fade show" role="alert">
+                  <p> ${msg.meg} ${msg.senderDisplayName} </p>
+                  <button type="button" class="close" data-dismiss="alert" aria-label="Close">
+                    <span aria-hidden="true">&times;</span>
+                  </button>
+                </div>
+
+                `);
         });
     });
 });
@@ -121,12 +138,17 @@ $('.restaurant-suggestion').on('click', function(evt) {
     event.preventDefault()
     let id = this.id;
     console.log(id);
+    $('#row-'+id).attr('hidden', false);
     $('#card-'+id).attr('hidden', false);
 });
 
 $('.close-restaurant').on('click', function() {
-
+    
     $('.restaurant-card').attr('hidden', true);
+    $('.row-bud').attr('hidden', true);
+
 })
+
+
 
 

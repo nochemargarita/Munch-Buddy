@@ -1,6 +1,3 @@
-# import requests
-# import json
-# from pprint import pprint
 from model import connect_to_db, db, User, LikeCategory, Restaurant, Category, RestaurantCategory, Message
 from server import app
 from werkzeug.security import generate_password_hash
@@ -93,21 +90,6 @@ if __name__ == "__main__":
     categories = get_categories('restaurants.json')
     restaurants = get_restaurants('restaurants.json')
     rest = open_json_file('restaurants.json')
-
-    # add_user_to_db('marry@yahoo.com', '123', 'Mary', 'Poppins', '1965-08-25')
-    # add_user_to_db('james@hotmail.com', '123', 'James', 'Corden', '1965-05-09')
-    # add_user_to_db('hannah@gmail.com', '123', 'Hannah', 'Baker', '1945-02-05')
-    # add_user_to_db('chris@gmail.com', '123', 'Chris', 'Hemsworth', '1989-06-15')
-    # add_user_to_db('marian@gmail.com', '123', 'Marian', 'Cabrera', '1990-09-11')
-    # add_user_to_db('josh@gmail.com', '123', 'Josh', 'Cabrera', '1989-06-27')
-    # add_user_to_db('dianne@gmail.com', '123', 'Dianne', 'Noche', '1996-12-07')
-    # add_user_to_db('tin@gmail.com', '123', 'Tin', 'Noche', '1999-11-15')
-    # add_user_to_db('rem@gmail.com', '123', 'Rem', 'Noche', '2000-04-14')
-    # add_user_to_db('abiel@gmail.com', '123', 'Abiel', 'Noche', '2000-08-14')
-
-    # add_messages_to_db(1, 3, '2018-05-12', 'Hello, would you be down to eat some korean food?')
-    # add_messages_to_db(3, 2, '2018-05-12', 'Yeah, that sounds really great. Do you have a restaurant in mind?')
-    # add_messages_to_db(3, 4, '2018-05-12', 'Hi Man, saw you like ethipian food. WOuld you wanna grab sometime this week?')
 
     add_rest_to_db()
     add_category_to_db()

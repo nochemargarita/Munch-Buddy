@@ -3,7 +3,7 @@ from flask import Flask, render_template, request, flash, redirect, session, jso
 # from flask_debugtoolbar import DebugToolbarExtension
 from werkzeug.security import generate_password_hash, check_password_hash
 from model import connect_to_db, db, User, LikeCategory, Restaurant, Category, Message, MessageSession, RestaurantCategory, LikeRestaurant
-from matches import create_room_session, selected_category_name, get_profile_picture, query_user_in_session, query_message_session, get_all_restaurants, query_message_of_matches
+from matches import create_room_session, selected_category_name, get_profile_picture, query_user_in_session, query_message_session, get_all_restaurants, query_message_of_matches, map_selected_category, map_each_matched_user
 
 from flask_socketio import SocketIO, emit, disconnect, join_room, leave_room, close_room, rooms
 from flask_uploads import UploadSet, configure_uploads, IMAGES
@@ -32,7 +32,7 @@ def homepage():
         return render_template("homepage.html")
 
 
-@app.route('/base')
+@app.route('/base.json')
 def base_page():
 
     name = session.get('name')
@@ -168,10 +168,57 @@ def selected_categories():
 def saved_restaurants():
     """redirect users to saved restaurants."""
     if session.get('user_id'):
-        return render_template('savedrestaurants.html')
+        name = session.get('name')
+        profile_picture = get_profile_picture()
+
+        return render_template('savedrestaurants.html', name=name, profile_picture=profile_picture)
 
     else:
         return redirect('/')
+
+
+
+def get_the_matches_cat():
+    results = get_all_restaurants()
+
+    li = {}
+
+    for user_id, restaurant in results.iteritems():
+        m = db.session.query(LikeCategory).filter(LikeCategory.user_id == user_id).all()
+        for i in m:
+            if i.user_id not in li:
+                li[i.user_id] = [i.category.cat_title]
+            else:
+                li[i.user_id].extend([i.category.cat_title])
+
+    return li
+
+
+def get_cuurent_user_cat():
+    sess = session.get('user_id')
+    user_categories = []
+    user_in_sess = db.session.query(LikeCategory).filter(LikeCategory.user_id==sess).all()
+
+    for item in user_in_sess:
+        user_categories.append(item.category.cat_title)
+    
+    return user_categories
+
+
+def show_all_common_categories():
+    curr_user = get_cuurent_user_cat()
+    user_matches = get_the_matches_cat()
+    hold_categories = {}
+    for k in user_matches:
+        for val in user_matches[k]:
+            if val in curr_user:
+                if k not in hold_categories:
+                    hold_categories[k] = [val]
+                else:
+                    hold_categories[k].append(val)
+
+    return hold_categories
+
 
 @app.route('/munchbuddies')
 def show_buddies():
@@ -179,14 +226,18 @@ def show_buddies():
     sess = session.get('user_id')
     name = session.get('name')
 
+    
+    get_cuurent_user_cat()
     if sess:
         profile_picture = get_profile_picture()
         results = get_all_restaurants()
         matches = {}
+        matches_cat = show_all_common_categories()
 
         for user_id, restaurant in results.iteritems():
             user = query_user_in_session(user_id)
             session_id = query_message_session(user_id)
+            matches_cat[user_id]
 
             if session_id:
                 matches[user.user_id] = {'display_name': user.display_name,
@@ -194,8 +245,8 @@ def show_buddies():
                                          'session_id': session_id.sess_id,
                                          'restaurant': choice(restaurant),
                                          'user_id': user_id,
-                                         'profile_picture': user.profile_picture}
-
+                                         'profile_picture': user.profile_picture,
+                                         'matches_cat': matches_cat[user_id]}
             else:
                 create_room_session()
 
@@ -266,8 +317,6 @@ def show_messages():
     for user_id, restaurant in results.iteritems():
         session_id = query_message_session(user_id)
 
-
-
         if session_id:
             all_messages.update(query_message_of_matches(user_id))
 
@@ -318,13 +367,17 @@ def update_edit_profile():
     return redirect('/munchbuddies')
 
 
-@app.route('/sender_name')
+@app.route('/sender_name.json')
 def get_sender_name():
     """Get the current user in session's name."""
 
-    name = session.get('name')
+    name = session.get('user_id')
+    display_name = session.get('name')
 
-    return name
+    pic = db.session.query(User).filter(User.user_id == name).first()
+    info_of_sender = {'profile_picture': pic.profile_picture,
+                      'display_name': display_name}
+    return jsonify(info_of_sender)
 
 
 @app.route('/matches_for_chat.json')

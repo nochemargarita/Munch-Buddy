@@ -1,17 +1,35 @@
 {% extends 'base.html' %}
 {% block content %}
     <body class="text-center bg-light">
-        <div class='container-fluid'>
-            <h1>Munch Buddy</h1>
-            <button id='login' class="btn btn-outline-danger">Log in</button>
-            <button id='signup' class="btn btn-outline-danger">Sign up</button>
-            <br><br>
+        <div class="container-fluid nav-munch">
+            <div class="col-12 hi nav-munch">
+            <nav class="navbar navbar-expand-lg navbar-light bg-light fixed-top">
+                <span class="nav-brand"><i>Munch Buddy</span></i>
+                <button class="navbar-toggler" type="button" data-toggle="collapse" data-target="#navbarNavAltMarkup" aria-controls="navbarNavAltMarkup" aria-expanded="false" aria-label="Toggle navigation">
+                    <span class="navbar-toggler-icon"></span>
+                </button>
+                <div class="collapse navbar-collapse" id="navbarNavAltMarkup">
+                    <div class="navbar-nav ml-auto">
+                        <a class="nav-item nav-link" href="/Log in">Log in</a>
+
+                        <a class="nav-item nav-link" href="#">|</a>
+
+                        <a class="nav-item nav-link" href="/Log out">Log out</a>
+                    </div>
+                </div>
+            </nav>
+            </div>
+        </div>
+
+        <div id="home-page-container" class='container home-page-font'>
+            <h1 class="home-page-font">Munch Buddy</h1>
+            <button id='login' class="btn btn-danger">Log in</button>
+            <button id='signup' class="btn btn-danger">Sign up</button>
+
             <form class='sign-in form-signin' action='/login' method='post' hidden='true'>
                 <input type='text' class='form-control' name='username' placeholder='Username' required autofocus>
                 <input type='password' class="form-control" name='password' placeholder='Password' required autofocus>
-                <br>
                 <button class="btn btn-primary btn-danger btn-lg  btn-block" type='submit'>Log in</button>
-
             </form>
             
             <form action='/signup' class='form-signin' method='POST' id="frm" hidden='true'>
@@ -19,16 +37,9 @@
                 <input type="text" class='form-control' name="display_name" placeholder='Display name' required>
                 <input type="password" class='form-control' name="password" placeholder='Password' required>
                 <textarea  maxlength="250" class='form-control' name="interests" placeholder="Interests(optional)" form="frm" ></textarea>
-                <br>
                 <button id='submit-info' class="btn btn-danger btn-lg btn-primary btn-block" type='submit'>Sign Up</button>
             </form>
-
-
-            <form id='upload-photo' method=POST enctype=multipart/form-data action='{{ url_for("upload") }}' hidden='true'>
-                <input type=file name='photo'>
-                <input type='submit'>
-            </form>
-
+        </div>
             <script src="https://code.jquery.com/jquery-3.2.1.min.js"></script>
             <script>
 
@@ -37,6 +48,9 @@
                     $('form#frm').attr('hidden', false);
                     $('#login').attr('hidden', false)
                     $('#signup').attr('hidden', true)
+                    $('#home-page-container').attr('id',"home-page-container-2")
+                    $('h1.home-page-font').attr('hidden', true)
+
 
                     $('form.sign-in').attr('hidden', true);
 
@@ -46,6 +60,8 @@
                     $('h2#signup-header').attr('hidden', true);
                     $('form#frm').attr('hidden', true);
                     $('#login').attr('hidden', true)
+                    $('#home-page-container').attr('id',"home-page-container-3")
+                    
 
                     $('form.sign-in').attr('hidden', false);
 
@@ -61,8 +77,11 @@
 
                 });
 
+
+
+
             </script>
-        </div>
+        
     </body>
 {% endblock %}
 

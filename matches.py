@@ -78,6 +78,7 @@ def map_each_matched_user():
     return mapped_users
 
 
+
 def get_pearson_correlation():
     """Returns a pearson correlation between the current user and the matches."""
 
@@ -232,13 +233,13 @@ def query_message_of_matches(user_id):
 
             if message.sess_id not in all_messages:
                 str_date = message.messaged_on.strftime('%a %b %d')
-                all_messages[message.sess_id] = [{'from': from_user_name.display_name,
-                                                  'to': to_user_name.display_name,
+                all_messages[message.sess_id] = [{'from': from_user_name.profile_picture,
+                                                  'to': to_user_name.profile_picture,
                                                   'message': message.message,
                                                   'date': str_date}]
             else:
-                all_messages[message.sess_id].append({'from': from_user_name.display_name,
-                                                      'to': to_user_name.display_name,
+                all_messages[message.sess_id].append({'from': from_user_name.profile_picture,
+                                                      'to': to_user_name.profile_picture,
                                                       'message': message.message,
                                                       'date': str_date})
 
@@ -263,11 +264,15 @@ def selected_category_name():
     return [item.category.cat_title for item in current_user_liked]
 
 
+
+
+
 if __name__ == "__main__":
     connect_to_db(app)
     get_pearson_correlation()
     get_current_user_matches()
     matches_liked_categories()
+    
     get_all_restaurants()
     create_room_session()
     get_profile_picture()
