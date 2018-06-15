@@ -2,13 +2,15 @@ from jinja2 import StrictUndefined
 from flask import Flask, render_template, request, flash, redirect, session, jsonify
 # from flask_debugtoolbar import DebugToolbarExtension
 from werkzeug.security import generate_password_hash, check_password_hash
-from model import connect_to_db, db, User, LikeCategory, Restaurant, Category, Message, MessageSession, RestaurantCategory, LikeRestaurant
-from matches import create_room_session, selected_category_name, get_profile_picture, query_user_in_session, query_message_session, get_all_restaurants, query_message_of_matches, map_selected_category, map_each_matched_user
-
-from flask_socketio import SocketIO, emit, disconnect, join_room, leave_room, close_room, rooms
+from model import connect_to_db, db, User, LikeCategory, Category
+from model import Message, LikeRestaurant
+from matches import create_room_session, selected_category_name, get_profile_picture
+from matches import query_user_in_session, query_message_session, get_all_restaurants
+from matches import query_message_of_matches, map_selected_category, map_each_matched_user
+from matches import join_categories
+from flask_socketio import SocketIO, emit, join_room
 from flask_uploads import UploadSet, configure_uploads, IMAGES
 from random import choice
-from datetime import datetime
 
 
 app = Flask(__name__)
@@ -20,7 +22,6 @@ configure_uploads(app, photos)
 app.secret_key = "ABC"
 socketio = SocketIO(app)
 app.jinja_env.undefined = StrictUndefined
-
 
 
 @app.route('/')
@@ -162,65 +163,12 @@ def saved_restaurants():
         return redirect('/')
 
 
-def get_the_matches_categories():
-    """Returns a dictionary w/ user_id of matches as key and list of category title as value."""
-
-    results = get_all_restaurants()
-    matches_category_title = {}
-
-    for user_id, restaurant in results.iteritems():
-        result = db.session.query(LikeCategory).filter(LikeCategory.user_id == user_id).all()
-        for _id in result:
-            if _id.user_id not in matches_category_title:
-                matches_category_title[_id.user_id] = [_id.category.cat_title]
-            else:
-                matches_category_title[_id.user_id].extend([_id.category.cat_title])
-
-    return matches_category_title
-
-
-def get_cuurent_user_cat():
-    sess = session.get('user_id')
-    user_categories = []
-    user_in_sess = db.session.query(LikeCategory).filter(LikeCategory.user_id==sess).all()
-
-    for item in user_in_sess:
-        user_categories.append(item.category.cat_title)
-    
-    return user_categories
-
-
-def show_all_common_categories():
-    curr_user = get_cuurent_user_cat()
-    user_matches = get_the_matches_cat()
-    hold_categories = {}
-    for k in user_matches:
-        for val in user_matches[k]:
-            if val in curr_user:
-                if k not in hold_categories:
-                    hold_categories[k] = [val]
-                else:
-                    hold_categories[k].append(val)
-
-    return hold_categories
-
-
-def join_categories():
-    final_categories = {}
-
-    for k in show_all_common_categories():
-        final_categories[k] = ", ".join(show_all_common_categories()[k])
-
-    return final_categories
-
-
 @app.route('/munchbuddies')
 def show_buddies():
     """Directs user to a page with list of people who matched his/her choice of categories."""
     sess = session.get('user_id')
     name = session.get('name')
 
-    get_cuurent_user_cat()
     if sess:
         profile_picture = get_profile_picture()
         results = get_all_restaurants()

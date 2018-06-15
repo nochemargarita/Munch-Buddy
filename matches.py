@@ -265,6 +265,60 @@ def selected_category_name():
 
 
 
+# getting category title of what the current user and matches have in common.
+def get_the_matches_categories():
+    """Returns a dictionary w/ user_id of matches as key and list of category title as value."""
+
+    results = get_all_restaurants()
+    matches_category_title = {}
+
+    for user_id, restaurant in results.iteritems():
+        result = db.session.query(LikeCategory).filter(LikeCategory.user_id == user_id).all()
+        for _id in result:
+            if _id.user_id not in matches_category_title:
+                matches_category_title[_id.user_id] = [_id.category.cat_title]
+            else:
+                matches_category_title[_id.user_id].extend([_id.category.cat_title])
+
+    return matches_category_title
+
+
+def get_curent_user_categories():
+    """Returns a set of category titles based on what current user chose."""
+    sess = session.get('user_id')
+    user_categories = set()
+    user_in_sess = db.session.query(LikeCategory).filter(LikeCategory.user_id == sess).all()
+
+    for item in user_in_sess:
+        user_categories.add(item.category.cat_title)
+
+    return user_categories
+
+
+def show_all_common_categories():
+    """Returns a dictionary of matches user id as key and a list of category titles in common."""
+    curr_user = get_curent_user_categories()
+    user_matches = get_the_matches_categories()
+    categories = {}
+    for user_id, categories_set in user_matches.iteritems():
+        for title in categories_set:
+            if title in curr_user:
+                if user_id not in categories:
+                    categories[user_id] = [title]
+                else:
+                    categories[user_id].append(title)
+
+    return categories
+
+
+def join_categories():
+    """Join categories to add comma in between."""
+    join_categories = {}
+
+    for user_id, categories in show_all_common_categories().iteritems():
+        join_categories[user_id] = ", ".join(categories)
+
+    return join_categories
 
 
 if __name__ == "__main__":
@@ -272,7 +326,6 @@ if __name__ == "__main__":
     get_pearson_correlation()
     get_current_user_matches()
     matches_liked_categories()
-    
     get_all_restaurants()
     create_room_session()
     get_profile_picture()
