@@ -170,6 +170,10 @@ body {
 
 }
 
+
+#submit-categories {
+    margin-top: 50px;
+}
 /*sign-in*/
 .form-signin {
   width: 100%;
@@ -578,12 +582,12 @@ div.make-inline {
 }
 
 .image-checkbox-checked {
-    border-color: #4783B0;
+    border-color: #D80707;
 }
 .image-checkbox .fa {
   position: absolute;
-  color: #4A79A3;
-  background-color: #fff;
+  color: #D80707;
+  background-color: white;
   padding: 10px;
   top: 0;
   right: 0;

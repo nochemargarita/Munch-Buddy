@@ -32,21 +32,6 @@ def homepage():
         return render_template("homepage.html")
 
 
-@app.route('/base.json')
-def base_page():
-
-    name = session.get('name')
-    profile_picture = get_profile_picture()
-
-    for_nav_bar = {}
-    if name:
-        for_nav_bar['name'] = name
-        for_nav_bar['profile_picture'] = profile_picture
-
-
-    return jsonify(for_nav_bar)
-
-
 @app.route('/signup', methods=['POST'])
 def signup():
     """Process signup using post request."""
@@ -55,10 +40,6 @@ def signup():
     password = request.form.get('password')
     display_name = request.form.get('display_name')
     interests = request.form.get('interests')
-
-    print username
-    print password
-    print display_name
 
     hashed_password = generate_password_hash(password)
     q = db.session.query(User).filter(User.username == username).first()
@@ -154,16 +135,19 @@ def selected_categories():
 
     user = User.query.get(session['user_id'])
     submitted_categories = request.form.getlist('cat_id')
-    print submitted_categories
 
     if submitted_categories:
         for ident in submitted_categories:
             like = LikeCategory(user_id=user.user_id, cat_id=ident)
 
             db.session.add(like)
-    db.session.commit()
+        db.session.commit()
+        return redirect('/munchbuddies')
 
-    return redirect('/munchbuddies')
+    else:
+        flash('Please choose 5.')
+        return redirect('/categories')
+
 
 @app.route('/saved-restaurants')
 def saved_restaurants():
@@ -178,21 +162,21 @@ def saved_restaurants():
         return redirect('/')
 
 
+def get_the_matches_categories():
+    """Returns a dictionary w/ user_id of matches as key and list of category title as value."""
 
-def get_the_matches_cat():
     results = get_all_restaurants()
-
-    li = {}
+    matches_category_title = {}
 
     for user_id, restaurant in results.iteritems():
-        m = db.session.query(LikeCategory).filter(LikeCategory.user_id == user_id).all()
-        for i in m:
-            if i.user_id not in li:
-                li[i.user_id] = [i.category.cat_title]
+        result = db.session.query(LikeCategory).filter(LikeCategory.user_id == user_id).all()
+        for _id in result:
+            if _id.user_id not in matches_category_title:
+                matches_category_title[_id.user_id] = [_id.category.cat_title]
             else:
-                li[i.user_id].extend([i.category.cat_title])
+                matches_category_title[_id.user_id].extend([_id.category.cat_title])
 
-    return li
+    return matches_category_title
 
 
 def get_cuurent_user_cat():

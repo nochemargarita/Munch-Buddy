@@ -24,22 +24,21 @@
           <h2 class="category-text">Choose 5 categories</h2>
           <br>
         <form action="/categories" method='POST'>
-        {% for number in range(0, categories|length - 5) %}
-            <div class="container individual-category-cont">
-                <label class="container-like-image image-checkbox">
-                      <img class="img-responsive" src="/static/food/{{number}}.jpg" />
-                      <input type='checkbox' class='single-checkbox' name='cat_id' value='{{ categories[number].cat_id }}'>
-                      {% if categories[number].cat_title == "Mediterranean" or categories[number].cat_title == "Shanghainese" or categories[number].cat_title == "Singaporean" or categories[number].cat_title == "Scandinavian" %}
-                        <div class="centered-text-cat2">{{ categories[number].cat_title }}</div>
-                      {% else %}
-                        <div class="centered-text-cat">{{ categories[number].cat_title }}</div>
-                      {% endif %}
-                      <i class="fa fa-check" hidden="true"></i>
-                </label>
-            </div>
-        {% endfor %}
-        <br><br><br>
-            <input id='submit-categories' class="btn-danger btn-lg btn-block" type='submit' name='submitted' hidden="true">
+          {% for number in range(0, categories|length - 5) %}
+              <div class="container individual-category-cont">
+                  <label class="container-like-image image-checkbox">
+                        <img class="img-responsive" src="/static/food/{{number}}.jpg" />
+                        <input type='checkbox' class='single-checkbox' name='cat_id' value='{{ categories[number].cat_id }}'>
+                        {% if categories[number].cat_title == "Mediterranean" or categories[number].cat_title == "Shanghainese" or categories[number].cat_title == "Singaporean" or categories[number].cat_title == "Scandinavian" %}
+                          <div class="centered-text-cat2">{{ categories[number].cat_title }}</div>
+                        {% else %}
+                          <div class="centered-text-cat">{{ categories[number].cat_title }}</div>
+                        {% endif %}
+                        <i class="fa fa-check" hidden="true"></i>
+                  </label>
+              </div>
+          {% endfor %}
+          <input id='submit-categories' class="btn-danger btn-lg btn-block" type='submit' name='submitted' hidden="true">
         </form>
         </div>
 
