@@ -8,7 +8,7 @@ function displayRestaurants(results) {
                                       <a href=${restaurants[restaurant]['url']}>
                                         ${restaurants[restaurant]['title']}
                                       </a>
-                                      <button id=${restaurant} onClick='deleteRestaurant(this.id)'>DELETE</button>
+                                      <button id=${restaurant} class="trash" onClick='deleteRestaurant(this.id)'><i class="fas fa-trash-alt"></i></button>
                                   </p>
                                 `);
 

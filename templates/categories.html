@@ -1,86 +1,187 @@
 {% extends 'base.html'%}
 {% block content %}
     <body class="text-center bg-light">
-        <a href="/logout" style="float:right">Log Out</a>
+
+    <div class="container-fluid nav-munch">
+        <div class="col-12 hi nav-munch">
+        <nav class="navbar navbar-expand-lg navbar-light bg-light fixed-top">
+            <img src="/static/logo3.png" height="70" width="110">
+            
+            <button class="navbar-toggler" type="button" data-toggle="collapse" data-target="#navbarNavAltMarkup" aria-controls="navbarNavAltMarkup" aria-expanded="false" aria-label="Toggle navigation">
+                <span class="navbar-toggler-icon"></span>
+            </button>
+            <div class="collapse navbar-collapse" id="navbarNavAltMarkup">
+                <div class="navbar-nav ml-auto">
+                    <a class="nav-item nav-link" href="/logout">Log Out</a>
+                </div>
+            </div>
+        </nav>
+        </div>
+    </div>
+
         <!--  look for styling the form/input -->
-        <h3>Choose 5 categories: </h3>
+        <div class="container bg-white categories-container">
+          <h2 class="category-text">Choose 5 categories</h2>
+          <br>
         <form action="/categories" method='POST'>
         {% for number in range(0, categories|length - 45) %}
-           <input type='checkbox' class='single-checkbox' name='cat_id' value='{{ categories[number].cat_id }}'>
-                {{ categories[number].cat_title }}
+            <div class="container individual-category-cont">
+                <label class="container-like-image image-checkbox">
+                      <img class="img-responsive" src="/static/food/{{number}}.jpg" />
+                      <input type='checkbox' class='single-checkbox' name='cat_id' value='{{ categories[number].cat_id }}'>
+                      <div class="centered-text-cat">{{ categories[number].cat_title }}</div>
+                      <i class="fa fa-check" hidden="true"></i>
+                </label>
+            </div>
         {% endfor %}
         <br><br>
-        {% for number in range(5, categories|length - 40) %}
-           <input type='checkbox' class='single-checkbox' name='cat_id' value='{{ categories[number].cat_id }}'>
-                {{ categories[number].cat_title }}
-        {% endfor %}
-        <br><br>
-        {% for number in range(10, categories|length - 35) %}
-           <input type='checkbox' class='single-checkbox' name='cat_id' value='{{ categories[number].cat_id }}'>
-                {{ categories[number].cat_title }}
-        {% endfor %}
-        <br><br>
-        {% for number in range(15, categories|length - 30) %}
-           <input type='checkbox' class='single-checkbox' name='cat_id' value='{{ categories[number].cat_id }}'>
-                {{ categories[number].cat_title }}
-        {% endfor %}
-        <br><br>
-        {% for number in range(20, categories|length - 25) %}
-           <input type='checkbox' class='single-checkbox' name='cat_id' value='{{ categories[number].cat_id }}'>
-                {{ categories[number].cat_title }}
-        {% endfor %}
-        <br><br>
-        {% for number in range(25, categories|length - 20) %}
-           <input type='checkbox' class='single-checkbox' name='cat_id' value='{{ categories[number].cat_id }}'>
-                {{ categories[number].cat_title }}
-        {% endfor %}
-        <br><br>
-        {% for number in range(30, categories|length - 15) %}
-           <input type='checkbox' class='single-checkbox' name='cat_id' value='{{ categories[number].cat_id }}'>
-                {{ categories[number].cat_title }}
-        {% endfor %}
-        <br><br>
-        {% for number in range(35, categories|length - 10) %}
-           <input type='checkbox' class='single-checkbox' name='cat_id' value='{{ categories[number].cat_id }}'>
-                {{ categories[number].cat_title }}
-        {% endfor %}
-        <br><br>
-        {% for number in range(40, categories|length - 5) %}
-           <input type='checkbox' class='single-checkbox' name='cat_id' value='{{ categories[number].cat_id }}'>
-                {{ categories[number].cat_title }}
-        {% endfor %}
-        <br><br>
-            <input id='submit-categories' type='submit' name='submitted' hidden='true'>
-        </form>
 
-            <script src="https://code.jquery.com/jquery-3.2.1.min.js"></script>
-            <script>
-                let limit = 5;
+        {% for number in range(5, categories|length - 40) %}
+            <div class="container individual-category-cont">
+                <label class="container-like-image image-checkbox">
+                      <img class="img-responsive" src="/static/food/{{number}}.jpg" />
+                      <input type='checkbox' class='single-checkbox' name='cat_id' value='{{ categories[number].cat_id }}'>
+                      <div class="centered-text-cat">{{ categories[number].cat_title }}</div>
+                      <i class="fa fa-check" hidden="true"></i>
+                </label>
+            </div>
+        {% endfor %}
+        <br><br>
+
+        {% for number in range(10, categories|length - 35) %}
+            <div class="container individual-category-cont">
+                <label class="container-like-image image-checkbox">
+                      <img class="img-responsive" src="/static/food/{{number}}.jpg" />
+                      <input type='checkbox' class='single-checkbox' name='cat_id' value='{{ categories[number].cat_id }}'>
+                      <div class="centered-text-cat">{{ categories[number].cat_title }}</div>
+                      <i class="fa fa-check" hidden="true"></i>
+                </label>
+            </div>
+        {% endfor %}
+        <br><br>
+
+        {% for number in range(15, categories|length - 30) %}
+
+            <div class="container individual-category-cont">
+                <label class="container-like-image image-checkbox">
+                      <img class="img-responsive" src="/static/food/{{number}}.jpg" />
+                      <input type='checkbox' class='single-checkbox' name='cat_id' value='{{ categories[number].cat_id }}'>
+                      <div class="centered-text-cat">{{ categories[number].cat_title }}</div>
+                      <i class="fa fa-check" hidden="true"></i>
+                </label>
+            </div>
+        {% endfor %}
+        <br><br>
+
+        {% for number in range(20, categories|length - 25) %}
+            <div class="container individual-category-cont">
+                <label class="container-like-image image-checkbox">
+                      <img class="img-responsive" src="/static/food/{{number}}.jpg" />
+                      <input type='checkbox' class='single-checkbox' name='cat_id' value='{{ categories[number].cat_id }}'>
+                      <div class="centered-text-cat">{{ categories[number].cat_title }}</div>
+                      <i class="fa fa-check" hidden="true"></i>
+                </label>
+            </div>
+        {% endfor %}
+        <br><br>
+
+        {% for number in range(25, categories|length - 20) %}
+            <div class="container individual-category-cont">
+                <label class="container-like-image image-checkbox">
+                      <img class="img-responsive" src="/static/food/{{number}}.jpg" />
+                      <input type='checkbox' class='single-checkbox' name='cat_id' value='{{ categories[number].cat_id }}'>
+
+                      {% if categories[number].cat_title == "Mediterranean" %}
+                        <div class="centered-text-cat2">{{ categories[number].cat_title }}</div>
+                      {% else %}
+                        <div class="centered-text-cat">{{ categories[number].cat_title }}</div>
+                      {% endif %}
+                      <i class="fa fa-check" hidden="true"></i>
+                </label>
+            </div>
+        {% endfor %}
+        <br><br>
+
+        {% for number in range(30, categories|length - 15) %}
+            <div class="container individual-category-cont">
+                <label class="container-like-image image-checkbox">
+                      <img class="img-responsive" src="/static/food/{{number}}.jpg" />
+                      <input type='checkbox' class='single-checkbox' name='cat_id' value='{{ categories[number].cat_id }}'>
+                      <div class="centered-text-cat">{{ categories[number].cat_title }}</div>
+                      <i class="fa fa-check" hidden="true"></i>
+                </label>
+            </div>
+        {% endfor %}
+        <br><br>
+
+        {% for number in range(35, categories|length - 10) %}
+            <div class="container individual-category-cont">
+                <label class="container-like-image image-checkbox">
+                      <img class="img-responsive" src="/static/food/{{number}}.jpg" />
+                      <input type='checkbox' class='single-checkbox' name='cat_id' value='{{ categories[number].cat_id }}'>
+                      {% if categories[number].cat_title == "Scandinavian" %}
+                        <div class="centered-text-cat2">{{ categories[number].cat_title }}</div>
+                      {% else %}
+                        <div class="centered-text-cat">{{ categories[number].cat_title }}</div>
+                      {% endif %}
+                      <i class="fa fa-check" hidden="true"></i>
+                </label>
+            </div>
+        {% endfor %}
+        <br><br>
+
+        {% for number in range(40, categories|length - 5) %}
+            <div class="container individual-category-cont">
+                <label class="container-like-image image-checkbox">
+                      <img class="img-responsive" src="/static/food/{{number}}.jpg" />
+                      <input type='checkbox' class='single-checkbox' name='cat_id' value='{{ categories[number].cat_id }}'>
+                      {% if categories[number].cat_title == "Shanghainese" or categories[number].cat_title == "Singaporean" %}
+                        <div class="centered-text-cat2">{{ categories[number].cat_title }}</div>
+                      {% else %}
+                        <div class="centered-text-cat">{{ categories[number].cat_title }}</div>
+                      {% endif %}
+                      <i class="fa fa-check" hidden="true"></i>
+                </label>
+            </div>
+                
+        {% endfor %}
+        <br><br>
+
+            <input id='submit-categories' type='submit' name='submitted' hidden="true">
+        </form>
+        </div>
+
+    <script src="https://code.jquery.com/jquery-3.2.1.min.js"></script>
+    <script>
                 let counter = 0;
-                $('input.single-checkbox').on('change', function(evt) {
-                   if($(this).siblings(':checked').length >= limit) {
-                        this.checked = false;
-                   }
+                $(".image-checkbox").each(function () {
+                    if ($(this).find('input[type="checkbox"]').first().attr("checked")) {
+                        $(this).addClass('image-checkbox-checked');
+                    } else {
+                    $(this).removeClass('image-checkbox-checked');
+                    }
                 });
 
-                $('input.single-checkbox').on('change', function(evt){
-                  if (this.checked === false) {
-                    counter -= 1;
-                    if (counter < 4) {
-                      $('#submit-categories').attr('hidden', true);
-                    }
-                  }
-                })
-
-                $('input.single-checkbox').on('click', function(evt){
-                    if (counter >= 4) {
+                // sync the state to the input
+                $(".image-checkbox").on("click", function (evt) {
+                    counter += 1;
+        
+                    $(this).toggleClass('image-checkbox-checked');
+                    let $checkbox = $(this).find('input[type="checkbox"]');
+                    $checkbox.prop("checked",!$checkbox.prop("checked"));
+                    $('.fa-check').show();
+                    console.log(counter);
+                    if (counter > 4){
                         $('#submit-categories').attr('hidden', false);
-                    }
-                    if (counter < 4) {
-                      counter += 1;
-                    }
-                })
-            </script>
-    </body>
+
+                    };
+
+                    evt.preventDefault();
+                    });
+
+                
+
+    </script>
+</body>
 
 {% endblock %}

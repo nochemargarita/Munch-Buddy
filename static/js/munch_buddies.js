@@ -1,6 +1,4 @@
-$(document).ready(function() {
-
-
+ $(document).ready(function() {
 
     let sessionIds = [];
 
@@ -32,12 +30,16 @@ $(document).ready(function() {
             $(".notification-box").hide();
             $('.panel-default').attr('hidden', false);
             $("form#send_room").show();
-            
+            $('.close-chat').attr('hidden', false);
+            let receiverName = $(this).attr('value');
+            $('.chat-header-message').html(receiverName);
+
             $('.mess').attr('hidden', false);
             
 
             let room = $(this).attr('target')
             let name_id = $(this).attr('name')
+
 
             socket.emit('join', {room: room});
 
@@ -117,8 +119,6 @@ $(document).ready(function() {
 });
 
 
-
-
 function addRestaurant(restaurant){
     $.post('/add_restaurant', {data: restaurant}, function(data){
         $('#restaurants').append(`
@@ -127,7 +127,7 @@ function addRestaurant(restaurant){
                   <a href=${data[restaurant]['url']}>
                     ${data[restaurant]['title']}
                   </a>
-                  <button id=${restaurant} onClick='deleteRestaurant(this.id)'>DELETE</button>
+                  <button id=${restaurant} class="trash" onClick='deleteRestaurant(this.id)'><i class="fas fa-trash-alt"></i></button>
               </p>
             `);
     });

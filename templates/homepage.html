@@ -4,17 +4,13 @@
         <div class="container-fluid nav-munch">
             <div class="col-12 hi nav-munch">
             <nav class="navbar navbar-expand-lg navbar-light bg-light fixed-top">
-                <span class="nav-brand"><i>Munch Buddy</span></i>
+                <img src="/static/logo3.png" height="90" width="130">
                 <button class="navbar-toggler" type="button" data-toggle="collapse" data-target="#navbarNavAltMarkup" aria-controls="navbarNavAltMarkup" aria-expanded="false" aria-label="Toggle navigation">
                     <span class="navbar-toggler-icon"></span>
                 </button>
                 <div class="collapse navbar-collapse" id="navbarNavAltMarkup">
                     <div class="navbar-nav ml-auto">
                         <a class="nav-item nav-link" href="/Log in">Log in</a>
-
-                        <a class="nav-item nav-link" href="#">|</a>
-
-                        <a class="nav-item nav-link" href="/Log out">Log out</a>
                     </div>
                 </div>
             </nav>
@@ -22,7 +18,8 @@
         </div>
 
         <div id="home-page-container" class='container home-page-font'>
-            <h1 class="home-page-font">Munch Buddy</h1>
+            <h1 class="home-page-font">Munch Buddy
+            <i><h6 class="home-page-font2">Make a new friend today over a great meal!</h6></i></h1>
             <button id='login' class="btn btn-danger">Log in</button>
             <button id='signup' class="btn btn-danger">Sign up</button>
 
@@ -37,7 +34,7 @@
                 <input type="text" class='form-control' name="display_name" placeholder='Display name' required>
                 <input type="password" class='form-control' name="password" placeholder='Password' required>
                 <textarea  maxlength="250" class='form-control' name="interests" placeholder="Interests(optional)" form="frm" ></textarea>
-                <button id='submit-info' class="btn btn-danger btn-lg btn-primary btn-block" type='submit'>Sign Up</button>
+                <input id='submit-info' type="submit" value="Sign Up" class="btn btn-danger btn-lg btn-primary btn-block">
             </form>
         </div>
             <script src="https://code.jquery.com/jquery-3.2.1.min.js"></script>
@@ -83,5 +80,6 @@
             </script>
         
     </body>
+    <br><br><br>
 {% endblock %}
 

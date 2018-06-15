@@ -3,19 +3,22 @@
     <body class="text-center bg-light">
         <div class="container-fluid nav-munch">
             <div class="col-12 nav-munch">
-            <nav class="navbar navbar-expand-lg navbar-light bg-light fixed-top">
-                <span class="nav-brand"><i>Munch Buddy</span></i>
-                <button class="navbar-toggler" type="button" data-toggle="collapse" data-target="#navbarNavAltMarkup" aria-controls="navbarNavAltMarkup" aria-expanded="false" aria-label="Toggle navigation">
-                    <span class="navbar-toggler-icon"></span>
-                </button>
-                <div class="collapse navbar-collapse" id="navbarNavAltMarkup">
-                    <div class="navbar-nav">
-                        <a class="nav-item nav-link active" href="/munchbuddies">Home <span class="sr-only">(current)</span></a>
-                        <a class="nav-item nav-link" href="/saved-restaurants">Saved Restaurants</a>
-                        <a class="nav-item nav-link" href="/logout">Log Out</a>
+                <nav class="navbar navbar-expand-lg navbar-light bg-light fixed-top">
+                    <img src="/static/logo3.png" height="90" width="130">
+                    
+                    <button class="navbar-toggler" type="button" data-toggle="collapse" data-target="#navbarNavAltMarkup" aria-controls="navbarNavAltMarkup" aria-expanded="false" aria-label="Toggle navigation">
+                        <span class="navbar-toggler-icon"></span>
+                    </button>
+                    <div class="collapse navbar-collapse" id="navbarNavAltMarkup">
+                        <div class="navbar-nav ml-auto">
+                            <a class="nav-item nav-link active" href="/munchbuddies">Home<span class="sr-only">(current)</span></a>
+                            <a class="nav-item nav-link" href="#">&nbsp;&nbsp;|&nbsp;&nbsp;</a>
+                            <a class="nav-item nav-link" href="/saved-restaurants">Saved Restaurants</a>
+                            <a class="nav-item nav-link" href="#">&nbsp;&nbsp;|&nbsp;&nbsp;</a>
+                            <a class="nav-item nav-link" href="/logout">Log Out</a>
+                        </div>
                     </div>
-                </div>
-            </nav>
+                </nav>
             </div>
         </div>
 
@@ -42,25 +45,31 @@
                 </div>
 
                 <div class="row">
-                    <div class="col-md-6">
-                        <h2 class="edit-name">{{ display_name }}<button class="btn edit-name-button"><i class="fas fa-pencil-alt"></i></button></h2>
+                    <div class="col-md-6 border2">
+                        <div class="row for-name-row">
+                            <h2 class="edit-name for-name">{{ display_name }}<button style="float: right;" class="btn edit-name-button"><i class="fas fa-pencil-alt"></i></button></h2>
+                        </div>
+                        <br>
                         <h5 class="edit-interest"><span class="edit-interest">{{ interests }}</span></h5>
-                        <form action='/editprofile' method='POST'>
-                            <input type="text" class="display-name" name="display_name" value='{{ display_name }}' hidden="true">
-                                <br><br>
-                                <textarea class="interest" rows="4" cols="30" maxlength="250" name="interests" hidden="true">{{ interests }}</textarea>
+
+                        <form action='/editprofile' method='POST' class="form-group form-group-edit">
+                            <input type="text" class="display-name form-control" name="display_name" value='{{ display_name }}' hidden="true" autofocus>
+                                <textarea class="interest form-control" rows="4" cols="30" maxlength="250" name="interests" hidden="true">{{ interests }}</textarea>
                             <input class="submit-button" type='submit' value='Update' float="right" hidden="true">
                         </form>
                     </div>
 
-                    <div class="col-md-6">
+                    <div class="col-md-6 border1">
                         <h3>Your Categories: </h3>
                         {% for category in chosen_categories %}
                             <h6 class="align-categories">{{ category }}</h6>
                             
                         {% endfor %}
                     </div>
-                </div>            
+                </div>  
+                <br>
+            <button type="button" class="btn btn-danger btn-lg btn-block">Cancel</button>
+          
             </div>
         </div>
 

@@ -154,6 +154,7 @@ def selected_categories():
 
     user = User.query.get(session['user_id'])
     submitted_categories = request.form.getlist('cat_id')
+    print submitted_categories
 
     if submitted_categories:
         for ident in submitted_categories:
@@ -220,19 +221,27 @@ def show_all_common_categories():
     return hold_categories
 
 
+def join_categories():
+    final_categories = {}
+
+    for k in show_all_common_categories():
+        final_categories[k] = ", ".join(show_all_common_categories()[k])
+
+    return final_categories
+
+
 @app.route('/munchbuddies')
 def show_buddies():
     """Directs user to a page with list of people who matched his/her choice of categories."""
     sess = session.get('user_id')
     name = session.get('name')
 
-    
     get_cuurent_user_cat()
     if sess:
         profile_picture = get_profile_picture()
         results = get_all_restaurants()
         matches = {}
-        matches_cat = show_all_common_categories()
+        matches_cat = join_categories()
 
         for user_id, restaurant in results.iteritems():
             user = query_user_in_session(user_id)
@@ -356,7 +365,7 @@ def update_edit_profile():
         session.pop('name', None)
         session['name'] = display_name
 
-    url = str(user_id)+"1" + ".jpg"
+    url = str(user_id)+"1a" + ".jpg"
     if request.method == 'POST' and 'photo' in request.files:
             request.files['photo'].filename = url
             filename = photos.save(request.files['photo'])

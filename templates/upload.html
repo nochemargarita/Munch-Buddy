@@ -2,9 +2,39 @@
 {% extends 'base.html' %}
 {% block content %}
     <body class="text-center bg-light">
-        <form method=POST enctype=multipart/form-data action='{{ url_for("upload") }}'>
-            <input type=file name='photo'>
-            <input type='submit'>
-        </form>
+        <div class="container-fluid nav-munch">
+            <div class="col-12 hi nav-munch">
+            <nav class="navbar navbar-expand-lg navbar-light bg-light fixed-top">
+                <img src="/static/logo3.png" height="90" width="130">
+                
+                <button class="navbar-toggler" type="button" data-toggle="collapse" data-target="#navbarNavAltMarkup" aria-controls="navbarNavAltMarkup" aria-expanded="false" aria-label="Toggle navigation">
+                    <span class="navbar-toggler-icon"></span>
+                </button>
+                <div class="collapse navbar-collapse" id="navbarNavAltMarkup">
+                    <div class="navbar-nav ml-auto">
+                        <a class="nav-item nav-link" href="/munchbuddies">Log Out</a>
+                    </div>
+                </div>
+            </nav>
+            </div>
+        </div>
+
+        <div class="container bg-white saved-rest-container">
+
+            <h2 class="upload-photo">Upload a profile picture</h2>
+            <form method=POST enctype=multipart/form-data action='{{ url_for("upload") }}'>
+                <input type=file class="btn-outline-danger" name='photo'>
+                <input type='submit' value="upload" class="btn-danger">
+            </form>
+
+        </div>
+
+
+
+
+        <div class="container-fluid">
+
+        </div>
+
     </body>
 {% endblock %}

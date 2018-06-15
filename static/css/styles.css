@@ -1,16 +1,32 @@
+/*All pages*/
+
+.footer {
+   left: 0;
+   bottom: 0;
+   width: 100%;
+   background-color: transparent;
+   color: black;
+   text-align: center;
+}
 
 /* navbar */
-
+body {
+    font-family: 'Roboto', sans-serif;
+}
 
  .bo {padding-top: 70px;}
 
 .nav-brand {
-    font-family: 'Pacifico', cursive;
+    /*font-family: 'Pacifico', cursive;*/
     color: #E84855;
     font-weight: 900;
     font-size: 35px;
 }
 
+
+.fixed-top {
+    border-bottom: solid #EA5D69 1px;
+}
 
 #menu1 {
     padding-left: 0;
@@ -22,7 +38,7 @@
 
 
 .user-name {
-    font-family: 'Nanum Gothic', sans-serif;
+    /*font-family: 'Nanum Gothic', sans-serif;*/
     color: #1B79FC;
     font-weight: 400;
     font-size: 25px;
@@ -51,62 +67,80 @@
     display: inline-block;
 }
 
-.container-buddies {
-    padding-right: 140px;
-    padding-left: 140px;
+
+
+.message-suggest {
+    margin: auto;
 }
 
 /*homepage*/
 #home-page-container {
     overflow: auto;
     padding-right: 0;
+    padding-left: 0;
     margin: 0;
-    padding-top: 200px;
+    padding-top: 220px;
     max-width: 100%;
     min-width: 100%;
     max-height: 460px;
     min-height: 460px;
-    background:#ffffff url('/static/home-page-photo.jpeg') no-repeat center center;
+    background:linear-gradient(
+      rgba(0, 0, 0, 0.2), 
+      rgba(0, 0, 0, 0.2)
+    ), url('/static/home-page-photo.jpeg') no-repeat center center;
     background-size: cover;
 }
 
 
 #home-page-container-2 {
     overflow: auto;
-    padding-top: 70px;
-    max-width: 1280px;
-    min-width: 1280px;
+    padding-top: 80px;
+    max-width: 100%;
+    min-width: 100%;
     max-height: 460px;
     min-height: 460px;
-    background:#ffffff url('/static/home-page-photo.jpeg') no-repeat center center;
+    background:linear-gradient(
+      rgba(0, 0, 0, 0.2), 
+      rgba(0, 0, 0, 0.2)
+    ), url('/static/home-page-photo.jpeg') no-repeat center center;
     background-size: cover;
 }
 
 #home-page-container-3 {
     overflow: auto;
-    padding-top: 100px;
+    padding-top: 120px;
     max-width: 100%;
     min-width: 100%;
     max-height: 460px;
     min-height: 460px;
-    background:#ffffff url('/static/home-page-photo.jpeg') no-repeat center center;
+    background:linear-gradient(
+      rgba(0, 0, 0, 0.2), 
+      rgba(0, 0, 0, 0.2)
+    ), url('/static/home-page-photo.jpeg') no-repeat center center;
     background-size: cover;
 }
 
 .home-page-font {
     font-size: 3rem;
-    font-family: 'Muli', sans-serif;
+    /*font-family: 'Muli', sans-serif;*/
     font-weight: bolder;
     color: white;
+    width: 100%;
+    height: 100%;
+    margin: auto;
 }
 /* banner */
 #banner {
     border-radius: 0;
+    margin-top: 20px; 
 }
 
+.btn-danger {
+    background-color: #D80707;
+}
 .jumbotron {
 
-    background-color: #E84855;
+    background-color: #D80707;
     max-width: 100%;
     min-width: 100%;
     max-height: 169px;
@@ -114,13 +148,14 @@
 }
 
 .banner, .nav-munch {
-    padding-top: 10px;
+    padding-top: 15px;
     padding-left: 0;
     padding-right: 0;
 }
 
 .nav-munch-edit {
     border: #C6C6C6 solid 2px;
+    margin-top: 100px; 
 }
 
 .align-categories {
@@ -164,6 +199,7 @@
 
 /* restaurants */
 .container-like-image .like-button {
+    object-fit: cover;
     position: absolute;
     top: 15%;
     left: 80%;
@@ -176,6 +212,16 @@
     cursor: pointer;
     border-radius: 5px;
     text-align: center;
+}
+
+#restaurants {
+    text-align: left;
+}
+
+.trash {
+    border-color: transparent;
+
+
 }
 
 
@@ -234,11 +280,12 @@
     text-decoration: none;
 }
 
+
 /* buddies */
 .pic {
     margin-top: 20px;
     margin-bottom: 20px;
-    margin-left: 20px;
+    margin-left: 40px;
 }
 
 .chat-icon {
@@ -248,7 +295,8 @@
 
 .box-shadow { 
     box-shadow: 0 .25rem .75rem rgba(0, 0, 0, .05); 
-    height: 270px;
+    margin-right: 50px; 
+    
 }
 
 .buddy-picture {
@@ -262,13 +310,13 @@
 
 .buddy-name {
     color: #212020 ;
-    font-family: 'Roboto', sans-serif;
+    /*font-family: 'Roboto', sans-serif;*/
     font-size: 20px;
     font-weight: bold;
 }
 
 .color-font {
-    font-family: 'Roboto', sans-serif;
+    /*font-family: 'Roboto', sans-serif;*/
     color: #212020 ;
     font-weight: 500;
     font-size: 18px;
@@ -277,7 +325,7 @@
 
 
 .color-font-2 {
-    font-family: 'Roboto', sans-serif;
+    /*font-family: 'Roboto', sans-serif;*/
     color: #212020 ;
     font-weight: 500;
     font-size: 15px;
@@ -286,12 +334,12 @@
 
 .buddy-info {
     color: #3E3D49;
-    font-family: 'Roboto', sans-serif;
+    /*font-family: 'Roboto', sans-serif;*/
 }
 
 .interested {
     color: #3E3D49;
-    font-family: 'Roboto', sans-serif;
+    /*font-family: 'Roboto', sans-serif;*/
     font-size: 60%;
     font-weight: 100;
 }
@@ -304,7 +352,7 @@
 
 
 .width-profile {
-    width: 200px;
+    width: 300px;
     height: 30px;
     padding: 0;
     margin: auto;
@@ -343,11 +391,11 @@
 .edit-pic-button {
     position: absolute;
     top: 10%;
-    left: 60%;
+    left: 63%;
     transform: translate(-50%, -50%);
     -ms-transform: translate(-50%, -50%);
     background-color: transparent;
-    color: #E84855;
+    color: #D80707;
     font-size: 30px;
     border: green;
     cursor: pointer;
@@ -360,7 +408,6 @@
 
 .chat-box {
     height: 400px;
-    margin-left: 90px;
     width: 350px;
 
 }
@@ -382,11 +429,11 @@
     position: absolute;
     bottom: 0;
     width: 350px;
-    height: 50px;
+    height: 0;
     }
 
 .exchanges-of-messages {
-    height: 300px;
+    height: 360px;
     margin: 0;
     padding: 0;
     width: 320px;
@@ -406,7 +453,7 @@
 
 
 #room_data {
-    width: 280px;
+    width: 279px;
     height: 50px;
     margin: 0;
 }
@@ -418,6 +465,8 @@
 .send-btn {
     border-radius: 0;
     height: 50px;
+    width: 70px;
+
 }
 
 div.message-box {
@@ -429,16 +478,16 @@ div.message-box {
 
 .close-chat {
   float: left;
-  margin-left:140px; 
+  margin-left: 220px;
 
 }
 
 .notification-box {
-    margin-left: 90px;
-    width: 350px;
+    margin-left: 50px;
+    width: 280px;
 }
 
-div.ex2 {s
+div.ex2 {
     height: 300px;
     overflow: auto;
 }
@@ -501,4 +550,196 @@ display:none;
    min-height:30px !important;
 }
 
-/**/
+/* categories */
+
+div.make-inline {
+    display: inline-block;
+    padding: 0;
+    margin: 0;
+
+}
+
+.nopad {
+    padding-left: 0 !important;
+    padding-right: 0 !important;
+}
+/*image gallery*/
+.image-checkbox {
+    cursor: pointer;
+    box-sizing: border-box;
+    -moz-box-sizing: border-box;
+    -webkit-box-sizing: border-box;
+    border: 4px solid transparent;
+    margin-bottom: 0;
+    outline: 0;
+}
+.image-checkbox input[type="checkbox"] {
+    display: none;
+}
+
+.image-checkbox-checked {
+    border-color: #4783B0;
+}
+.image-checkbox .fa {
+  position: absolute;
+  color: #4A79A3;
+  background-color: #fff;
+  padding: 10px;
+  top: 0;
+  right: 0;
+}
+.image-checkbox-checked .fa {
+  display: block !important;
+}
+
+.img-responsive {
+    object-fit: cover;
+    height: 100px;
+    width: 100px;
+    
+}
+
+.categories-container {
+    padding-top: 50px;
+    padding-bottom: 50px;
+    max-width: 700px;
+    margin-top: 90px;
+}
+
+.nam {
+    position: absolute;
+    top: auto;
+    left: auto;
+    transform: translate(-50%, -300%);
+    -ms-transform: translate(-50%, -50%);
+    background-color: transparent;
+    color: white;
+    font-size: 5px;
+    border: green;
+    cursor: pointer;
+    text-align: center;
+    font-weight: 900;
+
+}
+
+.individual-category-cont {
+    display: inline-block;
+    position: relative;
+    text-align: center;
+    color: white;
+    width: 120px;
+    padding-left: 0;
+    padding-right: 0;
+}
+
+
+.centered-text-cat {
+    position: absolute;
+    display: inline-block;
+    width: 100px;
+    color: white;
+    background: rgba(0, 0, 0, 0.5);
+    color: #f1f1f1;
+    font-weight: 800;
+    font-size: 18px;
+    word-wrap: break-word;
+    top: 50%;
+    left: 50%;
+    transform: translate(-50%, -50%);
+}
+
+
+.centered-text-cat2 {
+    position: absolute;
+    display: inline-block;
+    width: 100px;
+    color: white;
+    background: rgba(0, 0, 0, 0.5);
+    color: #f1f1f1;
+    font-weight: 800;
+    font-size: 14px;
+    word-wrap: break-word;
+    top: 50%;
+    left: 50%;
+    transform: translate(-50%, -50%);
+}
+
+
+
+/* edit profile */
+
+.edit-name-button {
+    color: red;
+    font-size: 25px;
+    background-color: transparent;
+    padding: 0;
+}
+
+
+.border1 {
+    border: #5E5D70 solid 3px;
+    padding: 10px;
+    border-radius: 5px;
+    display: inline-block;
+}
+
+.border2 {
+    border: #5E5D70 solid 2px;
+    
+    border-radius: 5px;
+    /*margin-right: 2px;*/
+    display: inline-block;
+    padding-left: 5px;
+    padding-right: 5px;
+}
+
+.for-name {
+    margin: auto;
+    width: 100%;
+    padding-top: 5px;
+    padding-right: 18px;
+}
+
+.form-group-edit {
+    padding: 15px;
+    padding-top: 20px;
+}
+
+
+/* saved restaurants */
+
+.saved-rest-container {
+    margin-top: 100px;
+    width: 600px;
+    padding: 25px;
+    border-radius: 5px;
+}
+
+.fa-trash-alt {
+    color: #E84855;
+}
+
+.upload-photo {
+    padding: 20px;
+    font-weight: 900;
+    color: #D80707;
+}
+
+.category-text {
+    font-weight: 900;
+    color: #D80707;
+}
+
+
+.interest-info {
+    margin-left: 40px;
+    margin-right: 20px;
+    margin-top: 20px;
+    margin-bottom: 20px;
+}
+
+
+.over-all-page {
+    padding-left: 100px;
+    padding-right: 100px;
+}

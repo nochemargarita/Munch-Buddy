@@ -1,0 +1,84 @@
+    <div class="container-fluid nav-munch">
+        <div class="col-12 hi nav-munch">
+        <nav class="navbar navbar-expand-lg navbar-light bg-light fixed-top">
+            <img src="/static/logo3.png" height="90" width="130">
+            
+            <button class="navbar-toggler" type="button" data-toggle="collapse" data-target="#navbarNavAltMarkup" aria-controls="navbarNavAltMarkup" aria-expanded="false" aria-label="Toggle navigation">
+                <span class="navbar-toggler-icon"></span>
+            </button>
+            <div class="collapse navbar-collapse" id="navbarNavAltMarkup">
+                <div class="navbar-nav ml-auto">
+                    <a class="nav-item nav-link" href="/saved-restaurants">Saved Restaurants</a>
+                    <a class="nav-item nav-link" href="#">&nbsp;&nbsp;|&nbsp;&nbsp;</a>
+                    <a class="nav-item nav-link disable button-name" href="#">{{ name }}</a>
+                </div>
+                <div class="dropdown">
+                    <button class="btn btn-default bg-light dropdown-toggle" type="button" id="menu1" data-toggle="dropdown">
+                        <img class="user-picture" src="{{ profile_picture }}">
+                    </button>
+                    <div class="dropdown-menu dropdown-menu-right">
+                        <a class="dropdown-item" href="/editprofile">Edit Profile</a>
+                        <a class="dropdown-item" href="/logout">Log Out</a>
+                    </div>
+                </div>
+            </div>
+        </nav>
+        </div>
+    </div>
+
+
+
+    <div class="container-fluid banner">
+        <div class="col-12 banner">
+            <div class="jumbotron" id="banner">
+                <p class="header-banner">Welcome, {{ name }}!</p>
+            </div>
+        </div>
+    </div>
+
+
+    <div class="row">
+        <div class="col-md-6">
+            <div class="container-fluid container-buddies">
+                {% for user in matches %}
+
+                    <div class="row">
+                        <div class="row">
+                            <div class="info-buddies pic">                  
+                                <img class="buddy-picture" src="{{ matches[user]['profile_picture'] }}">
+                            </div>
+                        </div>
+                        <div class="row"></div>
+                    </div>
+                    
+
+
+            </div>
+        </div>
+
+        <div class="col-md-6">
+                <div class="notification-box"></div>
+                <div class="container-fluid bg-white chat-box">
+                    <div class="row bg-primary chat-header">
+                        <h5 class="chat-header-message">Munch Buddy Chat</h5>
+                        <button type="button" class="close close-chat" aria-label="Close" hidden="true">
+                            <span aria-hidden="true">&times;</span>
+                        </button>
+                    </div>
+                    <div id="messages" class="row exchanges-of-messages message-box">
+                        
+                        <div id="log"></div>
+
+                        <p class="temp-message">Message your buddy now!</p>
+
+                    </div>
+                    <div class="row bg-white chat-text-area form-group">
+                        <form id="send_room" class="mess form-inline" method="POST" action='#' hidden="true">
+                            <input class="bg-light form-control" type="text" name="room_data" id="room_data" placeholder="Type message"><button type="submit" class="btn send-btn btn-primary form-control">SEND</button>
+                        </form>
+                    </div>
+                </div>
+        </div>
+    </div>
+
+    

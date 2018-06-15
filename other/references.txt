@@ -45,6 +45,7 @@ JQUERY
 
 CSS
     -http://jsfiddle.net/LgT4A/
+    -https://codepen.io/nochemargarita/pen/KeWRaV
 
 UPLOAD PICTURE:
     -Denise shared her code
