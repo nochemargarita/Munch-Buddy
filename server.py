@@ -83,6 +83,13 @@ def upload():
         return redirect('/')
 
 
+@app.route('/login')
+def login_form():
+    """redirects the user to log in form page."""
+
+    return render_template('login.html')
+
+
 @app.route('/login', methods=['POST'])
 def login():
     """Verify user and log the user in."""
