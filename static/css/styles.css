@@ -27,17 +27,6 @@ body {
     font-size: 35px;
 }
 
-.nav-log1 {
-    position: relative;
-
-}
-
-.nav-log {
-    position: absolute;
-    bottom: 6px;
-}
-
-
 .fixed-top {
     border-bottom: solid #EA5D69 1px;
 }
@@ -48,6 +37,11 @@ body {
 
 .menu1 {
     padding-right: 0;
+}
+
+.munch-logo {
+    height: 60px;
+    width: 90px;
 }
 
 
@@ -143,6 +137,14 @@ body {
     height: 100%;
     margin: auto;
 }
+
+
+.form-login-height {
+    height: 30px;
+    line-height: 0;
+}
+
+
 /* banner */
 #banner {
     border-radius: 0;
