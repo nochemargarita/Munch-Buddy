@@ -1,25 +1,20 @@
 {% extends 'base.html' %}
 {% block content %}
     <body class="text-center bg-light">
-        <div class="container-fluid nav-munch">
-            <div class="col-12 hi nav-munch">
+        <div class="row">
             <nav class="navbar navbar-expand-lg navbar-light bg-light fixed-top">
-                <img src="/static/logo3.png" height="90" width="130">
+                <img src="/static/logo3.png" height="80" width="120">
                 <button class="navbar-toggler" type="button" data-toggle="collapse" data-target="#navbarNavAltMarkup" aria-controls="navbarNavAltMarkup" aria-expanded="false" aria-label="Toggle navigation">
                     <span class="navbar-toggler-icon"></span>
                 </button>
                 <div class="collapse navbar-collapse" id="navbarNavAltMarkup">
-                    <div class="navbar-nav ml-auto">
-                        <form class='form-inline my-2 my-lg-0' action='/login' method='post'>
-                            <input class="form-control mr-sm-2" type='text' name='username' placeholder='Username' required autofocus>
-                            <input class="form-control mr-sm-2" type='password' name='password' placeholder='Password' required autofocus>
-                            <button class="btn btn-danger my-2 my-sm-0" type="submit">Log in</button>
-                        </form>
-
-                    </div>
+                    <form class='form-inline my-2 my-lg-0 nav-log ml-auto' action='/login' method='post'>
+                        <input class="form-control mr-sm-2" type='text' name='username' placeholder='Username' required autofocus>
+                        <input class="form-control mr-sm-2" type='password' name='password' placeholder='Password' required autofocus>
+                        <button class="btn btn-danger my-2 my-sm-0" type="submit">Log in</button>
+                    </form>
                 </div>
             </nav>
-            </div>
         </div>
 
         <div id="home-page-container" class='container home-page-font'>
@@ -42,47 +37,49 @@
                 <input id='submit-info' type="submit" value="Sign Up" class="btn btn-danger btn-lg btn-primary btn-block">
             </form>
         </div>
-            <script src="https://code.jquery.com/jquery-3.2.1.min.js"></script>
-            <script>
+        <script src="https://code.jquery.com/jquery-3.2.1.slim.min.js" integrity="sha384-KJ3o2DKtIkvYIK3UENzmM7KCkRr/rE9/Qpg6aAZGJwFDMVNA/GpGFF93hXpG5KkN" crossorigin="anonymous"></script>
+        <script src="https://cdnjs.cloudflare.com/ajax/libs/popper.js/1.12.9/umd/popper.min.js" integrity="sha384-ApNbgh9B+Y1QKtv3Rn7W3mgPxhU9K/ScQsAP7hUibX39j7fakFPskvXusvfa0b4Q" crossorigin="anonymous"></script>
+        <script src="https://maxcdn.bootstrapcdn.com/bootstrap/4.0.0/js/bootstrap.min.js" integrity="sha384-JZR6Spejh4U02d8jOt6vLEHfe/JQGiRRSQQxSfFWpi1MquVdAyjUar5+76PVCmYl" crossorigin="anonymous"></script>
+        <script>
 
-                $('button#signup').on('click', function(evt) {
-                    $('h2#signup-header').attr('hidden', false);
-                    $('form#frm').attr('hidden', false);
-                    $('#login').attr('hidden', false)
-                    $('#signup').attr('hidden', true)
-                    $('#home-page-container').attr('id',"home-page-container-2")
-                    $('h1.home-page-font').attr('hidden', true)
-
-
-                    $('form.sign-in').attr('hidden', true);
-
-                });
-
-                $('button#login').on('click', function(evt) {
-                    $('h2#signup-header').attr('hidden', true);
-                    $('form#frm').attr('hidden', true);
-                    $('#login').attr('hidden', true)
-                    $('#home-page-container').attr('id',"home-page-container-3")
-                    
-
-                    $('form.sign-in').attr('hidden', false);
-
-                });
-
-                $('input#submit-info').on('submit', function(evt) {
-                    $('form#upload-photo').attr('hidden', false);
-
-                    $('h2#signup-header').attr('hidden', true);
-                    $('form#frm').attr('hidden', true);
-                    $('h2#signup-header').attr('hidden', true);
-                    $('form#frm').attr('hidden', true);
-
-                });
+            $('button#signup').on('click', function(evt) {
+                $('h2#signup-header').attr('hidden', false);
+                $('form#frm').attr('hidden', false);
+                $('#login').attr('hidden', false)
+                $('#signup').attr('hidden', true)
+                $('#home-page-container').attr('id',"home-page-container-2")
+                $('h1.home-page-font').attr('hidden', true)
 
 
+                $('form.sign-in').attr('hidden', true);
+
+            });
+
+            $('button#login').on('click', function(evt) {
+                $('h2#signup-header').attr('hidden', true);
+                $('form#frm').attr('hidden', true);
+                $('#login').attr('hidden', true)
+                $('#home-page-container').attr('id',"home-page-container-3")
+                
+
+                $('form.sign-in').attr('hidden', false);
+
+            });
+
+            $('input#submit-info').on('submit', function(evt) {
+                $('form#upload-photo').attr('hidden', false);
+
+                $('h2#signup-header').attr('hidden', true);
+                $('form#frm').attr('hidden', true);
+                $('h2#signup-header').attr('hidden', true);
+                $('form#frm').attr('hidden', true);
+
+            });
 
 
-            </script>
+
+
+        </script>
         
     </body>
     <br><br><br>

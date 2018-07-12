@@ -14,7 +14,10 @@ body {
     font-family: 'Roboto', sans-serif;
 }
 
- .bo {padding-top: 70px;}
+ .bo {
+    padding-top: 70px;
+}
+
 
 
 .nav-brand {
@@ -22,6 +25,16 @@ body {
     color: #E84855;
     font-weight: 900;
     font-size: 35px;
+}
+
+.nav-log1 {
+    position: relative;
+
+}
+
+.nav-log {
+    position: absolute;
+    bottom: 6px;
 }
 
 
