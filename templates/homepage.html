@@ -18,67 +18,29 @@
         </div>
 
         <div id="home-page-container" class='container home-page-font'>
-            <h1 class="home-page-font">Munch Buddy
-            <i><h6 class="home-page-font2">Make a new friend today over a great meal!</h6></i></h1>
-            <button id='login' class="btn btn-danger">Log in</button>
-            <button id='signup' class="btn btn-danger">Sign up</button>
-
-            <form class='sign-in form-signin' action='/login' method='post' hidden='true'>
-                <input type='text' class='form-control' name='username' placeholder='Username' required autofocus>
-                <input type='password' class="form-control" name='password' placeholder='Password' required autofocus>
-                <button class="btn btn-primary btn-danger btn-lg  btn-block" type='submit'>Log in</button>
-            </form>
-            
-            <form action='/signup' class='form-signin' method='POST' id="frm" hidden='true'>
-                <input type="text" class='form-control' name="username" placeholder='Username' required autofocus>
-                <input type="text" class='form-control' name="display_name" placeholder='Display name' required>
-                <input type="password" class='form-control' name="password" placeholder='Password' required>
-                <textarea  maxlength="250" class='form-control' name="interests" placeholder="Interests(optional)" form="frm" ></textarea>
-                <input id='submit-info' type="submit" value="Sign Up" class="btn btn-danger btn-lg btn-primary btn-block">
-            </form>
+            <div class="row">
+                <div class="col-6">
+                    <h1 class="home-page-font">Munch Buddy
+                    <i><h6>Make a new friend today over a great meal!</h6></i></h1>
+                </div>
+                <div class="col-6">
+                    <h4 class="sign-up-font">Sign Up
+                    <br><br>
+                    <form action='/signup' class='form-sign-up' method='POST' id="frm">
+                        <input type="text" class='form-control' name="username" placeholder='Username' required autofocus>
+                        <input type="text" class='form-control' name="display_name" placeholder='Display name' required>
+                        <input type="password" class='form-control' name="password" placeholder='Password' required>
+                        <textarea  maxlength="250" class='form-control' name="interests" placeholder="Interests(optional)" form="frm"></textarea>
+                        <input id='submit-info' type="submit" value="Sign Up" class="btn btn-danger btn-lg btn-primary btn-block">
+                    </form>
+                    </h4>
+                </div>
+            </div>
         </div>
         <script src="https://code.jquery.com/jquery-3.2.1.slim.min.js" integrity="sha384-KJ3o2DKtIkvYIK3UENzmM7KCkRr/rE9/Qpg6aAZGJwFDMVNA/GpGFF93hXpG5KkN" crossorigin="anonymous"></script>
         <script src="https://cdnjs.cloudflare.com/ajax/libs/popper.js/1.12.9/umd/popper.min.js" integrity="sha384-ApNbgh9B+Y1QKtv3Rn7W3mgPxhU9K/ScQsAP7hUibX39j7fakFPskvXusvfa0b4Q" crossorigin="anonymous"></script>
         <script src="https://maxcdn.bootstrapcdn.com/bootstrap/4.0.0/js/bootstrap.min.js" integrity="sha384-JZR6Spejh4U02d8jOt6vLEHfe/JQGiRRSQQxSfFWpi1MquVdAyjUar5+76PVCmYl" crossorigin="anonymous"></script>
         <script>
-
-            $('button#signup').on('click', function(evt) {
-                $('h2#signup-header').attr('hidden', false);
-                $('form#frm').attr('hidden', false);
-                $('#login').attr('hidden', false)
-                $('#signup').attr('hidden', true)
-                $('#home-page-container').attr('id',"home-page-container-2")
-                $('h1.home-page-font').attr('hidden', true)
-
-
-                $('form.sign-in').attr('hidden', true);
-
-            });
-
-            $('button#login').on('click', function(evt) {
-                $('h2#signup-header').attr('hidden', true);
-                $('form#frm').attr('hidden', true);
-                $('#login').attr('hidden', true)
-                $('#home-page-container').attr('id',"home-page-container-3")
-                
-
-                $('form.sign-in').attr('hidden', false);
-
-            });
-
-            $('input#submit-info').on('submit', function(evt) {
-                $('form#upload-photo').attr('hidden', false);
-
-                $('h2#signup-header').attr('hidden', true);
-                $('form#frm').attr('hidden', true);
-                $('h2#signup-header').attr('hidden', true);
-                $('form#frm').attr('hidden', true);
-
-            });
-
-
-
-
         </script>
         
     </body>
