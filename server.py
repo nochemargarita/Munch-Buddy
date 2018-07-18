@@ -47,7 +47,7 @@ def signup():
 
     if q:
         flash('Username is already taken.')
-        return redirect('/signup')
+        return redirect('/')
 
     else:
         flash('Yay! You are now a Munch Buddy!')
@@ -86,7 +86,7 @@ def upload():
 @app.route('/login')
 def login_form():
     """redirects the user to log in form page."""
-
+    flash('working?')
     return render_template('login.html')
 
 

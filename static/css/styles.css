@@ -24,22 +24,13 @@ body {
     border-bottom: solid #EA5D69 1px;
 }
 
-#menu1 {
-    padding-left: 0;
-}
-
-.menu1 {
-    padding-right: 0;
-}
 
 .munch-logo {
     height: 60px;
     width: 90px;
 }
 
-
 .user-name {
-    /*font-family: 'Nanum Gothic', sans-serif;*/
     color: #1B79FC;
     font-weight: 400;
     font-size: 25px;
