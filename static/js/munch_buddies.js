@@ -37,8 +37,8 @@
             $('.mess').attr('hidden', false);
             
 
-            let room = $(this).attr('target')
-            let name_id = $(this).attr('name')
+            let room = $(this).attr('target');
+            let name_id = $(this).attr('name');
 
 
             socket.emit('join', {room: room});

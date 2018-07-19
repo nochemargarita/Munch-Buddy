@@ -1,52 +1,51 @@
-# from unittest import TestCase
-# from model import connect_to_db, db
-# from server import app
-# from flask import session
+from unittest import TestCase
+from model import connect_to_db, db
+from server import app
+from flask import session
 
 
-# class FlaskTestsHome(TestCase):
-#     """Flask tests."""
+class FlaskTestsHome(TestCase):
+    """Flask tests."""
 
-#     def setUp(self):
-#         """Stuff to do before every test."""
+    def setUp(self):
+        """Stuff to do before every test."""
 
-#         # Get the Flask test client
-#         self.client = app.test_client()
+        # Get the Flask test client
+        self.client = app.test_client()
 
-#         # # Show Flask errors that happen during tests
-#         app.config['TESTING'] = True
-#         app.config['SQLALCHEMY_TRACK_MODIFICATIONS'] = False
-#         app.config["SQLALCHEMY_DATABASE_URI"] = "PostgreSQL:///munch"
+        # # Show Flask errors that happen during tests
+        app.config['TESTING'] = True
+        app.config['SQLALCHEMY_TRACK_MODIFICATIONS'] = False
+        app.config["SQLALCHEMY_DATABASE_URI"] = "PostgreSQL:///munch"
 
-#     def test_index(self):
-#         """Test homepage page."""
+    def test_index(self):
+        """Test homepage page."""
 
-#         result = self.client.get("/")
-#         self.assertIn("Munch Buddy", result.data)
+        result = self.client.get("/")
+        self.assertIn("Munch Buddy", result.data)
 
 
-# class FlaskTestsSignup(TestCase):
-#     """Flask tests."""
+class FlaskTestsSignup(TestCase):
+    """Flask tests."""
 
-#     def setUp(self):
-#         """Stuff to do before every test."""
+    def setUp(self):
+        """Stuff to do before every test."""
 
-#         # Get the Flask test client
-#         self.client = app.test_client()
+        # Get the Flask test client
+        self.client = app.test_client()
 
-#         # Show Flask errors that happen during tests
-#         app.config['TESTING'] = True
-#         app.config['SQLALCHEMY_TRACK_MODIFICATIONS'] = False
-#         app.config["SQLALCHEMY_DATABASE_URI"] = "PostgreSQL:///munch"
+        # Show Flask errors that happen during tests
+        app.config['TESTING'] = True
+        app.config['SQLALCHEMY_TRACK_MODIFICATIONS'] = False
+        app.config["SQLALCHEMY_DATABASE_URI"] = "PostgreSQL:///munch"
 
-#     def test_index(self):
-#         """Test sign up page."""
+    def test_index(self):
+        """Test sign up page."""
 
-#         result = self.client.get("/signup")
-#         self.assertIn("It's free", result.data)
-#         self.assertIn("Interests", result.data)
-#         self.assertNotIn("Saved Restaurants", result.data)
-#         self.assertNotIn("Log out", result.data)
+        result = self.client.get("/")
+        self.assertIn("Interests", result.data)
+        self.assertNotIn("Saved Restaurants", result.data)
+        self.assertNotIn("Log out", result.data)
 
 
 # class FlaskTestsLogin(TestCase):
@@ -66,124 +65,124 @@
 #     def test_index(self):
 #         """Test log in page."""
 
-#         result = self.client.get("/login")
+#         result = self.client.get("/")
 #         self.assertIn("Email", result.data)
 
 
-# # class FlaskTestsCategories(TestCase):
-# #     """Flask tests."""
+# class FlaskTestsCategories(TestCase):
+#     """Flask tests."""
+
+#     def setUp(self):
+#         """Stuff to do before every test."""
+
+#         # Get the Flask test client
+#         self.client = app.test_client()
+
+#         # Show Flask errors that happen during tests
+#         app.config['TESTING'] = True
+#         app.config['SQLALCHEMY_TRACK_MODIFICATIONS'] = False
+#         app.config["SQLALCHEMY_DATABASE_URI"] = "PostgreSQL:///munch"
+
+
+#     def test_index(self):
+#         """Test categories page."""
+        
+#         with self.client as c:
+#             with c.session_transaction() as sess:
+#                 sess['user_id'] = '1'
+
+        
+#         result = self.client.post("/categories")
+
+        # print result.data
+
+
+
+        
+# class FlaskTestsDatabase(TestCase):
+#     """Flask tests that use the database."""
 
 # #     def setUp(self):
 # #         """Stuff to do before every test."""
 
 # #         # Get the Flask test client
 # #         self.client = app.test_client()
-
-# #         # Show Flask errors that happen during tests
 # #         app.config['TESTING'] = True
-# #         app.config['SQLALCHEMY_TRACK_MODIFICATIONS'] = False
-# #         app.config["SQLALCHEMY_DATABASE_URI"] = "PostgreSQL:///munch"
+
+# #         # Connect to test database
+# #         connect_to_db(app, "postgresql:///exampledata")
+
+# #         # Create tables and add sample data
+# #         db.create_all()
+# #         example_data()
+
+# #     def tearDown(self):
+# #         """Do at end of every test."""
+
+# #         db.session.close()
+# #         db.drop_all()
+
+#     def test_categories_list(self):
+#         """Test departments page."""
+
+#         result = self.client.get("/departments")
+#         self.assertIn("Legal", result.data)
+
+#     def test_departments_details(self):
+#         """Test departments page."""
+
+#         result = self.client.get("/department/fin")
+#         self.assertIn("Phone: 555-1000", result.data)
+
+#     def test_login(self):
+#         """Test login page."""
+
+#         result = self.client.post("/login",
+#                                   data={"user_id": "rachel", "password": "123"},
+#                                   follow_redirects=True)
+#         self.assertIn("You are a valued user", result.data)
 
 
-# #     def test_index(self):
-# #         """Test categories page."""
-        
-# #         with self.client as c:
-# #             with c.session_transaction() as sess:
-# #                 sess['user_id'] = '1'
+# class FlaskTestsLoggedIn(TestCase):
+#     """Flask tests with user logged in to session."""
 
-        
-# #         result = self.client.post("/categories")
+#     def setUp(self):
+#         """Stuff to do before every test."""
 
-#         # print result.data
+#         app.config['TESTING'] = True
+#         app.config['SECRET_KEY'] = 'key'
+#         self.client = app.test_client()
 
+#         with self.client as c:
+#             with c.session_transaction() as sess:
+#                 sess['user_id'] = 1
 
+#     def test_important_page(self):
+#         """Test log in page."""
 
-        
-# # class FlaskTestsDatabase(TestCase):
-# #     """Flask tests that use the database."""
-
-# # #     def setUp(self):
-# # #         """Stuff to do before every test."""
-
-# # #         # Get the Flask test client
-# # #         self.client = app.test_client()
-# # #         app.config['TESTING'] = True
-
-# # #         # Connect to test database
-# # #         connect_to_db(app, "postgresql:///exampledata")
-
-# # #         # Create tables and add sample data
-# # #         db.create_all()
-# # #         example_data()
-
-# # #     def tearDown(self):
-# # #         """Do at end of every test."""
-
-# # #         db.session.close()
-# # #         db.drop_all()
-
-# #     def test_categories_list(self):
-# #         """Test departments page."""
-
-# #         result = self.client.get("/departments")
-# #         self.assertIn("Legal", result.data)
-
-# #     def test_departments_details(self):
-# #         """Test departments page."""
-
-# #         result = self.client.get("/department/fin")
-# #         self.assertIn("Phone: 555-1000", result.data)
-
-# #     def test_login(self):
-# #         """Test login page."""
-
-# #         result = self.client.post("/login",
-# #                                   data={"user_id": "rachel", "password": "123"},
-# #                                   follow_redirects=True)
-# #         self.assertIn("You are a valued user", result.data)
-
-
-# # class FlaskTestsLoggedIn(TestCase):
-# #     """Flask tests with user logged in to session."""
-
-# #     def setUp(self):
-# #         """Stuff to do before every test."""
-
-# #         app.config['TESTING'] = True
-# #         app.config['SECRET_KEY'] = 'key'
-# #         self.client = app.test_client()
-
-# #         with self.client as c:
-# #             with c.session_transaction() as sess:
-# #                 sess['user_id'] = 1
-
-# #     def test_important_page(self):
-# #         """Test log in page."""
-
-# #         result = self.client.get("/login", follow_redirects=True)
-# #         self.assertIn("Munch", result.data)
-# #         # self.assertIn("You successfully logged in.", result.data)
-# #         # self.assertNotIn("Sign Up", result.data)
+#         result = self.client.get("/login", follow_redirects=True)
+#         self.assertIn("Munch", result.data)
+#         # self.assertIn("You successfully logged in.", result.data)
+#         # self.assertNotIn("Sign Up", result.data)
 
 
 
-# # class FlaskTestsLoggedOut(TestCase):
-# #     """Flask tests with user logged in to session."""
+# class FlaskTestsLoggedOut(TestCase):
+#     """Flask tests with user logged in to session."""
 
-# #     def setUp(self):
-# #         """Stuff to do before every test."""
+#     def setUp(self):
+#         """Stuff to do before every test."""
 
-# #         app.config['TESTING'] = True
-# #         self.client = app.test_client()
+#         app.config['TESTING'] = True
+#         self.client = app.test_client()
 
-# #     def test_important_page(self):
-# #         """Test that user can't see important page when logged out."""
+#     def test_important_page(self):
+#         """Test that user can't see important page when logged out."""
 
-# #         result = self.client.get("/logout", follow_redirects=True)
-# #         self.assertNotIn("email", result.data)
-# #         self.assertIn("Sign Up", result.data)
-# #         self.assertIn("You successfully logged out.", result.data)
+#         result = self.client.get("/logout", follow_redirects=True)
+#         self.assertNotIn("email", result.data)
+#         self.assertIn("Sign Up", result.data)
+#         self.assertIn("You successfully logged out.", result.data)
 
 
 # class FlaskTestsLogInLogOut(TestCase):
@@ -205,24 +204,24 @@
 #                             follow_redirects=True)
 
 #             self.assertEqual(session['user_id'], 1)
-#             # self.assertIn("You are a valued user", result.data)
+            # self.assertIn("You are a valued user", result.data)
 
  
 
-#     # def test_logout(self):
-#     #     """Test logout route."""
+    # def test_logout(self):
+    #     """Test logout route."""
 
-#     #     with self.client as c:
-#     #         with c.session_transaction() as sess:
-#     #             sess['user_id'] = 1
+    #     with self.client as c:
+    #         with c.session_transaction() as sess:
+    #             sess['user_id'] = 1
 
-#     #         result = self.client.get('/logout', follow_redirects=True)
+    #         result = self.client.get('/logout', follow_redirects=True)
 
-#     #         self.assertNotIn('user_id', session)
-#     #         self.assertIn('logged out', result.data)
+    #         self.assertNotIn('user_id', session)
+    #         self.assertIn('logged out', result.data)
 
 
-# if __name__ == "__main__":
-#     import unittest
+if __name__ == "__main__":
+    import unittest
 
-#     unittest.main()
+    unittest.main()

@@ -463,7 +463,8 @@ div.message-box {
 
 
 .close-chat {
-  float: left;
+  margin-left: 10px;
+  margin-right: 20px; 
 }
 
 .notification-box {
