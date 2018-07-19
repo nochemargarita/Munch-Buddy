@@ -74,10 +74,10 @@
 
                         <div class="row message-suggestion">
                             <div class="row buttons-row">
-                                <button data-toggle="tooltip" data-placement="top" title="Send a message" class="user-id btn btn-primary btn width-profile" target="{{ matches[user]['session_id'] }}" value="{{ matches[user]['display_name'] }}" name="{{ matches[user]['user_id'] }}"><i class="fas fa-comment-alt"></i>&nbsp;MESSAGE</button>
+                                <button data-toggle="tooltip" data-placement="top" title="Send a message" class="user-id btn btn-primary width-profile" target="{{ matches[user]['session_id'] }}" value="{{ matches[user]['display_name'] }}" name="{{ matches[user]['user_id'] }}"><i class="fas fa-comment-alt"></i>&nbsp;MESSAGE</button>
                                 &nbsp; &nbsp;                        
 
-                                <button class="restaurant-suggestion btn btn-danger btn width-profile" id="{{ matches[user]['restaurant']['rest_id'] }}"><i class="fas fa-utensils"></i>&nbsp;SUGGESTION</button>
+                                <button class="restaurant-suggestion btn btn-danger width-profile btn-block" id="{{ matches[user]['restaurant']['rest_id'] }}"><i class="fas fa-utensils"></i>&nbsp;SUGGESTION</button>
                             </div>
 
                         </div>

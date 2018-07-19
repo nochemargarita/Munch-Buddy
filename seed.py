@@ -80,8 +80,6 @@ def add_messages_to_db(from_user_id, to_user_id, messaged_on, message):
     db.session.commit()
 
 
-
-
 # Match
 
 if __name__ == "__main__":

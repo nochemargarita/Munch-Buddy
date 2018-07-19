@@ -11,6 +11,8 @@ from matches import join_categories
 from flask_socketio import SocketIO, emit, join_room
 from flask_uploads import UploadSet, configure_uploads, IMAGES
 from random import choice
+from string import letters
+
 
 
 app = Flask(__name__)
@@ -43,9 +45,9 @@ def signup():
     interests = request.form.get('interests')
 
     hashed_password = generate_password_hash(password)
-    q = db.session.query(User).filter(User.username == username).first()
+    user_exists = db.session.query(User).filter(User.username == username).first()
 
-    if q:
+    if user_exists:
         flash('Username is already taken.')
         return redirect('/')
 
@@ -304,7 +306,7 @@ def update_edit_profile():
         session.pop('name', None)
         session['name'] = display_name
 
-    url = str(user_id)+"1a" + ".jpg"
+    url = (choice(letters) * user_id) + ".jpg"
     if request.method == 'POST' and 'photo' in request.files:
             request.files['photo'].filename = url
             filename = photos.save(request.files['photo'])
