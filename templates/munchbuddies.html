@@ -3,8 +3,6 @@
 {% block content %}
 <body class="bg-light">
     <div class="container-fluid nav-munch">
-
-
     <div class="container-fluid nav-munch">
         <div class="col-12 hi nav-munch">
         <nav class="navbar navbar-expand-lg navbar-light bg-light fixed-top">
@@ -74,7 +72,7 @@
 
                         </div>
 
-                        <div class="row message-suggest">
+                        <div class="row message-suggestion">
                             <div class="row buttons-row">
                                 <button data-toggle="tooltip" data-placement="top" title="Send a message" class="user-id btn btn-primary btn width-profile" target="{{ matches[user]['session_id'] }}" value="{{ matches[user]['display_name'] }}" name="{{ matches[user]['user_id'] }}"><i class="fas fa-comment-alt"></i>&nbsp;MESSAGE</button>
                                 &nbsp; &nbsp;                        
@@ -90,7 +88,7 @@
 
                         <div class="col-md-6">
                             <div class="container-like-image">
-                              <img class="card-img-top" src="{{ matches[user]['restaurant']['image_url'] }}" alt="Card image cap" style="height: 180px; width: 100%;">
+                              <img class="card-img-top" src="{{ matches[user]['restaurant']['image_url'] }}" alt="Card image cap">
                               <button name="rest_id" onClick="addRestaurant(this.value)" value="{{ matches[user]['restaurant']['rest_id'] }}" class="btn btn-primary btn-sm like-button"><i class="fas fa-heart"></i></button>
                             </div>
                         </div>
@@ -147,16 +145,12 @@
         </div>
     </div>
 
-        
-
     <script src="https://code.jquery.com/jquery-3.3.1.slim.min.js" integrity="sha384-q8i/X+965DzO0rT7abK41JStQIAqVgRVzpbzo5smXKp4YfRvH+8abtTE1Pi6jizo" crossorigin="anonymous"></script>
     <script src="https://cdnjs.cloudflare.com/ajax/libs/popper.js/1.14.3/umd/popper.min.js" integrity="sha384-ZMP7rVo3mIykV+2+9J3UJ46jBk0WLaUAdn689aCwoqbBJiSnjAK/l8WvCWPIPm49" crossorigin="anonymous"></script>
     <script src="https://stackpath.bootstrapcdn.com/bootstrap/4.1.1/js/bootstrap.min.js" integrity="sha384-smHYKdLADwkXOn1EmN1qk/HfnUcbVRZyYmZ4qpPea6sjB/pTJ0euyQp0Mk8ck+5T" crossorigin="anonymous"></script>
     <script src="https://code.jquery.com/jquery-1.11.1.js"></script>
     <script type="text/javascript" src="//cdnjs.cloudflare.com/ajax/libs/socket.io/1.3.5/socket.io.min.js"></script>
-
     <script src="https://cdnjs.cloudflare.com/ajax/libs/popper.js/1.12.9/umd/popper.min.js"></script>
-
     <script src="static/js/munch_buddies.js" type="text/javascript"></script>
 
 

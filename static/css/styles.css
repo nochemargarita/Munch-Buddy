@@ -1,4 +1,7 @@
 /*All pages*/
+body {
+    font-family: 'Roboto', sans-serif;
+}
 
 .footer {
    left: 0;
@@ -10,9 +13,6 @@
 }
 
 /* navbar */
-body {
-    font-family: 'Roboto', sans-serif;
-}
 
 .nav-brand {
     color: #E84855;
@@ -43,26 +43,11 @@ body {
     height: 40px;
 }
 
-
 .padding-col {
     padding-left: 0;
     padding-right: 0;
     margin-right: auto;
     display: inline-block;
-}
-
-
-.info-buddies {
-
-    margin-top: 30px;
-    margin-left: 15px;
-    display: inline-block;
-}
-
-
-
-.message-suggest {
-    margin: auto;
 }
 
 /*homepage*/
@@ -114,6 +99,18 @@ body {
     line-height: 0;
 }
 
+/* munchbuddies page */
+
+.info-buddies {
+
+    margin-top: 30px;
+    margin-left: 15px;
+    display: inline-block;
+}
+
+.message-suggestion {
+    margin: auto;
+}
 
 /* banner */
 #banner {
@@ -209,7 +206,6 @@ body {
 
 }
 
-
 .fa-heart, .fa-pencil-alt {
    -webkit-text-stroke-width: 2px;
    -webkit-text-stroke-color: #3E3D49; 
@@ -264,6 +260,12 @@ body {
     font-size: 12px; 
     text-decoration: none;
 }
+
+.card-img-top {
+    object-fit: cover;
+    height: 180px; 
+    width: 100%;
+    }
 
 
 /* buddies */
