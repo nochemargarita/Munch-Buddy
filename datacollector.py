@@ -44,8 +44,8 @@ def open_json_file(filename):
     restaurants = []
 
     with open(filename, 'r') as filename:
-        for item in filename:
-            info = json.loads(item)
+        for item in json.load(filename):
+            
             restaurants.append(info)
 
     return restaurants

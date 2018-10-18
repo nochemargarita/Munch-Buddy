@@ -144,7 +144,7 @@ def selected_categories():
     """Get all selected check boxes and add it to database, LikeCategory."""
 
     user = User.query.get(session['user_id'])
-    submitted_categories = request.form.getlist('cat_id')
+    submitted_categories = request.form.get('cat_id')
 
     if submitted_categories:
         for ident in submitted_categories:

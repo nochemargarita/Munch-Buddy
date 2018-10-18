@@ -1,8 +1,19 @@
 from unittest import TestCase
-from model import connect_to_db, db
+from model import connect_to_db, db, seed, 
 from server import app
 from flask import session
 
+import unittest
+
+from server import app
+from model import db, seed_data, connect_to_db, User
+
+import server
+import flask
+
+from StringIO import StringIO  
+
+connect_to_db(app)
 
 class FlaskTestsHome(TestCase):
     """Flask tests."""
