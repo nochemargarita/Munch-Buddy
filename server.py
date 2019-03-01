@@ -16,11 +16,9 @@ from string import letters
 
 
 app = Flask(__name__)
-# Images is the type of file that will be uploaded
 photos = UploadSet('photos', IMAGES)
 app.config['UPLOADED_PHOTOS_DEST'] = 'static/img'
 configure_uploads(app, photos)
-# Required to use Flask sessions and the debug toolbar
 app.secret_key = "ABC"
 socketio = SocketIO(app)
 app.jinja_env.undefined = StrictUndefined
@@ -45,9 +43,9 @@ def signup():
     interests = request.form.get('interests')
 
     hashed_password = generate_password_hash(password)
-    user_exists = db.session.query(User).filter(User.username == username).first()
+    new_user = db.session.query(User).filter(User.username == username).first()
 
-    if user_exists:
+    if not new_user:
         flash('Username is already taken.')
         return redirect('/')
 
