@@ -38,7 +38,7 @@ SQLAlchemy
 ## See live demo:
 
 
-<a href="https://youtu.be/JAdUjmrHfuQ" target="_blank"><img src="http://i3.ytimg.com/vi/JAdUjmrHfuQ/maxresdefault.jpg" 
+<a href="https://youtu.be/JAdUjmrHfuQ" target="_blank"><img src="http://i3.ytimg.com/vi/JAdUjmrHfuQ/hqdefault.jpg" 
 alt="IMAGE ALT TEXT HERE" width="240" height="180" border="10" /></a>
 
 
