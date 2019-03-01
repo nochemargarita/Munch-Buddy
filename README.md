@@ -11,11 +11,11 @@ The creator of Munch Buddy is [Margarita Noche](https://www.linkedin.com/in/marg
 
 ## Technologies
 ### Backend
-Python
-Flask
-Flask-Socketio
-Jinja
-SQLAlchemy
+- Python
+- Flask
+- Flask-Socketio
+- Jinja
+- SQLAlchemy
 
 ### Frontend
 - Javascript
@@ -39,7 +39,7 @@ SQLAlchemy
 
 
 <a href="https://youtu.be/JAdUjmrHfuQ" target="_blank"><img src="http://i3.ytimg.com/vi/JAdUjmrHfuQ/hqdefault.jpg" 
-alt="IMAGE ALT TEXT HERE" width="240" height="180" border="10" /></a>
+alt="IMAGE ALT TEXT HERE" width="440" height="380" border="10" /></a>
 
 
 ## Make a new friend today over a great meal!
