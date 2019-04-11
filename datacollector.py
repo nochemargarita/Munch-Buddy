@@ -23,7 +23,7 @@ def request_api_restaurants(offset):
     return requests.request('GET', url=url, headers=headers, params=params)
 
 
-def rest_json_file():
+def restaurant_json_file():
     """Send response from API request to a json file."""
 
     with open('restaurants.json', 'w') as filename:
@@ -82,7 +82,7 @@ def append_categories(filename):
 
 
 def get_categories(filename):
-    """Get all unque categories."""
+    """Get all unique categories."""
 
     category_info = {}
     categories = append_categories(filename)

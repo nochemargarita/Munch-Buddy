@@ -14,7 +14,6 @@ from random import choice
 from string import letters
 
 
-
 app = Flask(__name__)
 photos = UploadSet('photos', IMAGES)
 app.config['UPLOADED_PHOTOS_DEST'] = 'static/img'
@@ -83,10 +82,10 @@ def upload():
         return redirect('/')
 
 
-@app.route('/login')
-def login_form():
+@app.route('/<test_id>/login')
+def login_form(test_id):
     """redirects the user to log in form page."""
-    flash('working?')
+    flash(test_id)
     return render_template('login.html')
 
 
@@ -367,10 +366,7 @@ if __name__ == "__main__":
     app.config["SQLALCHEMY_TRACK_MODIFICATIONS"] = False
     app.debug = True
     app.jinja_env.auto_reload = app.debug
-    
+
     socketio.run(app, host="0.0.0.0", port=5000)
 
     # DebugToolbarExtension(app)
-
-    # app.run(host="0.0.0.0")
-

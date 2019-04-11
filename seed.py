@@ -19,7 +19,7 @@ def add_category_to_db():
 
 
 # RestaurantCategory
-def add_rest_cat_to_db():
+def add_restaurant_category_to_db():
     """Add the restaurant id and category id to the database."""
     categories = Category.query.all()
 
@@ -36,7 +36,7 @@ def add_rest_cat_to_db():
 
 
 # Restaurant
-def add_rest_to_db():
+def add_restaurant_to_db():
     """Add all restaurants and info to the database."""
 
     for restaurant in restaurants:
@@ -70,7 +70,7 @@ def add_user_to_db(username, password, display, lname, birthday, interests):
 
 
 # Message
-def add_messages_to_db(from_user_id, to_user_id, messaged_on, message):
+def add_message_to_db(from_user_id, to_user_id, messaged_on, message):
     """Add fake messages to database."""
 
     message = Message(from_user_id=from_user_id, to_user_id=to_user_id,
@@ -89,6 +89,6 @@ if __name__ == "__main__":
     restaurants = get_restaurants('restaurants.json')
     rest = open_json_file('restaurants.json')
 
-    add_rest_to_db()
+    add_restaurant_to_db()
     add_category_to_db()
-    add_rest_cat_to_db()
+    add_restaurant_category_to_db()
