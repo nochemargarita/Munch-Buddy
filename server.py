@@ -1,24 +1,31 @@
 from jinja2 import StrictUndefined
+
 from flask import Flask, render_template, request, flash, redirect, session, jsonify
-# from flask_debugtoolbar import DebugToolbarExtension
+from flask_debugtoolbar import DebugToolbarExtension
+from flask_socketio import SocketIO, emit, join_room
+from flask_uploads import UploadSet, configure_uploads, IMAGES
+
 from werkzeug.security import generate_password_hash, check_password_hash
+
 from model import connect_to_db, db, User, LikeCategory, Category
 from model import Message, LikeRestaurant
+
 from matches import create_room_session, selected_category_name, get_profile_picture
 from matches import query_user_in_session, query_message_session, get_all_restaurants
 from matches import query_message_of_matches, map_selected_category, map_each_matched_user
 from matches import join_categories
-from flask_socketio import SocketIO, emit, join_room
-from flask_uploads import UploadSet, configure_uploads, IMAGES
-from random import choice
-from string import letters
 
+from random import choice
+from string import ascii_letters
 
 app = Flask(__name__)
 photos = UploadSet('photos', IMAGES)
-app.config['UPLOADED_PHOTOS_DEST'] = 'static/img'
+app.config['UPLOADED_PHOTOS_DEST'] = 'static/images/profile-pictures'
 configure_uploads(app, photos)
-app.secret_key = "ABC"
+
+# Required to use Flask sessions and the debug toolbar
+app.secret_key = "munch_buddy_secret"
+
 socketio = SocketIO(app)
 app.jinja_env.undefined = StrictUndefined
 
@@ -44,11 +51,12 @@ def signup():
     hashed_password = generate_password_hash(password)
     new_user = db.session.query(User).filter(User.username == username).first()
 
-    if not new_user:
+    if new_user is not None:
         flash('Username is already taken.')
         return redirect('/')
 
     else:
+        print 'not working'
         flash('Yay! You are now a Munch Buddy!')
         user = User(username=username, password=hashed_password,
                     display_name=display_name, interests=interests)
@@ -57,6 +65,10 @@ def signup():
         session['username'] = username
     return render_template('upload.html')
 
+def random_string():
+    """Generate a random string with the combination of lowercase and uppercase letters """
+    letters = ascii_letters
+    return ''.join(choice(letters) for i in xrange(4))
 
 @app.route('/upload', methods=['GET', 'POST'])
 def upload():
@@ -68,7 +80,7 @@ def upload():
         session['user_id'] = user.user_id
         session['name'] = user.display_name
         user_id = session.get('user_id')
-        url = str(user_id) + ".jpg"
+        url = str(user_id) + random_string + ".jpg"
 
         if request.method == 'POST' and 'photo' in request.files:
             request.files['photo'].filename = url
@@ -82,10 +94,9 @@ def upload():
         return redirect('/')
 
 
-@app.route('/<test_id>/login')
-def login_form(test_id):
+@app.route('/login')
+def login_form():
     """redirects the user to log in form page."""
-    flash(test_id)
     return render_template('login.html')
 
 
@@ -141,7 +152,7 @@ def selected_categories():
     """Get all selected check boxes and add it to database, LikeCategory."""
 
     user = User.query.get(session['user_id'])
-    submitted_categories = request.form.get('cat_id')
+    submitted_categories = request.form.getlist('cat_id')
 
     if submitted_categories:
         for ident in submitted_categories:
@@ -303,7 +314,7 @@ def update_edit_profile():
         session.pop('name', None)
         session['name'] = display_name
 
-    url = (choice(letters) * user_id) + ".jpg"
+    url = user_id + random_string + ".jpg"
     if request.method == 'POST' and 'photo' in request.files:
             request.files['photo'].filename = url
             filename = photos.save(request.files['photo'])
@@ -360,13 +371,18 @@ def send_room_message(message):
 
 
 if __name__ == "__main__":
-    # set debug to True at the point of invoking the DebugToolbarExtension
-    connect_to_db(app)
-    app.config["SQLALCHEMY_DATABASE_URI"] = "PostgreSQL:///munch"
-    app.config["SQLALCHEMY_TRACK_MODIFICATIONS"] = False
-    app.debug = True
+    # We have to set debug=True here, since it has to be True at the
+    # point that we invoke the DebugToolbarExtension
+    # app.debug = True
+    # make sure templates, etc. are not cached in debug mode
     app.jinja_env.auto_reload = app.debug
 
-    socketio.run(app, host="0.0.0.0", port=5000)
+    connect_to_db(app)
 
+    # Use the DebugToolbar
     # DebugToolbarExtension(app)
+
+    # Run server in developer mode
+    # socketio.run(app, debug=False, port=5000)
+    # Run server in developer mode in vagrant
+    socketio.run(app, debug=True, host='0.0.0.0', port=5000)

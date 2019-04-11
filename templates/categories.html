@@ -5,7 +5,7 @@
     <div class="container-fluid nav-munch">
         <div class="col-12 hi nav-munch">
         <nav class="navbar navbar-expand-lg navbar-light bg-light fixed-top">
-            <img src="/static/logo3.png" height="70" width="110">
+            <img src="/static/images/munch-logo.png" height="70" width="110">
             
             <button class="navbar-toggler" type="button" data-toggle="collapse" data-target="#navbarNavAltMarkup" aria-controls="navbarNavAltMarkup" aria-expanded="false" aria-label="Toggle navigation">
                 <span class="navbar-toggler-icon"></span>
@@ -27,7 +27,7 @@
           {% for number in range(0, categories|length - 5) %}
               <div class="container individual-category-cont">
                   <label class="container-like-image image-checkbox">
-                        <img class="img-responsive" src="/static/food/{{number}}.jpg" />
+                        <img class="img-responsive" src="/static/images/category/{{number}}.jpg" />
                         <input type='checkbox' class='single-checkbox' name='cat_id' value='{{ categories[number].cat_id }}'>
                         {% if categories[number].cat_title == "Mediterranean" or categories[number].cat_title == "Shanghainese" or categories[number].cat_title == "Singaporean" or categories[number].cat_title == "Scandinavian" %}
                           <div class="centered-text-cat2">{{ categories[number].cat_title }}</div>
