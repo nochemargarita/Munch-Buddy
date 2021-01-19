@@ -1,25 +1,31 @@
 from jinja2 import StrictUndefined
+
 from flask import Flask, render_template, request, flash, redirect, session, jsonify
-# from flask_debugtoolbar import DebugToolbarExtension
+from flask_debugtoolbar import DebugToolbarExtension
+from flask_socketio import SocketIO, emit, join_room
+from flask_uploads import UploadSet, configure_uploads, IMAGES
+
 from werkzeug.security import generate_password_hash, check_password_hash
+
 from model import connect_to_db, db, User, LikeCategory, Category
 from model import Message, LikeRestaurant
+
 from matches import create_room_session, selected_category_name, get_profile_picture
 from matches import query_user_in_session, query_message_session, get_all_restaurants
 from matches import query_message_of_matches, map_selected_category, map_each_matched_user
 from matches import join_categories
-from flask_socketio import SocketIO, emit, join_room
-from flask_uploads import UploadSet, configure_uploads, IMAGES
+
 from random import choice
-from string import letters
-
-
+from string import ascii_letters
 
 app = Flask(__name__)
 photos = UploadSet('photos', IMAGES)
-app.config['UPLOADED_PHOTOS_DEST'] = 'static/img'
+app.config['UPLOADED_PHOTOS_DEST'] = 'static/images/profile-pictures'
 configure_uploads(app, photos)
-app.secret_key = "ABC"
+
+# Required to use Flask sessions and the debug toolbar
+app.secret_key = "munch_buddy_secret"
+
 socketio = SocketIO(app)
 app.jinja_env.undefined = StrictUndefined
 
@@ -45,7 +51,7 @@ def signup():
     hashed_password = generate_password_hash(password)
     new_user = db.session.query(User).filter(User.username == username).first()
 
-    if not new_user:
+    if new_user is not None:
         flash('Username is already taken.')
         return redirect('/')
 
@@ -58,6 +64,10 @@ def signup():
         session['username'] = username
     return render_template('upload.html')
 
+def random_string():
+    """Generate a random string with the combination of lowercase and uppercase letters """
+    letters = ascii_letters
+    return ''.join(choice(letters) for i in xrange(4))
 
 @app.route('/upload', methods=['GET', 'POST'])
 def upload():
@@ -69,24 +79,25 @@ def upload():
         session['user_id'] = user.user_id
         session['name'] = user.display_name
         user_id = session.get('user_id')
-        url = str(user_id) + ".jpg"
-
+        url = str(user_id) + random_string() + ".jpg"
+        print 'enter'
         if request.method == 'POST' and 'photo' in request.files:
             request.files['photo'].filename = url
             filename = photos.save(request.files['photo'])
             user_session = User.query.get(user_id)
             user_session.profile_picture = app.config['UPLOADED_PHOTOS_DEST'] + '/' + url
             db.session.commit()
+            print 'success'
         return redirect('/categories')
     else:
         flash('wrong')
+        print 'error'
         return redirect('/')
 
 
 @app.route('/login')
 def login_form():
-    """redirects the user to log in form page."""
-    flash('working?')
+    """Redirects the user to log in form page."""
     return render_template('login.html')
 
 
@@ -116,7 +127,7 @@ def login():
 
 @app.route('/logout')
 def logout():
-    """Logs the user our from the session."""
+    """Logs the user out from the session."""
     if session.get('user_id'):
         flash('You successfully logged out.')
         session.pop('user_id', None)
@@ -127,7 +138,7 @@ def logout():
 
 @app.route('/categories')
 def categories():
-    """Let's the user select multiple categories of cuisine."""
+    """Take all the categories of cuisine from database for user to choose from."""
     categories = Category.query.order_by(Category.cat_id).all()
 
     if session.get('user_id'):
@@ -142,7 +153,7 @@ def selected_categories():
     """Get all selected check boxes and add it to database, LikeCategory."""
 
     user = User.query.get(session['user_id'])
-    submitted_categories = request.form.get('cat_id')
+    submitted_categories = request.form.getlist('cat_id')
 
     if submitted_categories:
         for ident in submitted_categories:
@@ -159,7 +170,7 @@ def selected_categories():
 
 @app.route('/saved-restaurants')
 def saved_restaurants():
-    """redirect users to saved restaurants."""
+    """Redirect the user to saved restaurant/s."""
     if session.get('user_id'):
         name = session.get('name')
         profile_picture = get_profile_picture()
@@ -173,10 +184,10 @@ def saved_restaurants():
 @app.route('/munchbuddies')
 def show_buddies():
     """Directs user to a page with list of people who matched his/her choice of categories."""
-    sess = session.get('user_id')
+    user_session_id = session.get('user_id')
     name = session.get('name')
 
-    if sess:
+    if user_session_id:
         profile_picture = get_profile_picture()
         results = get_all_restaurants()
         matches = {}
@@ -199,7 +210,7 @@ def show_buddies():
                 create_room_session()
 
         return render_template('munchbuddies.html', matches=matches,
-                               sess=sess, profile_picture=profile_picture,
+                               sess=user_session_id, profile_picture=profile_picture,
                                name=name, async_mode=socketio.async_mode)
 
     else:
@@ -208,6 +219,7 @@ def show_buddies():
 
 @app.route('/add_restaurant', methods=['POST'])
 def add_restaurant():
+    """Add the new liked restaurant of the user to LikeRestaurant database."""
     user_id = session.get('user_id')
     restaurant_id = request.form['data']
 
@@ -233,6 +245,7 @@ def add_restaurant():
 
 @app.route('/delete_liked_restaurant', methods=['POST'])
 def delete_restaurant():
+    """Delete user liked restaurant from database, LikeRestaurant."""
     restaurant_id = request.form['data']
     user_id = session.get('user_id')
     if restaurant_id:
@@ -245,6 +258,7 @@ def delete_restaurant():
 
 @app.route('/restaurants.json')
 def show_restaurants():
+    """Retrieve user liked restaurants from database."""
     user_id = session.get('user_id')
     current_likes = db.session.query(LikeRestaurant).filter(LikeRestaurant.user_id == user_id).all()
     restaurants = {}
@@ -260,6 +274,7 @@ def show_restaurants():
 
 @app.route('/messages.json')
 def show_messages():
+    """Retrieve all messages of current user and buddies."""
     all_messages = {}
     results = get_all_restaurants()
     for user_id, restaurant in results.iteritems():
@@ -271,53 +286,9 @@ def show_messages():
     return jsonify(all_messages)
 
 
-@app.route('/editprofile')
-def edit_profile():
-    """Allows the user to edit interests and display name."""
-    user_id = session.get('user_id')
-
-    if user_id:
-        interests = db.session.query(User).filter(User.user_id == user_id).first()
-        chosen_categories = selected_category_name()
-
-        return render_template('editprofile.html',
-                               interests=interests.interests,
-                               display_name=interests.display_name,
-                               profile_picture=interests.profile_picture,
-                               chosen_categories=chosen_categories)
-
-    else:
-        return redirect('/')
-
-
-@app.route('/editprofile', methods=['GET', 'POST'])
-def update_edit_profile():
-    """Update interests in the database."""
-    user_id = session.get('user_id')
-    interests = request.form.get('interests')
-    display_name = request.form.get('display_name')
-    if display_name or interests:
-        db.session.query(User).filter(User.user_id == user_id).update(dict(interests=interests,
-                                                                           display_name=display_name))
-        db.session.commit()
-
-        session.pop('name', None)
-        session['name'] = display_name
-
-    url = (choice(letters) * user_id) + ".jpg"
-    if request.method == 'POST' and 'photo' in request.files:
-            request.files['photo'].filename = url
-            filename = photos.save(request.files['photo'])
-            profile_picture = app.config['UPLOADED_PHOTOS_DEST'] + '/' + url
-            db.session.query(User).filter(User.user_id == user_id).update(dict(profile_picture=profile_picture))
-            db.session.commit()
-
-    return redirect('/munchbuddies')
-
-
 @app.route('/sender_name.json')
 def get_sender_name():
-    """Get the current user in session's name."""
+    """jsonify the current user's name and profile picture."""
 
     name = session.get('user_id')
     display_name = session.get('name')
@@ -330,7 +301,7 @@ def get_sender_name():
 
 @app.route('/matches_for_chat.json')
 def session_id_for_matches():
-    """Returns all the session ids related to the current user."""
+    """Returns all the chat session ids related to the current user."""
     results = get_all_restaurants()
     chat_session_ids = []
     for user_id, restaurant in results.iteritems():
@@ -344,16 +315,18 @@ def session_id_for_matches():
 
 @socketio.on('join', namespace='/munchbuddies')
 def join(message):
+    """The user enters the chat room."""
     room = message['room']
     join_room(room)
 
 
 @socketio.on('my_room_event', namespace='/munchbuddies')
 def send_room_message(message):
+    """Emits the message to the chat room when sent and then added to database, Message."""
     emit('my_response', message, room=message['room'])
-    sess = session.get('user_id')
+    user_session_id = session.get('user_id')
     message_to_db = Message(sess_id=message['room'],
-                            from_user_id=sess,
+                            from_user_id=user_session_id,
                             to_user_id=message['receiver_id'],
                             message=message['data'])
     db.session.add(message_to_db)
@@ -361,16 +334,18 @@ def send_room_message(message):
 
 
 if __name__ == "__main__":
-    # set debug to True at the point of invoking the DebugToolbarExtension
-    connect_to_db(app)
-    app.config["SQLALCHEMY_DATABASE_URI"] = "PostgreSQL:///munch"
-    app.config["SQLALCHEMY_TRACK_MODIFICATIONS"] = False
-    app.debug = True
+    # We have to set debug=True here, since it has to be True at the
+    # point that we invoke the DebugToolbarExtension
+    # app.debug = True
+    # make sure templates, etc. are not cached in debug mode
     app.jinja_env.auto_reload = app.debug
-    
-    socketio.run(app, host="0.0.0.0", port=5000)
 
+    connect_to_db(app)
+
+    # Use the DebugToolbar
     # DebugToolbarExtension(app)
 
-    # app.run(host="0.0.0.0")
-
+    # Run server in developer mode
+    # socketio.run(app, debug=False, port=5000)
+    # Run server in developer mode in vagrant
+    socketio.run(app, debug=True, host='0.0.0.0', port=5000)

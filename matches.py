@@ -43,7 +43,6 @@ def find_matched_users():
     return users
 
 
-# NEED TO OPTIMIZE, NESTED FOR LOOPS
 def add_to_matched_users():
     """Returns a dictionary of users and list of chosen categories."""
 
@@ -56,7 +55,6 @@ def add_to_matched_users():
     return users
 
 
-# NEED TO OPTIMIZE, NESTED FOR LOOPS
 def map_each_matched_user():
     """Returns a list that contains 1 or 2.
 
@@ -76,7 +74,6 @@ def map_each_matched_user():
                 mapped_users[user_id].append(1)
 
     return mapped_users
-
 
 
 def get_pearson_correlation():
