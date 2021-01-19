@@ -1,0 +1,27 @@
+<!DOCTYPE html>
+<html lang="en" xmlns="http://www.w3.org/1999/xhtml" xmlns:th="https://www.thymeleaf.org">
+<head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
+
+    <link rel="stylesheet" type="text/css" media="all" th:href="@{/css/bootstrap.min.css}">
+    <title>Error</title>
+</head>
+<body>
+<div class="container justify-content-center w-50 p-3" style="margin-top: 5em;">
+    <div th:if="${isNotFound}">
+        <h1 style="width: 750px" class="alert alert-danger fill-parent">Return <a th:href="@{/home}">here</a></h1>
+        <img src="https://http.cat/404">
+    </div>
+    <div th:if="${isServerError}">
+        <h1 style="width: 750px" class="alert alert-danger fill-parent">Return <a th:href="@{/home}">here</a></h1>
+        <img src="https://http.cat/500">
+    </div>
+    <div th:if="${unknownError}">
+        <h1 style="width: 750px" class="alert alert-danger fill-parent">Return <a th:href="@{/home}">here</a></h1>
+        <span>Something went wrong.</span>
+    </div>
+</div>
+
+</body>
+</html>
