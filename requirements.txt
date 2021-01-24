@@ -56,7 +56,7 @@ Pygments==2.2.0
 PyJWT==1.6.1
 pyOpenSSL==17.5.0
 python-dateutil==2.7.2
-python-engineio==2.1.1
+python-engineio==3.8.2.post1
 python-socketio==1.9.0
 python-twitter==3.4.1
 pytz==2018.4
