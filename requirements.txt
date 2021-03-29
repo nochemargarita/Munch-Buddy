@@ -52,7 +52,7 @@ psycopg2-binary==2.7.5
 ptyprocess==0.5.2
 pycparser==2.18
 pycrypto==2.6.1
-Pygments==2.2.0
+Pygments==2.7.4
 PyJWT==1.6.1
 pyOpenSSL==17.5.0
 python-dateutil==2.7.2
