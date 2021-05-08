@@ -14,7 +14,7 @@ cryptography==2.2.2
 decorator==4.2.1
 entrypoints==0.2.3
 enum34==1.1.6
-eventlet==0.23.0
+eventlet==0.31.0
 Flask==0.12
 Flask-Bcrypt==0.7.1
 Flask-DebugToolbar==0.10.1
