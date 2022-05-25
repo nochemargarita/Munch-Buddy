@@ -53,7 +53,7 @@ ptyprocess==0.5.2
 pycparser==2.18
 pycrypto==2.6.1
 Pygments==2.2.0
-PyJWT==1.6.1
+PyJWT==2.4.0
 pyOpenSSL==17.5.0
 python-dateutil==2.7.2
 python-engineio==2.1.1
